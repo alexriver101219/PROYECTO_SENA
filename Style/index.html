@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Página Principal</h1>
+    <nav>
+      <a href="landing.html">Landing</a>
+      <a href="register.html">Registro</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Bienvenido de nuevo</h2>
+    <p>Si ya tienes cuenta, inicia sesión aquí:</p>
+    <form action="/login" method="POST">
+      <label for="email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Iniciar sesión</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Mi App</p>
+  </footer>
+</body>
+</html>
+<!--LOGIN CARD-->
+<main class="container d-flex justify-content-center align-items-center vh-100">
+<div class="card shadow p-4" style="max-width: 360px; width: 100%;">
+  <h3> class="text-center">Iniciar Sesion</h3>
+
+  <form>
+    <div class="mb-3">
+      <label class="form-label">Correo electronico</label>
+      <input type="email" class="form-control" placeholder="ingresa tu correo" required>
+    </div>
+
+      <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" class="form-control" placeholder="ingresa tu contraseña" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+  </form>
+
+  <p class="text-center mt-3 small">
+    ¿No tienes cuenta? <a href="register.html" class="link-primary">Registrate aqui</a>
+  </p>
+  
+  <p class="text-center mt-3 small">
+    ¿Olvido su contraseña? <a href="#" class="link-primary"></a>
+  </p>
+    </div>
+</main>

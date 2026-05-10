@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Bootstrap CSS (opcional para estilos rápidos de modal) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!--NAVBAR-->
+  <header>
+    <h1>Crear cuenta</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="landing.html">Landing</a>
+      <a href="forgotpwd.html">¿Olvidaste tu contraseña?</a>
+    </nav>
+  </header>
+
+  <main class="container mt-4">
+    <section class="card p-4 shadow">
+      <h2 class="mb-3">Formulario de Registro</h2>
+      <p>Completa los siguientes campos para crear tu cuenta en <strong>Mi App</strong>.</p>
+
+      <!--REGISTER FORM-->
+      <form action="/register" method="POST" class="form">
+        <div class="mb-3">
+          <label for="fullname" class="form-label">Nombre completo:</label>
+          <input type="text" id="fullname" name="fullname" class="form-control" placeholder="Tu nombre completo" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Correo electrónico:</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="tu@correo.com" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña:</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirm-password" class="form-label">Confirmar contraseña:</label>
+          <input type="password" id="confirm-password" name="confirm-password" class="form-control" placeholder="Repite tu contraseña" minlength="6" required>
+        </div>
+
+        <!--BUTTON TRIGGER MODAL-->
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="terms" required>
+          <label class="form-check-label" for="terms">
+            Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">términos y condiciones</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+      </form>
+
+      <p class="small text-center mt-3">
+        ¿Ya tienes cuenta? <a href="index.html" class="link-primary">Inicia sesión aquí</a>
+      </p>
+    </section>
+  </main>
+
+  <!--MODAL-->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>Al registrarte en <strong>Mi App</strong> aceptas lo siguiente:</p>
+          <ul>
+            <li>Usar la aplicación de manera responsable.</li>
+            <li>No compartir tus credenciales con terceros.</li>
+            <li>Respetar la privacidad de otros usuarios.</li>
+            <li>La aplicación puede enviar correos de verificación y notificaciones.</li>
+          </ul>
+          <p>Estos términos pueden actualizarse en cualquier momento.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center mt-4">
+    <p>&copy; 2026 Mi App | Todos los derechos reservados</p>
+  </footer>
+
+  <!-- Bootstrap JS (para el modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

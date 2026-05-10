@@ -1,0 +1,101 @@
+/* styles.css */
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Tipografía y colores */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Encabezado */
+header {
+  background: #4a90e2;
+  color: #fff;
+  padding: 1rem;
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+}
+
+nav a {
+  color: #fff;
+  margin-right: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Secciones principales */
+section, main {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 24px; /* actualizado */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3); /* actualizado */
+}
+
+/* Botones */
+.btn, button {
+  display: inline-block;
+  background: #4a90e2;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 24px; /* actualizado */
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3); /* actualizado */
+}
+
+.btn:hover, button:hover {
+  background: #357ab8;
+}
+
+/* Formularios */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+input {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 24px; /* actualizado */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1); /* ligero para inputs */
+}
+
+input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #eee;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  border-radius: 24px; /* actualizado */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1); /* sutil */
+}

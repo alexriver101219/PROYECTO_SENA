@@ -1,0 +1,101 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4a90e2, #357ab8);
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+/* Tarjeta de login */
+.card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Títulos */
+.card h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Formularios */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: bold;
+  margin-top: 1rem;
+  color: #444;
+}
+
+.form-control {
+  padding: 0.7rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+/* Botón */
+.btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #357ab8;
+}
+
+/* Links */
+.link-primary, .link-secondary {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.link-primary:hover, .link-secondary:hover {
+  text-decoration: underline;
+}
+
+/* Mensajes de error */
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: #666;
+}
