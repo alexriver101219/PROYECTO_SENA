@@ -1,13 +1,45 @@
 {
-  "name": "client",
-  "private": true,
-  "version": "0.0.0",
+  "name": "proyecto-sena-backend",
+  "version": "1.0.0",
+  "description": "Backend profesional para PROYECTO SENA con Express, MongoDB y Nodemon",
+  "main": "server/server.js",
   "scripts": {
-    "dev": "nodemon server.js",
-    "build": "vite build",
-    "preview": "vite preview"
-  }
+    "dev-root": "nodemon server/server.js",
+    "dev-backend": "nodemon ../server/server.js",
+    "start": "node server/server.js",
+    "lint": "eslint .",
+    "test": "echo \"No hay tests definidos\" && exit 0",
+    "build": "echo \"No hay build definido\"",
+    "prestart": "npm run lint"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.6.0",
+    "morgan": "^1.10.0",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "Alexander",
+  "license": "ISC"
 }
+
+
+
+
   
 
 

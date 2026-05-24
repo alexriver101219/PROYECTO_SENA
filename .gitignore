@@ -1,1 +1,50 @@
-node_modules
+# --- Archivos temporales y backups ---
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# --- Archivos de entorno ---
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Build / Output ---
+dist/
+build/
+.cache/
+coverage/
+*.lcov
+
+# --- Logs ---
+logs
+*.log
+
+# --- IDEs ---
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+
+# --- Sistema operativo ---
+Thumbs.db
+.DS_Store
+
+# --- MongoDB ---
+*.pid
+*.seed
+dump/
+
+# --- Otros ---
+*.tgz
+*.tar
+*.zip
+
