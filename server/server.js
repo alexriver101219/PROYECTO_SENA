@@ -1,19 +1,19 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const cors = require("cors");
-dotenv.config();
+import express, { json } from 'express';
+import { connect } from 'mongoose';
+import { config } from 'dotenv';
+import cors from "cors";
+config();
 
 const app = express();
-app.use(express.json());
+app.use(json());
 
 // Conexión a MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('✅ Conectado a MongoDB Atlas'))
   .catch(err => console.error('❌ Error de conexión a MongoDB:', err));
 
 // Rutas
-const authRoutes = require('../routes/auth');
+import authRoutes from '../routes/auth';
 app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 8000;
@@ -28,5 +28,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-const connectDB = require('../config/db');
+import connectDB from '../config/db';
 connectDB();
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});
