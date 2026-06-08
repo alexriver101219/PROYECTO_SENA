@@ -1,13 +1,13 @@
 {
-  "name": "proyecto-sena-backend",
+  "name": "backend",
   "version": "1.0.0",
   "description": "Backend profesional para PROYECTO SENA con Express, MongoDB y Nodemon",
-  "main": "../server/server.js",
+  "main": "server.js",
   "scripts": {
-    "dev-root": "nodemon../server/server.js",
-    "dev-backend": "nodemon ../server/server.js",
-    "start": "node ../server/server.js",
-    "dev": "nodemon../server/server.js",
+    "dev-root": "nodemon ./server/server.js",
+    "dev-backend": "nodemon ./server/server.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "lint": "eslint .",
     "test": "echo \"No hay tests definidos\" && exit 0",
     "build": "echo \"No hay build definido\"",
@@ -22,6 +22,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^7.6.0",
     "morgan": "^1.10.0"
   },
