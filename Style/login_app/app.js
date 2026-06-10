@@ -1,27 +1,28 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Empleados from "./pages/Empleados";
-import Documentos from "./pages/Documentos";
-import Solicitudes from "./pages/Solicitudes";
-import Perfil from "./pages/Perfil";
-import NotFound from "./pages/NotFound";
+import Header from "./components/Header"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import Dashboard from "./pages/Dashboard"
+import Empleados from "./pages/Empleados"
+import Documentos from "./pages/Documentos"
+import Solicitudes from "./pages/Solicitudes"
+import Perfil from "./pages/Perfil"
+import NotFound from "./pages/NotFound"
 
-import ProtectedRoute from "./components/ProtectedRoute";
-
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
   return (
     <BrowserRouter>
-
+      <Header />
       <Routes>
+        {/* Rutas públicas */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/"
-          element={<Login />}
-        />
-
+        {/* Rutas privadas */}
         <Route
           path="/dashboard"
           element={
@@ -30,7 +31,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/empleados"
           element={
@@ -39,7 +39,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/documentos"
           element={
@@ -48,7 +47,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/solicitudes"
           element={
@@ -57,7 +55,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/perfil"
           element={
@@ -67,15 +64,11 @@ function App() {
           }
         />
 
-        <Route
-          path="*"
-          element={<NotFound />}
-        />
-
+        {/* Ruta por defecto */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
-
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

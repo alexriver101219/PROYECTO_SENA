@@ -1,39 +1,46 @@
+// ==========================
+// Dependencias
+// ==========================
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
 
-// ==========================
-// Configuración
-// ==========================
 dotenv.config();
 
+// ==========================
+// Inicialización
+// ==========================
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // ==========================
-// Middlewares
+// Middlewares de seguridad
 // ==========================
-app.use(cors());
+app.use(helmet());
+app.use(cors({ origin: "http://localhost:5173" }));
+app.use(express.json({ limit: "10kb" }));
+app.use(morgan("combined"));
 
-app.use(
-  express.json({
-    limit: "10mb",
-  }),
-);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Demasiadas solicitudes desde esta IP, intenta más tarde.",
+});
+app.use("/api", limiter);
 
-app.use(
-  express.urlencoded({
-    extended: true,
-  }),
-);
+// ==========================
+// Rutas
+// ==========================
+app.get("/api/test", (req, res) => {
+  res.json({ msg: "Servidor seguro funcionando ✅" });
+});
 
-// 🔥 IMPORTANTE: RUTAS
 app.use("/api/auth", require("./routes/auth"));
 
-// ==========================
-// Ruta principal
-// ==========================
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
@@ -44,16 +51,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// ==========================
-// Rutas API
-// ==========================
-
-// const authRoutes = require("./routes/auth");
-// app.use("/api/auth", authRoutes);
-
-// ==========================
 // Manejo de errores 404
-// ==========================
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -62,14 +60,11 @@ app.use((req, res) => {
 });
 
 // ==========================
-// Conexión MongoDB
+// Conexión MongoDB y arranque
 // ==========================
 const connectDB = async () => {
-  console.log("Entrando a connectDB...");
-
   try {
     await mongoose.connect(process.env.MONGO_URI);
-
     console.log("✅ MongoDB Atlas conectado");
 
     app.listen(PORT, () => {
@@ -83,7 +78,4 @@ const connectDB = async () => {
   }
 };
 
-// ==========================
-// Iniciar servidor
-// ==========================
 connectDB();

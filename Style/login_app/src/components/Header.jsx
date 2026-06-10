@@ -1,18 +1,31 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext } from "react"
+import { Link } from "react-router-dom"
+import { AuthContext } from "../context/AuthContext"
 
 function Header() {
+  const { user, logout } = useContext(AuthContext)
+
   return (
-    <header className="navbar">
-      <div className="navbar-brand">
-        <h1>Mi App 🚀</h1>
-      </div>
-      <nav className="navbar-links">
-        <Link to="/" className="nav-link">Inicio</Link>
-        <Link to="/landing" className="nav-link">Landing</Link>
-        <Link to="/register" className="nav-link">Registro</Link>
-        <Link to="/login" className="nav-link">Login</Link>
-        <Link to="/forgotpwd" className="nav-link">Recuperar Contraseña</Link>
+    <header className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+      <Link className="navbar-brand" to="/">LoginApp</Link>
+      <nav className="navbar-nav ms-auto">
+        {!user ? (
+          <>
+            <Link className="nav-link" to="/login">Login</Link>
+            <Link className="nav-link" to="/register">Register</Link>
+          </>
+        ) : (
+          <>
+            <Link className="nav-link" to="/dashboard">Dashboard</Link>
+            <Link className="nav-link" to="/empleados">Empleados</Link>
+            <Link className="nav-link" to="/documentos">Documentos</Link>
+            <Link className="nav-link" to="/solicitudes">Solicitudes</Link>
+            <Link className="nav-link" to="/perfil">Perfil</Link>
+            <button className="btn btn-outline-light ms-2" onClick={logout}>
+              Logout
+            </button>
+          </>
+        )}
       </nav>
     </header>
   )

@@ -99,3 +99,57 @@ footer {
   border-radius: 24px; /* actualizado */
   box-shadow: 0 8px 32px rgba(0,0,0,0.1); /* sutil */
 }
+body {
+  background-image: url('./assets/fondo.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* mantiene el fondo fijo al hacer scroll */
+}
+.login-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url('./assets/fondo.png'); /* ajusta la ruta según tu estructura */
+  background-size: cover;
+  background-position: center;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 600px;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background: #4a90e2;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #357ab8;
+}
+
+.btn-outline-primary {
+  border: 2px solid #4a90e2;
+  color: #4a90e2;
+}
+
+.btn-outline-primary:hover {
+  background: #4a90e2;
+  color: #fff;
+}

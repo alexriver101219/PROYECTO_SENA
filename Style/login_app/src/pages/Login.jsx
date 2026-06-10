@@ -2,9 +2,10 @@ import React, { useState, useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
+import { Link } from 'react-router-dom'
 
 function Login() {
-  const { login } = useContext(AuthContext)
+  const auth = useContext(AuthContext)
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState(null)
 
@@ -14,39 +15,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError(null)
+
     try {
-      await login(formData.email, formData.password)
-      alert('Login exitoso ✅')
+      if (auth && auth.login) {
+        await auth.login(formData.email, formData.password)
+        alert('Login exitoso ✅')
+      }
     } catch (err) {
-      setError('Credenciales inválidas ❌')
+      setError('Error al iniciar sesión ❌')
     }
   }
-
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  try {
-    const res = await fetch('http://localhost:8000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    })
-
-    const data = await res.json()
-
-    if (res.ok) {
-      alert('Login exitoso ✅')
-      console.log(data)
-    } else {
-      alert(`Error en login ❌: ${data.error}`)
-    }
-  } catch (error) {
-    console.error('Error en la petición:', error)
-    alert('Error de conexión con el servidor ❌')
-  }
-}
-
 
   return (
     <main className="container mt-4">
@@ -80,11 +59,12 @@ const handleSubmit = async (e) => {
 
         {error && <p className="text-danger mt-2">{error}</p>}
 
+        {/* 🔗 Enlaces de navegación */}
         <p className="small text-center mt-3">
-          ¿No tienes cuenta? <a href="/register" className="link-primary">Regístrate aquí</a>
+          ¿No tienes cuenta? <Link to="/register" className="link-primary">Regístrate aquí</Link>
         </p>
         <p className="small text-center">
-          ¿Olvidaste tu contraseña? <a href="/forgotpwd" className="link-secondary">Recupérala</a>
+          ¿Olvidaste tu contraseña? <Link to="/reset" className="link-secondary">Recupérala</Link>
         </p>
       </section>
     </main>

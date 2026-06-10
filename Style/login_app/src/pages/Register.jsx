@@ -1,12 +1,11 @@
-import React, { useState, useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import React, { useState } from 'react'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
+import { Link } from 'react-router-dom'
 
-function Registro() {
-  const { register } = useContext(AuthContext)
+function Register() {
   const [formData, setFormData] = useState({
-    fullname: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -19,15 +18,17 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden ❌')
-      return
-    }
+    setError(null)
+
     try {
-      await register(formData.fullname, formData.email, formData.password)
-      alert('Registro exitoso ✅')
+      if (formData.password !== formData.confirmPassword) {
+        setError('Las contraseñas no coinciden ❌')
+        return
+      }
+      // Aquí iría la lógica de registro (API, contexto, etc.)
+      alert('Cuenta creada exitosamente ✅')
     } catch (err) {
-      setError('Error en el registro ❌')
+      setError('Error al crear la cuenta ❌')
     }
   }
 
@@ -35,14 +36,15 @@ function Registro() {
     <main className="container mt-4">
       <section className="card p-4 shadow">
         <h2 className="mb-3">Crear cuenta</h2>
-        <p>Completa los siguientes campos para registrarte en <strong>Mi App</strong>.</p>
+        <p>Completa el formulario para registrarte.</p>
 
         <form onSubmit={handleSubmit}>
           <InputField
-            id="fullname"
+            id="name"
+            type="text"
             label="Nombre completo"
             placeholder="Tu nombre"
-            value={formData.fullname}
+            value={formData.name}
             onChange={handleChange}
             required
           />
@@ -50,7 +52,7 @@ function Registro() {
           <InputField
             id="email"
             type="email"
-            label="Correo electrónico"
+            label="Correo"
             placeholder="tu@correo.com"
             value={formData.email}
             onChange={handleChange}
@@ -61,7 +63,7 @@ function Registro() {
             id="password"
             type="password"
             label="Contraseña"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Tu contraseña"
             value={formData.password}
             onChange={handleChange}
             required
@@ -77,17 +79,19 @@ function Registro() {
             required
           />
 
-          <Button type="submit" label="Registrarse" className="btn btn-success w-100" />
+          <Button type="submit" label="Crear cuenta" className="btn btn-primary w-100" />
         </form>
 
         {error && <p className="text-danger mt-2">{error}</p>}
 
+        {/* 🔗 Enlace de navegación */}
         <p className="small text-center mt-3">
-          ¿Ya tienes cuenta? <a href="/login" className="link-primary">Inicia sesión aquí</a>
+          ¿Ya tienes cuenta? <Link to="/login" className="link-primary">Inicia sesión</Link>
         </p>
       </section>
     </main>
   )
 }
 
-export default Registro
+export default Register
+
