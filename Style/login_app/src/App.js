@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import Register from "./pages/Register";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Empleados from "./pages/Empleados";
@@ -7,21 +8,26 @@ import Documentos from "./pages/Documentos";
 import Solicitudes from "./pages/Solicitudes";
 import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
-
 import ProtectedRoute from "./components/ProtectedRoute";
-
 
 function App() {
   return (
     <BrowserRouter>
-
       <Routes>
 
         <Route
           path="/"
-          element={<Login />}
+          element={<LandingPage />}
         />
 
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+        <Route
+          path="/register"
+          element={<Register/>}
+/>
         <Route
           path="/dashboard"
           element={
@@ -73,7 +79,6 @@ function App() {
         />
 
       </Routes>
-
     </BrowserRouter>
   );
 }

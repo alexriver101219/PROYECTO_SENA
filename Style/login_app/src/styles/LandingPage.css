@@ -1,0 +1,186 @@
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between; /* Logo izquierda, links centro, video derecha */
+  align-items: center;
+  padding: 15px 40px;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  width: 120px;
+  height: auto;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0 auto; /* 🔹 empuja los links al centro */
+}
+
+.btn-nav {
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 18px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+/* 🔹 Colores diferenciados */
+.btn-inicio {
+  background: #007bff; /* Azul */
+}
+.btn-inicio:hover {
+  background: #3399ff;
+  transform: scale(1.05);
+}
+
+.btn-login {
+  background: #28a745; /* Verde */
+}
+.btn-login:hover {
+  background: #45c76d;
+  transform: scale(1.05);
+}
+
+.btn-registro {
+  background: #e3a008; /* Amarillo/Dorado */
+}
+.btn-registro:hover {
+  background: #ffbd32;
+  transform: scale(1.05);
+}
+
+/* Video en Navbar */
+.navbar-video {
+  width: 200px; /* tamaño controlado */
+}
+
+.navbar-video video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  min-height: 100vh; /* 🔹 más alto para que todo se vea */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px; /* 🔹 baja el contenido para que no quede tapado por el navbar */
+}
+
+.overlay {
+  width: 100%;
+  min-height: 80vh;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* 🔹 empieza más abajo */
+  text-align: center;
+  padding: 30px;
+  margin-top: 60px; /* 🔹 espacio extra debajo del navbar */
+}
+
+.logo {
+  width: 150px; /* 🔹 un poco más grande */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+
+h1 {
+  color: white;
+  font-size: 40px;
+  margin: 10px;
+}
+
+.hero p {
+  color: white;
+  font-size: 18px;
+  max-width: 600px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-primary {
+  padding: 12px 28px;
+  background: #e3a008;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: .3s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background: #ffbd32;
+}
+
+/* Servicios */
+.services {
+  padding: 50px 30px;
+}
+
+.services h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 25px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0,0,0,.15);
+  transition: .3s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.card h3 {
+  text-align: center;
+  padding: 12px;
+  font-size: 16px;
+}
+
+/* Footer */
+.footer {
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+}
