@@ -16,6 +16,8 @@ dotenv.config();
 // ==========================
 const app = express();
 const PORT = process.env.PORT || 8000;
+const isTestEnvironment =
+  process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 
 // ==========================
 // Middlewares de seguridad
@@ -40,6 +42,9 @@ app.get("/api/test", (req, res) => {
 });
 
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/empleados", require("./routes/empleados"));
+app.use("/api/documentos", require("./routes/documentos"));
+app.use("/api/solicitudes", require("./routes/solicitudes"));
 
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -63,19 +68,28 @@ app.use((req, res) => {
 // Conexión MongoDB y arranque
 // ==========================
 const connectDB = async () => {
+  if (!process.env.MONGO_URI) {
+    console.log("ℹ️ No se encontró MONGO_URI; se omite la conexión a MongoDB");
+    return;
+  }
+
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB Atlas conectado");
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-      console.log(`🌐 URL: http://localhost:${PORT}`);
-    });
   } catch (error) {
-    console.error("❌ Error de conexión MongoDB");
     console.error(error.message);
     process.exit(1);
   }
 };
 
-connectDB();
+// Solo inicia el servidor si NO estamos ejecutando pruebas
+if (!isTestEnvironment) {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
+      console.log(`🌐 URL: http://localhost:${PORT}`);
+    });
+  });
+}
+
+module.exports = app;

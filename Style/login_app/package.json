@@ -24,10 +24,15 @@
     "webpack-dev-server": "^5.2.4"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^8.57.0",
     "eslint-config-react-app": "^7.0.1",
-    "prettier": "^3.2.5"
+    "jest": "^27.5.1",
+    "prettier": "^3.2.5",
+    "supertest": "^7.2.2"
   },
   "browserslist": {
     "production": [

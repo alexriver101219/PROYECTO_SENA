@@ -1,8 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
 const router = express.Router();
-const User = require("../models/user");
+const User = require("../models/User");
 
 // ======================
 // REGISTER
@@ -54,6 +55,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
