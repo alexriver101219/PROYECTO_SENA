@@ -20,6 +20,21 @@ describe("API Auth", () => {
     });
   });
 
+  describe("POST /api/auth/register", () => {
+    test("Debe registrar usuarios demo con dominio @sesha y emitir JWT", async () => {
+      const response = await request(app).post("/api/auth/register").send({
+        name: "Empleado Demo 21",
+        email: "empleado21@sesha.com",
+        password: "Sesha2026!",
+      });
+
+      expect(response.status).toBe(201);
+      expect(response.body.success).toBe(true);
+      expect(response.body.token).toBeTruthy();
+      expect(response.body.user.email).toBe("empleado21@sesha.com");
+    });
+  });
+
   describe("POST /api/auth/login", () => {
     test("Debe permitir login demo cuando no hay base de datos", async () => {
       const response = await request(app).post("/api/auth/login").send({
@@ -30,6 +45,18 @@ describe("API Auth", () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.token).toBeTruthy();
+    });
+
+    test("Debe permitir login de un empleado demo con dominio @sesha", async () => {
+      const response = await request(app).post("/api/auth/login").send({
+        email: "carlos.mendoza@sesha.com",
+        password: "Sesha2026!",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.token).toBeTruthy();
+      expect(response.body.user.email).toBe("carlos.mendoza@sesha.com");
     });
 
     test("Debe permitir peticiones desde el frontend en puerto 3000", async () => {

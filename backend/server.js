@@ -15,7 +15,7 @@ dotenv.config();
 // Inicialización
 // ==========================
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = Number.parseInt(process.env.PORT || "8000", 10) || 8000;
 const isTestEnvironment =
   process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 const allowedOrigins = [
@@ -96,6 +96,24 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB Atlas conectado");
+
+    try {
+      const userCollection = mongoose.connection.collection("users");
+      const indexes = await userCollection.indexes();
+      const legacyIndex = indexes.find((index) => index.name === "username_1");
+
+      if (legacyIndex) {
+        await userCollection.dropIndex("username_1");
+        console.log("🧹 Índice legacy username_1 eliminado de users");
+      }
+    } catch (indexError) {
+      if (indexError.code !== 26) {
+        console.warn(
+          "⚠️ No se pudo limpiar el índice legacy de users:",
+          indexError.message,
+        );
+      }
+    }
   } catch (error) {
     console.error(error.message);
     process.exit(1);
@@ -105,10 +123,26 @@ const connectDB = async () => {
 // Solo inicia el servidor si NO estamos ejecutando pruebas
 if (!isTestEnvironment) {
   connectDB().then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-      console.log(`🌐 URL: http://localhost:${PORT}`);
-    });
+    const startServer = (port) => {
+      const server = app.listen(port, () => {
+        console.log(`🚀 Servidor ejecutándose en puerto ${port}`);
+        console.log(`🌐 URL: http://localhost:${port}`);
+      });
+
+      server.on("error", (error) => {
+        if (error.code === "EADDRINUSE") {
+          console.warn(
+            `⚠️ El puerto ${port} está ocupado. Intentando ${port + 1}...`,
+          );
+          server.close(() => startServer(port + 1));
+        } else {
+          console.error(error);
+          process.exit(1);
+        }
+      });
+    };
+
+    startServer(PORT);
   });
 }
 

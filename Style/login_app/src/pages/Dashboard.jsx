@@ -1,7 +1,8 @@
-﻿import React from "react";
+﻿import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import { AuthContext } from "../context/AuthContext";
 import "../styles/Dashboard.css";
 import fisica from "../assets/seguridad fisica.jpg";
 import electronica from "../assets/seguridad electronica.jpg";
@@ -12,6 +13,10 @@ import supervisor from "../assets/Supervisor de Seguridad.png";
 import { getGreeting, formatDate } from "../utils/formatters";
 
 function Dashboard() {
+  const { user } = useContext(AuthContext);
+  const displayName = user?.name || user?.email?.split("@")?.[0] || "Usuario";
+  const displayEmail = user?.email || "usuario@sesha.com";
+
   const services = [
     {
       title: "Seguridad Física",
@@ -81,11 +86,12 @@ function Dashboard() {
           <section className="welcome">
           <div>
             <p className="welcome-eyebrow">Panel principal</p>
-            <h1>{getGreeting()}, bienvenido a SESHA APP</h1>
+            <h1>{getGreeting()}, {displayName}</h1>
             <p>
-              Plataforma integral para la gestión de seguridad y operación del equipo.
+              Bienvenido a SESHA APP. Estás viendo tu panel personal con acceso a la operación del equipo.
               <span> {formatDate()}</span>
             </p>
+            <p className="welcome-user-info">{displayEmail}</p>
           </div>
           <div className="welcome-badge">Operación en tiempo real</div>
         </section>

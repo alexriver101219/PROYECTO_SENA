@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ function Register() {
     confirmPassword: ''
   })
   const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -25,10 +27,24 @@ function Register() {
         setError('Las contraseñas no coinciden ❌')
         return
       }
-      // Aquí iría la lógica de registro (API, contexto, etc.)
-      alert('Cuenta creada exitosamente ✅')
+
+      const response = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      })
+
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+
+      navigate('/dashboard')
     } catch (err) {
-      setError('Error al crear la cuenta ❌')
+      setError(
+        err.response?.data?.msg ||
+        err.response?.data?.message ||
+        'Error al crear la cuenta ❌'
+      )
     }
   }
 

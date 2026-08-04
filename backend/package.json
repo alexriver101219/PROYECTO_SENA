@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test": "jest --runInBand",
     "format": "prettier --write \"backend/**/*.{js,json}\""
-},
+  },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "bcryptjs": "^3.0.3",

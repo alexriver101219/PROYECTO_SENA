@@ -16,32 +16,20 @@ function Login() {
   }
 
  const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    setError(null);
 
-  console.log("Entró al submit");
-
-  setError(null);
-
-  try {
-    console.log("Llamando auth.login...");
-
-    await auth.login(formData.email, formData.password);
-
-    console.log("Login correcto");
-
-    navigate("/dashboard");
-
-  } catch (err) {
-    console.log(err);
-
-    setError(
-      err.response?.data?.message ||
-      err.response?.data?.msg ||
-      "Correo o contraseña incorrectos"
-    );
-  }
-};
-
+    try {
+      await auth.login(formData.email, formData.password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.msg ||
+        'Correo o contraseña incorrectos'
+      );
+    }
+  };
   return (
     <main className="container mt-4">
       <section className="card p-4 shadow">

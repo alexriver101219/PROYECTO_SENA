@@ -8,13 +8,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
+      const savedUser = localStorage.getItem("user");
 
-    if (token) {
-      setUser({ token });
+      if (token) {
+        setUser(savedUser ? JSON.parse(savedUser) : { token });
+      }
+    } catch (error) {
+      console.error("No se pudo cargar la sesión guardada", error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
@@ -23,15 +28,20 @@ export function AuthProvider({ children }) {
       password,
     });
 
-    localStorage.setItem("token", response.data.token);
+    if (response.data?.token) {
+      localStorage.setItem("token", response.data.token);
+    }
 
-    setUser(response.data.user);
+    const loggedUser = response.data?.user || { email };
+    localStorage.setItem("user", JSON.stringify(loggedUser));
+    setUser(loggedUser);
 
     return response.data;
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
   };
 
