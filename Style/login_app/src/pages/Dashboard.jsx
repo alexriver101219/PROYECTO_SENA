@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 import "../styles/Dashboard.css";
 import fisica from "../assets/seguridad fisica.jpg";
 import electronica from "../assets/seguridad electronica.jpg";
@@ -74,8 +75,10 @@ function Dashboard() {
   return (
     <>
       <Header />
-      <main className="dashboard-container">
-        <section className="welcome">
+      <div className="dashboard-layout">
+        <Sidebar />
+        <main className="dashboard-container">
+          <section className="welcome">
           <div>
             <p className="welcome-eyebrow">Panel principal</p>
             <h1>{getGreeting()}, bienvenido a SESHA APP</h1>
@@ -108,17 +111,18 @@ function Dashboard() {
           ))}
         </section>
 
-        <section className="modules">
-          {quickModules.map((module) => (
-            <Link to={module.to} className="module-box" key={module.title}>
-              <h3>
-                {module.icon} {module.title}
-              </h3>
-              <p>{module.description}</p>
-            </Link>
-          ))}
-        </section>
-      </main>
+          <section className="modules">
+            {quickModules.map((module) => (
+              <Link to={module.to} className="module-box" key={module.title}>
+                <h3>
+                  {module.icon} {module.title}
+                </h3>
+                <p>{module.description}</p>
+              </Link>
+            ))}
+          </section>
+        </main>
+      </div>
     </>
   );
 }

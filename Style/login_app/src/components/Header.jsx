@@ -1,10 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
 import logo from "../assets/Sesha_logo.png";
-
 import "../styles/Header.css";
-
 
 function Header() {
   const navigate = useNavigate();
