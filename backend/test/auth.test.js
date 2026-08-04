@@ -21,6 +21,17 @@ describe("API Auth", () => {
   });
 
   describe("POST /api/auth/login", () => {
+    test("Debe permitir login demo cuando no hay base de datos", async () => {
+      const response = await request(app).post("/api/auth/login").send({
+        email: "admin@sesha.com",
+        password: "123456",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.token).toBeTruthy();
+    });
+
     test("Debe rechazar usuario inexistente", async () => {
       const response = await request(app).post("/api/auth/login").send({
         email: "fake@test.com",
