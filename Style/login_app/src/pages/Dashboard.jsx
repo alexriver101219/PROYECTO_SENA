@@ -65,6 +65,12 @@ function Dashboard() {
     },
   ];
 
+  const metrics = [
+    { label: "Personal activo", value: "124" },
+    { label: "Solicitudes hoy", value: "18" },
+    { label: "Riesgos monitoreados", value: "7" },
+  ];
+
   return (
     <>
       <Header />
@@ -79,6 +85,15 @@ function Dashboard() {
             </p>
           </div>
           <div className="welcome-badge">Operación en tiempo real</div>
+        </section>
+
+        <section className="stats-grid">
+          {metrics.map((metric) => (
+            <div className="stat-card" key={metric.label}>
+              <span>{metric.label}</span>
+              <strong>{metric.value}</strong>
+            </div>
+          ))}
         </section>
 
         <section className="cards">
