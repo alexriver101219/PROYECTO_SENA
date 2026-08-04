@@ -18,12 +18,32 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const isTestEnvironment =
   process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  "http://127.0.0.1:5173",
+];
 
 // ==========================
 // Middlewares de seguridad
 // ==========================
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origin no permitida por CORS"));
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json({ limit: "10kb" }));
 app.use(morgan("combined"));
 

@@ -32,6 +32,18 @@ describe("API Auth", () => {
       expect(response.body.token).toBeTruthy();
     });
 
+    test("Debe permitir peticiones desde el frontend en puerto 3000", async () => {
+      const response = await request(app)
+        .options("/api/auth/login")
+        .set("Origin", "http://localhost:3000")
+        .set("Access-Control-Request-Method", "POST");
+
+      expect(response.status).toBe(204);
+      expect(response.headers["access-control-allow-origin"]).toBe(
+        "http://localhost:3000",
+      );
+    });
+
     test("Debe rechazar usuario inexistente", async () => {
       const response = await request(app).post("/api/auth/login").send({
         email: "fake@test.com",
