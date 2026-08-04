@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const router = express.Router();
@@ -66,14 +67,39 @@ router.post("/login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return res.status(401).json({ msg: "Contraseña incorrecta" });
+      return res.status(401).json({
+        success: false,
+        message: "Contraseña incorrecta",
+      });
     }
 
-    res.json({ msg: "Login exitoso ✅" });
+    // Generar JWT
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "8h",
+      },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login exitoso",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
     res.status(500).json({
-      msg: "Error en login",
+      msg: "Error en el login",
       error: err.message,
     });
   }

@@ -4,14 +4,10 @@
   "description": "Backend profesional para PROYECTO SENA con Express, MongoDB y Nodemon",
   "main": "server.js",
   "scripts": {
-    "dev-root": "nodemon ./server/server.js",
-    "dev-backend": "nodemon ./server/server.js",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "lint": "eslint .",
     "test": "jest --runInBand",
-    "build": "echo \"No hay build definido\"",
-    "prestart": "npm run lint",
     "format": "prettier --write \"backend/**/*.{js,json}\""
 },
   "dependencies": {

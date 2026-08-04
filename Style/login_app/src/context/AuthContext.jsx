@@ -1,24 +1,50 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from "react";
+import api from "../services/api";
 
-export const AuthContext = createContext()
+export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setUser({ token });
+    }
+
+    setLoading(false);
+  }, []);
 
   const login = async (email, password) => {
-    // Aquí puedes conectar con tu backend
-    if (email === 'test@correo.com' && password === '1234') {
-      setUser({ email })
-    } else {
-      throw new Error('Credenciales inválidas')
-    }
-  }
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
-  const logout = () => setUser(null)
+    localStorage.setItem("token", response.data.token);
+
+    setUser(response.data.user);
+
+    return response.data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }

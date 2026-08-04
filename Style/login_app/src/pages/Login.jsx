@@ -3,29 +3,44 @@ import { AuthContext } from '../context/AuthContext'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
 import { Link } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const auth = useContext(AuthContext)
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState(null)
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      if (auth && auth.login) {
-        await auth.login(formData.email, formData.password)
-        alert('Login exitoso ✅')
-      }
-    } catch (err) {
-      setError('Error al iniciar sesión ❌')
-    }
+  console.log("Entró al submit");
+
+  setError(null);
+
+  try {
+    console.log("Llamando auth.login...");
+
+    await auth.login(formData.email, formData.password);
+
+    console.log("Login correcto");
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.log(err);
+
+    setError(
+      err.response?.data?.message ||
+      err.response?.data?.msg ||
+      "Correo o contraseña incorrectos"
+    );
   }
+};
 
   return (
     <main className="container mt-4">
