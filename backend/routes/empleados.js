@@ -1,101 +1,104 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const Empleado = require("../models/Empleado");
 
-// Obtener todos los empleados
-router.get("/", async (req, res) => {
+// ==========================
+// Middleware de autenticación
+// ==========================
+const verificarToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).json({ msg: "Token requerido" });
+
+  const token = authHeader.split(" ")[1];
   try {
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(200).json([]);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // guardar info del usuario en la request
+    next();
+  } catch (error) {
+    return res.status(403).json({ msg: "Token inválido" });
+  }
+};
+
+// ==========================
+// Login empleado
+// ==========================
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const empleado = await Empleado.findOne({ email });
+    if (!empleado) {
+      return res
+        .status(404)
+        .json({ éxito: false, mensaje: "Usuario no encontrado" });
     }
 
-    const empleados = await Empleado.find();
-    res.status(200).json(empleados);
+    const esValida = await bcrypt.compare(password, empleado.password);
+    if (!esValida) {
+      return res
+        .status(400)
+        .json({ éxito: false, mensaje: "Credenciales inválidas" });
+    }
+
+    const token = jwt.sign(
+      { id: empleado._id, email: empleado.email, nombre: empleado.nombre },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+
+    res.json({ éxito: true, mensaje: "Login exitoso", token });
   } catch (error) {
     res.status(500).json({
-      msg: "Error al consultar empleados",
+      éxito: false,
+      mensaje: "Error en el servidor",
       error: error.message,
     });
   }
 });
 
-// Obtener empleado por ID
-router.get("/:id", async (req, res) => {
-  try {
-    const empleado = await Empleado.findById(req.params.id);
-
-    if (!empleado) {
-      return res.status(404).json({
-        msg: "Empleado no encontrado",
-      });
-    }
-
-    res.json(empleado);
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-});
+// ==========================
+// CRUD de empleados
+// ==========================
 
 // Crear empleado
 router.post("/", async (req, res) => {
   try {
+    const { nombre, documento, cargo, email, password } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+    const nuevoEmpleado = new Empleado({
+      nombre,
+      documento,
+      cargo,
+      email,
+      password: hash,
+    });
+    await nuevoEmpleado.save();
+    res.status(201).json(nuevoEmpleado);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error al crear empleado", error: error.message });
+  }
+});
+
+// Obtener todos los empleados (protegido con token)
+router.get("/", verificarToken, async (req, res) => {
+  try {
     if (mongoose.connection.readyState !== 1) {
-      return res.status(201).json({
-        msg: "Empleado registrado correctamente",
-        empleado: req.body,
-      });
+      return res.status(200).json([]);
     }
-
-    const empleado = new Empleado(req.body);
-
-    await empleado.save();
-
-    res.status(201).json({
-      msg: "Empleado registrado correctamente",
-      empleado,
-    });
+    const empleados = await Empleado.find();
+    res.status(200).json(empleados);
   } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
+    res
+      .status(500)
+      .json({ msg: "Error al consultar empleados", error: error.message });
   }
 });
-
-// Actualizar empleado
-router.put("/:id", async (req, res) => {
-  try {
-    const empleado = await Empleado.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-
-    res.json({
-      msg: "Empleado actualizado",
-      empleado,
-    });
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-});
-
-// Eliminar empleado
-router.delete("/:id", async (req, res) => {
-  try {
-    await Empleado.findByIdAndDelete(req.params.id);
-
-    res.json({
-      msg: "Empleado eliminado correctamente",
-    });
-  } catch (error) {
-    res.status(500).json({
-      msg: error.message,
-    });
-  }
-});
-
 module.exports = router;
+
+// Aquí puedes añadir GET/:id, PUT/:id, DELETE/:id

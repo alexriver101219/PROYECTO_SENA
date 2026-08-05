@@ -98,8 +98,8 @@ const connectDB = async () => {
     console.log("✅ MongoDB Atlas conectado");
 
     try {
-      const userCollection = mongoose.connection.collection("users");
-      const indexes = await userCollection.indexes();
+      const empleadoCollection = mongoose.connection.collection("empleados");
+      const indexes = await empleadoCollection.indexes();
       const legacyIndex = indexes.find((index) => index.name === "username_1");
 
       if (legacyIndex) {
@@ -123,27 +123,24 @@ const connectDB = async () => {
 // Solo inicia el servidor si NO estamos ejecutando pruebas
 if (!isTestEnvironment) {
   connectDB().then(() => {
-    const startServer = (port) => {
-      const server = app.listen(port, () => {
-        console.log(`🚀 Servidor ejecutándose en puerto ${port}`);
-        console.log(`🌐 URL: http://localhost:${port}`);
-      });
+    if (!isTestEnvironment) {
+      const startServer = (port) => {
+        const server = app.listen(port, () => {
+          console.log(`🚀 Servidor ejecutándose en puerto ${port}`);
+        });
 
-      server.on("error", (error) => {
-        if (error.code === "EADDRINUSE") {
-          console.warn(
-            `⚠️ El puerto ${port} está ocupado. Intentando ${port + 1}...`,
-          );
-          server.close(() => startServer(port + 1));
-        } else {
-          console.error(error);
-          process.exit(1);
-        }
-      });
-    };
+        server.on("error", (error) => {
+          if (error.code === "EADDRINUSE") {
+            server.close(() => startServer(port + 1));
+          } else {
+            console.error(error);
+          }
+        });
+      };
 
-    startServer(PORT);
+      startServer(PORT);
+    }
   });
-}
 
-module.exports = app;
+  module.exports = app;
+}

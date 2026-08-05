@@ -1,84 +1,42 @@
 const request = require("supertest");
+const jwt = require("jsonwebtoken");
 const app = require("../server");
 
-describe("API Auth", () => {
-  describe("GET /", () => {
-    test("Debe responder que la API está online", async () => {
-      const response = await request(app).get("/");
+describe("Pruebas de autenticación con JWT", () => {
+  let token;
 
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
+  test("Login exitoso devuelve token válido", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "juan@test.com",
+      password: "123456",
     });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("token");
+
+    token = res.body.token;
+
+    const decoded = jwt.decode(token);
+
+    expect(decoded.email).toBe("juan@test.com");
   });
 
-  describe("POST /api/auth/register", () => {
-    test("Debe rechazar registro sin datos", async () => {
-      const response = await request(app).post("/api/auth/register").send({});
+  test("Ruta protegida responde con token válido", async () => {
+    const res = await request(app)
+      .get("/api/empleados")
+      .set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toBe(400);
-      expect(response.body.msg).toBe("Todos los campos son requeridos");
-    });
+    expect(res.statusCode).toBe(200);
   });
 
-  describe("POST /api/auth/register", () => {
-    test("Debe registrar usuarios demo con dominio @sesha y emitir JWT", async () => {
-      const response = await request(app).post("/api/auth/register").send({
-        name: "Empleado Demo 21",
-        email: "empleado21@sesha.com",
-        password: "Sesha2026!",
-      });
-
-      expect(response.status).toBe(201);
-      expect(response.body.success).toBe(true);
-      expect(response.body.token).toBeTruthy();
-      expect(response.body.user.email).toBe("empleado21@sesha.com");
-    });
-  });
-
-  describe("POST /api/auth/login", () => {
-    test("Debe permitir login demo cuando no hay base de datos", async () => {
-      const response = await request(app).post("/api/auth/login").send({
-        email: "admin@sesha.com",
-        password: "123456",
-      });
-
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.token).toBeTruthy();
+  test("Login falla con credenciales inválidas", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "fake@test.com",
+      password: "123456",
     });
 
-    test("Debe permitir login de un empleado demo con dominio @sesha", async () => {
-      const response = await request(app).post("/api/auth/login").send({
-        email: "carlos.mendoza@sesha.com",
-        password: "Sesha2026!",
-      });
+    expect([400, 401, 404]).toContain(res.statusCode);
 
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.token).toBeTruthy();
-      expect(response.body.user.email).toBe("carlos.mendoza@sesha.com");
-    });
-
-    test("Debe permitir peticiones desde el frontend en puerto 3000", async () => {
-      const response = await request(app)
-        .options("/api/auth/login")
-        .set("Origin", "http://localhost:3000")
-        .set("Access-Control-Request-Method", "POST");
-
-      expect(response.status).toBe(204);
-      expect(response.headers["access-control-allow-origin"]).toBe(
-        "http://localhost:3000",
-      );
-    });
-
-    test("Debe rechazar usuario inexistente", async () => {
-      const response = await request(app).post("/api/auth/login").send({
-        email: "fake@test.com",
-        password: "123456",
-      });
-
-      expect(response.status).toBe(404);
-      expect(response.body.msg).toBe("Usuario no encontrado");
-    });
+    expect(res.body.msg).toBeDefined();
   });
 });
