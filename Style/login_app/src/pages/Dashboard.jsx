@@ -13,7 +13,7 @@ import supervisor from "../assets/Supervisor de Seguridad.png";
 import { getGreeting, formatDate } from "../utils/formatters";
 
 function Dashboard() {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext) || {};
   const displayName = user?.name || user?.email?.split("@")?.[0] || "Usuario";
   const displayEmail = user?.email || "usuario@sesha.com";
 

@@ -4,8 +4,8 @@ import Login from "../pages/Login";
 
 test("Renderiza correctamente la página Login", () => {
   render(
-    <BrowserRouter>
-    <Login />
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Login />
     </BrowserRouter>
   );
 });

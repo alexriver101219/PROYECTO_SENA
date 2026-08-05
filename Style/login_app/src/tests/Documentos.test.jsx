@@ -4,8 +4,8 @@ import Documentos from "../pages/Documentos";
 
 test("Renderiza correctamente el módulo Documentos", () => {
   render(
-    <BrowserRouter>
-    <Documentos />
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Documentos />
     </BrowserRouter>
   );
 });

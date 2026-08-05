@@ -4,7 +4,7 @@ import Dashboard from "../pages/Dashboard";
 
 test("Renderiza correctamente el Dashboard", () => {
   render(
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Dashboard />
     </BrowserRouter>
   );
