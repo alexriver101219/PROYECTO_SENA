@@ -45,7 +45,11 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: empleado._id, email: empleado.email, nombre: empleado.nombre },
+      {
+        id: empleado._id,
+        email: empleado.email,
+        nombre: empleado.nombre || empleado.name,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
@@ -67,18 +71,27 @@ router.post("/login", async (req, res) => {
 // Crear empleado
 router.post("/", async (req, res) => {
   try {
-    const { nombre, documento, cargo, email, password } = req.body;
-    const hash = await bcrypt.hash(password, 10);
+    const { nombre, name, password } = req.body;
+    const valorNombre = name || nombre || "Sin Nombre";
+
+    // Encriptar solo si se proporciona contraseña (evita crash en bcrypt)
+    let hash = password;
+    if (password) {
+      hash = await bcrypt.hash(password, 10);
+    }
+
+    // Fusionamos req.body para conservar campos obligatorios como rol, estado, telefono, etc.
     const nuevoEmpleado = new Empleado({
-      nombre,
-      documento,
-      cargo,
-      email,
+      ...req.body,
+      name: valorNombre,
+      nombre: valorNombre,
       password: hash,
     });
+
     await nuevoEmpleado.save();
     res.status(201).json(nuevoEmpleado);
   } catch (error) {
+    console.error("🔴 Error en POST /api/empleados:", error.message);
     res
       .status(500)
       .json({ msg: "Error al crear empleado", error: error.message });
@@ -99,6 +112,5 @@ router.get("/", verificarToken, async (req, res) => {
       .json({ msg: "Error al consultar empleados", error: error.message });
   }
 });
-module.exports = router;
 
-// Aquí puedes añadir GET/:id, PUT/:id, DELETE/:id
+module.exports = router;

@@ -18,6 +18,7 @@ const app = express();
 const PORT = Number.parseInt(process.env.PORT || "8000", 10) || 8000;
 const isTestEnvironment =
   process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -45,7 +46,11 @@ app.use(
   }),
 );
 app.use(express.json({ limit: "10kb" }));
-app.use(morgan("combined"));
+
+// En test omitimos los logs de morgan para mantener la consola limpia
+if (!isTestEnvironment) {
+  app.use(morgan("combined"));
+}
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -103,13 +108,14 @@ const connectDB = async () => {
       const legacyIndex = indexes.find((index) => index.name === "username_1");
 
       if (legacyIndex) {
-        await userCollection.dropIndex("username_1");
-        console.log("🧹 Índice legacy username_1 eliminado de users");
+        // Corregido: se usaba 'userCollection' en lugar de 'empleadoCollection'
+        await empleadoCollection.dropIndex("username_1");
+        console.log("🧹 Índice legacy username_1 eliminado de empleados");
       }
     } catch (indexError) {
       if (indexError.code !== 26) {
         console.warn(
-          "⚠️ No se pudo limpiar el índice legacy de users:",
+          "⚠️ No se pudo limpiar el índice legacy:",
           indexError.message,
         );
       }
@@ -120,27 +126,26 @@ const connectDB = async () => {
   }
 };
 
-// Solo inicia el servidor si NO estamos ejecutando pruebas
+// Solo inicia la conexión a BD y el puerto HTTP si NO estamos en entorno de pruebas
 if (!isTestEnvironment) {
   connectDB().then(() => {
-    if (!isTestEnvironment) {
-      const startServer = (port) => {
-        const server = app.listen(port, () => {
-          console.log(`🚀 Servidor ejecutándose en puerto ${port}`);
-        });
+    const startServer = (port) => {
+      const server = app.listen(port, () => {
+        console.log(`🚀 Servidor ejecutándose en puerto ${port}`);
+      });
 
-        server.on("error", (error) => {
-          if (error.code === "EADDRINUSE") {
-            server.close(() => startServer(port + 1));
-          } else {
-            console.error(error);
-          }
-        });
-      };
+      server.on("error", (error) => {
+        if (error.code === "EADDRINUSE") {
+          server.close(() => startServer(port + 1));
+        } else {
+          console.error(error);
+        }
+      });
+    };
 
-      startServer(PORT);
-    }
+    startServer(PORT);
   });
-
-  module.exports = app;
 }
+
+// 🟢 SIEMPRE EXPORTAR APP AL FINAL (Fuera de cualquier 'if')
+module.exports = app;
