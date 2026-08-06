@@ -1,13 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   CONFIGURACIÓN GLOBAL
+   ========================================================================== */
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #020617; /* slate-950 */
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Scrollbar Personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488;
+}
+
+/* ==========================================================================
+   ANIMACIONES Y FADE-IN PROFESIONALES
+   ========================================================================== */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Clases de animación */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Retrasos para escalonamiento */
+.delay-100 {
+  animation-delay: 100ms;
+  opacity: 0;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+  opacity: 0;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+  opacity: 0;
+}
+
+/* Glassmorphism y efectos Hover */
+.glass-header {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card-hover-effect {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -10px rgba(13, 148, 136, 0.15);
+}
+/* ==========================================
+   AGREGAR ESTO AL FINAL DEL ARCHIVO APP.CSS
+   ========================================== */
+
+/* 1. CONFIGURACIÓN DE TEXTO Y FONDO PARA INPUTS */
+input, textarea, select {
+  color: #0f172a !important;            /* Texto gris oscuro casi negro */
+  background-color: #f8fafc !important;   /* Fondo gris suave / limpio */
+  border: 1px solid #cbd5e1 !important;   /* Borde definido */
+  border-radius: 0.5rem !important;
+}
+
+/* 2. EFECTO AL HACER CLIC EN EL CAMPO */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: #2563eb !important;      /* Borde azul brillante */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* 3. VISIBILIDAD DEL PLACEHOLDER */
+::placeholder,
+::-webkit-input-placeholder,
+:-ms-input-placeholder {
+  color: #64748b !important;            /* Gris legible para el texto de ayuda */
+  opacity: 1 !important;
+}
+
+/* 4. FIX PARA LAS OPCIONES DEL SELECT */
+select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }

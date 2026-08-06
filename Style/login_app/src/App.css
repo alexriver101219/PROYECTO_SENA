@@ -1,38 +1,228 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   CONFIGURACIÓN GLOBAL Y RESET
+   ========================================================================== */
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color-scheme: dark;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+  scroll-behavior: smooth;
+  background-color: #020617; /* slate-950 */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488;
+}
+
+/* ==========================================================================
+   KEYFRAMES / ANIMACIONES PROFESIONALES
+   ========================================================================== */
+
+/* Entrada con Fade y Desplazamiento Hacia Arriba */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Entrada con Fade y Desplazamiento Hacia Abajo (Ideal para Header) */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.App-link {
-  color: #61dafb;
+/* Entrada con Escalado Suave */
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Pulso Sutil de Fondo */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    opacity: 0.8;
   }
+}
+
+/* ==========================================================================
+   CLASES UTILITARIAS DE ANIMACIÓN
+   ========================================================================== */
+
+/* Animación genérica */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tiempos de Retraso Escalonados (Staggering) */
+.delay-100 {
+  animation-delay: 100ms;
+  opacity: 0;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+  opacity: 0;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+  opacity: 0;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+  opacity: 0;
+}
+
+/* Ecosistema Glassmorphism y Sombras Especiales */
+.glass-header {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card-hover-effect {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -10px rgba(13, 148, 136, 0.15);
+}
+/* EFECTOS DE RESPLANDOR Y BORDES ILUMINADOS */
+.glow-emerald {
+  box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.3);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 20px -3px rgba(99, 102, 241, 0.35);
+}
+
+.glow-amber {
+  box-shadow: 0 0 20px -3px rgba(245, 158, 11, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.3);
+}
+
+/* EFECTO CRISTAL / GLASSMORPHISM */
+.glass-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card:hover {
+  border-color: rgba(45, 212, 191, 0.4);
+  transform: translateY(-2px);
+}
+/* CONFIGURACIÓN GLOBAL PARA INPUTS Y PLACEHOLDERS */
+input, textarea, select {
+  color: #f8fafc !important; /* Texto blanco suave (slate-50) */
+  background-color: #0f172a !important; /* Fondo oscuro (slate-900) */
+}
+
+/* Color del texto de ayuda / Placeholder */
+::placeholder {
+  color: #94a3b8 !important; /* Gris claro visible (slate-400) */
+  opacity: 1; /* Necesario para Firefox */
+}
+
+::-webkit-input-placeholder {
+  color: #94a3b8 !important;
+}
+
+:-ms-input-placeholder {
+  color: #94a3b8 !important;
+}
+/* ==========================================
+   AGREGAR ESTO AL FINAL DEL ARCHIVO APP.CSS
+   ========================================== */
+
+/* 1. CONFIGURACIÓN DE TEXTO Y FONDO PARA INPUTS */
+input, textarea, select {
+  color: #0f172a !important;            /* Texto gris oscuro casi negro */
+  background-color: #f8fafc !important;   /* Fondo gris suave / limpio */
+  border: 1px solid #cbd5e1 !important;   /* Borde definido */
+  border-radius: 0.5rem !important;
+}
+
+/* 2. EFECTO AL HACER CLIC EN EL CAMPO */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: #2563eb !important;      /* Borde azul brillante */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* 3. VISIBILIDAD DEL PLACEHOLDER */
+::placeholder,
+::-webkit-input-placeholder,
+:-ms-input-placeholder {
+  color: #64748b !important;            /* Gris legible para el texto de ayuda */
+  opacity: 1 !important;
+}
+
+/* 4. FIX PARA LAS OPCIONES DEL SELECT */
+select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }

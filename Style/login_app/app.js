@@ -1,5 +1,5 @@
 import React from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import Header from "./components/Header"
 import Login from "./pages/Login"
@@ -11,8 +11,17 @@ import Solicitudes from "./pages/Solicitudes"
 import Perfil from "./pages/Perfil"
 import NotFound from "./pages/NotFound"
 
-import ProtectedRoute from "./components/ProtectedRoute"
-
+import ProtectedRoute from "./components/ProtectedRouuter"
+function PrivateLayout() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Outlet /> {/* Aquí se renderizarán Dashboard, Empleados, etc. */}
+      </main>
+    </>
+  )
+}
 function App() {
   return (
     <BrowserRouter>
@@ -21,7 +30,7 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         {/* Rutas privadas */}
         <Route
           path="/dashboard"
