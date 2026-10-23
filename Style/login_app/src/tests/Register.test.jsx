@@ -35,7 +35,7 @@ describe("Register page", () => {
     await userEvent.type(screen.getByLabelText(/correo/i), "ana.diaz@sesha.com");
     await userEvent.type(screen.getByLabelText(/^contraseña/i), "Sesha2026!");
     await userEvent.type(screen.getByLabelText(/confirmar contraseña/i), "Sesha2026!");
-    await userEvent.click(screen.getByRole("button", { name: /crear cuenta/i }));
+    await userEvent.click(screen.getByRole("button", { name: /registrarse/i }));
 
     await waitFor(() => expect(api.post).toHaveBeenCalledWith("/auth/register", {
       name: "Ana Díaz",

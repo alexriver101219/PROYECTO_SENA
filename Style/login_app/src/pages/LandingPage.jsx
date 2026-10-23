@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Shield, 
@@ -6,7 +6,6 @@ import {
   UserPlus, 
   Home, 
   ArrowRight, 
-  Play, 
   Lock, 
   Sparkles,
   ChevronRight,
@@ -26,7 +25,6 @@ import supervisor from "../assets/Supervisor de Seguridad.png";
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const services = [
     { title: "Seguridad Física", desc: "Control de acceso y vigilancia fija.", image: fisica, tag: "Operativo", color: "from-blue-500/20 to-teal-500/10" },
@@ -96,30 +94,30 @@ function LandingPage() {
 
       {/* 🔹 HERO SECTION (Fondo con Glow y Estilo Moderno) */}
       <section 
-        className="relative py-12 lg:py-16 px-4 sm:px-8 border-b border-slate-800/80 bg-cover bg-center flex-1 flex items-center overflow-hidden"
+        className="relative max-w-none mx-0 my-0 rounded-none bg-transparent shadow-none py-10 lg:py-14 px-4 sm:px-8 xl:px-12 border-b border-slate-800/80 bg-cover bg-center flex-1 flex items-center overflow-hidden"
         style={{ backgroundImage: `linear-gradient(to right, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.88)), url(${fondo})` }}
       >
         {/* Luz de fondo decorativa */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center w-full relative z-10">
+        <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
           
           {/* Texto Principal */}
-          <div className="lg:col-span-7 space-y-5 text-center lg:text-left animate-fade-in-up delay-100">
+          <div className="md:col-span-5 space-y-5 text-left animate-fade-in-up delay-100">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-500/20 to-emerald-500/10 border border-teal-500/40 px-3.5 py-1.5 rounded-full text-xs font-bold text-teal-300 shadow-inner">
               <Sparkles className="w-4 h-4 text-teal-400" /> Plataforma Integral de Seguridad Privada
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-3xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight leading-tight">
               Gestión Operativa y Control Eficiente de <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400">Personal en Campo</span>
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
               Automatiza la supervisión, genera certificados oficiales en PDF y reporta novedades en tiempo real con trazabilidad geolocalizada.
             </p>
 
             {/* BOTONES PRINCIPALES DE ACCIÓN (Grandes y Coloridos) */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-3">
+            <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 pt-3">
               
               {/* Botón Principal: Cyan/Azul Verde */}
               <button 
@@ -143,35 +141,22 @@ function LandingPage() {
           </div>
 
           {/* Reproductor de Video en Marco Tecnológico */}
-          <div className="lg:col-span-5 flex justify-center animate-zoom-in delay-200">
-            <div className="w-full max-w-md bg-slate-900/90 border border-teal-500/30 rounded-2xl p-1.5 shadow-2xl shadow-teal-950/50 relative group">
-              
-              <div 
-                className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden cursor-pointer border border-slate-800" 
-                onClick={() => setIsPlaying(!isPlaying)}
-              >
+          <div className="md:col-span-7 flex justify-center animate-zoom-in delay-200">
+            <div className="w-full bg-slate-900/90 border border-teal-500/30 rounded-2xl p-1.5 shadow-2xl shadow-teal-950/50">
+              <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
                 <video 
-                  controls={isPlaying}
-                  className="w-full h-full object-cover"
+                  aria-label="Demostración de SESHA APP"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full h-full object-contain"
                   poster={fondo}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
                 >
                   <source src="/sesha_demo.mp4" type="video/mp4" />
                 </video>
-
-                {!isPlaying && (
-                  <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-300 group-hover:bg-slate-950/40">
-                    <div className="w-14 h-14 bg-gradient-to-tr from-teal-400 to-emerald-400 text-slate-950 rounded-full flex items-center justify-center shadow-xl glow-emerald transition-transform duration-300 group-hover:scale-110">
-                      <Play className="w-7 h-7 fill-slate-950 ml-1" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-200 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-700">
-                      Ver Demostración del Sistema
-                    </span>
-                  </div>
-                )}
               </div>
-
             </div>
           </div>
 

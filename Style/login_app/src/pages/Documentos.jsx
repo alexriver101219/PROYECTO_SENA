@@ -8,6 +8,13 @@ const Documentos = () => {
 
   // Generador dinámico de Certificado Laboral PDF
   const generarCertificadoPDF = () => {
+    // 1. Obtener la información del usuario en sesión desde el localStorage
+    const usuarioSesion = JSON.parse(localStorage.getItem('user')) || {};
+    
+    // Extraer datos o definir valores por defecto si no existen
+    const nombreEmpleado = (usuarioSesion.nombre || usuarioSesion.name || 'Alexander Rivera').toUpperCase();
+    const cedulaEmpleado = usuarioSesion.cedula || usuarioSesion.documento || 'Sin registrar';
+
     const doc = new jsPDF();
 
     // Encabezado
@@ -21,9 +28,9 @@ const Documentos = () => {
     
     doc.line(20, 35, 190, 35); // Línea divisoria
 
-    // Cuerpo
-    const fecha = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-    const cuerpo = `Por medio de la presente se hace constar que el colaborador(a) se encuentra vinculado(a) laboralmente a nuestra organización desempeñando sus funciones en el área de desarrollo de software bajo un contrato a término indefinido.\n\nEste documento se expide a solicitud del interesado el día ${fecha}.`;
+    // Cuerpo con datos dinámicos
+    const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+    const cuerpo = `Por medio de la presente se hace constar que el colaborador(a) ${nombreEmpleado}, identificado(a) con documento No. ${cedulaEmpleado}, se encuentra vinculado(a) laboralmente a nuestra organización desempeñando sus funciones en el área de desarrollo de software bajo un contrato a término indefinido.\n\nEste documento se expide a solicitud del interesado el día ${fecha}.`;
 
     doc.setFontSize(11);
     doc.text(cuerpo, 20, 50, { maxWidth: 170 });
@@ -76,7 +83,7 @@ const Documentos = () => {
               <h2 className="text-lg font-semibold text-gray-800">Certificado Laboral</h2>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-              Genera instantáneamente tu certificado de trabajo actualizado con firma digital verificada (PDF).
+              Genera instantáneamente tu certificado de trabajo personalizado con firma digital verificada (PDF).
             </p>
           </div>
           <button

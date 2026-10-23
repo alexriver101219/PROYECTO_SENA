@@ -2,4 +2,23 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
+import { TextEncoder, TextDecoder } from 'util';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 import '@testing-library/jest-dom';
+
+// src/setupTests.js
+
+jest.mock('jspdf', () => {
+  return {
+    jsPDF: jest.fn().mockImplementation(() => ({
+      text: jest.fn(),
+      setFontSize: jest.fn(),
+      setTextColor: jest.fn(),
+      addImage: jest.fn(),
+      addPage: jest.fn(),
+      save: jest.fn(),
+      // Agrega aquí cualquier otro método que use tu aplicación
+    })),
+  };
+});
