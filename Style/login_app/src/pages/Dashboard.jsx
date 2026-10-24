@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import Servicios from "../components/Servicios";
 import { AuthContext } from "../context/AuthContext";
 import { 
   FileText, 
@@ -14,53 +15,12 @@ import {
   ArrowRight 
 } from "lucide-react";
 
-// Importación de assets de servicios
-import fisica from "../assets/seguridad fisica.jpg";
-import electronica from "../assets/seguridad electronica.jpg";
-import canina from "../assets/seguridad canina.png";
-import vip from "../assets/Escolta Vip.jpg";
-import mercancias from "../assets/Escolta de mercancias.jpg";
-import supervisor from "../assets/Supervisor de Seguridad.png";
-
 import { getGreeting, formatDate } from "../utils/formatters";
 
 function Dashboard() {
   const { user } = useContext(AuthContext) || {};
   const displayName = user?.name || user?.email?.split("@")?.[0] || "Usuario";
   const displayEmail = user?.email || "usuario@sesha.com";
-
-  const services = [
-    {
-      title: "Seguridad Física",
-      image: fisica,
-      description: "Control y protección de instalaciones con operatividad garantizada.",
-    },
-    {
-      title: "Seguridad Electrónica",
-      image: electronica,
-      description: "Monitoreo y respuesta tecnológica para entornos críticos.",
-    },
-    {
-      title: "Seguridad Canina",
-      image: canina,
-      description: "Unidades caninas especializadas para detección y respaldo operativo.",
-    },
-    {
-      title: "Escolta VIP",
-      image: vip,
-      description: "Protección personalizada y discreta para personas de alto valor.",
-    },
-    {
-      title: "Escolta de Mercancías",
-      image: mercancias,
-      description: "Acompañamiento seguro de cargas y logística sensible.",
-    },
-    {
-      title: "Supervisión",
-      image: supervisor,
-      description: "Gestión operativa del personal y control de desempeño.",
-    },
-  ];
 
   const quickModules = [
     {
@@ -176,27 +136,7 @@ function Dashboard() {
           {/* Servicios Operativos / Portafolio */}
           <section className="space-y-3">
             <h2 className="text-lg font-bold text-gray-800">Servicios y Cobertura Operativa</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service, index) => (
-                <article key={index} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                  <div className="h-40 bg-gray-100 overflow-hidden relative">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=500&q=80"; // Imagen de resguardo si falla
-                      }}
-                    />
-                  </div>
-                  <div className="p-4 space-y-1">
-                    <h3 className="text-sm font-bold text-gray-800">{service.title}</h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">{service.description}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <Servicios />
           </section>
 
         </main>

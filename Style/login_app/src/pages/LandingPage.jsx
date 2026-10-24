@@ -8,32 +8,16 @@ import {
   ArrowRight, 
   Lock, 
   Sparkles,
-  ChevronRight,
   CheckCircle2,
   ExternalLink
 } from "lucide-react";
 
 import logo from "../assets/Sesha_logo.png";
 import fondo from "../assets/fondo.png";
-
-import fisica from "../assets/seguridad fisica.jpg";
-import electronica from "../assets/seguridad electronica.jpg";
-import canina from "../assets/seguridad canina.png";
-import vip from "../assets/Escolta Vip.jpg";
-import mercancias from "../assets/Escolta de mercancias.jpg";
-import supervisor from "../assets/Supervisor de Seguridad.png";
+import Servicios from "../components/Servicios";
 
 function LandingPage() {
   const navigate = useNavigate();
-
-  const services = [
-    { title: "Seguridad Física", desc: "Control de acceso y vigilancia fija.", image: fisica, tag: "Operativo", color: "from-blue-500/20 to-teal-500/10" },
-    { title: "Seguridad Electrónica", desc: "Monitoreo CCTV y alarmas 24/7.", image: electronica, tag: "Tech", color: "from-indigo-500/20 to-purple-500/10" },
-    { title: "Seguridad Canina", desc: "Detección y patrullaje K9.", image: canina, tag: "K9", color: "from-amber-500/20 to-orange-500/10" },
-    { title: "Escolta VIP", desc: "Protección ejecutiva personal.", image: vip, tag: "VIP", color: "from-emerald-500/20 to-teal-500/10" },
-    { title: "Escolta Mercancías", desc: "Custodia de carga y rutas.", image: mercancias, tag: "Rutas", color: "from-cyan-500/20 to-blue-500/10" },
-    { title: "Supervisión Operativa", desc: "Control y auditorías en campo.", image: supervisor, tag: "Control", color: "from-rose-500/20 to-pink-500/10" },
-  ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-between selection:bg-teal-500 selection:text-white">
@@ -177,45 +161,7 @@ function LandingPage() {
           </span>
         </div>
 
-        {/* REJILLA DE TARJETAS CON TAMAÑO DE IMAGEN CONTROLADO */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {services.map((service, index) => (
-            <div 
-              key={index} 
-              className={`bg-gradient-to-br ${service.color} glass-card rounded-xl p-2.5 flex items-center gap-3.5 transition-all duration-300 group cursor-pointer`}
-            >
-              {/* ⚠️ IMAGEN CON TAMAÑO FIJO CONTROLADO (W-16 H-14) */}
-              <div className="w-16 h-14 rounded-lg bg-slate-950 overflow-hidden flex-shrink-0 relative border border-slate-700/80 shadow-md">
-                <img 
-                  src={service.image} 
-                  alt={service.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=150&q=80";
-                  }}
-                />
-              </div>
-
-              {/* Contenido de la Tarjeta */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <h3 className="text-xs font-extrabold text-white group-hover:text-teal-300 transition-colors duration-200 truncate">
-                    {service.title}
-                  </h3>
-                  <span className="text-[9px] font-bold text-slate-300 bg-slate-900/90 px-2 py-0.5 rounded border border-slate-700">
-                    {service.tag}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 truncate mt-1">
-                  {service.desc}
-                </p>
-              </div>
-
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-teal-300 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
-            </div>
-          ))}
-        </div>
+        <Servicios compact />
       </section>
 
       {/* 🔹 FOOTER */}

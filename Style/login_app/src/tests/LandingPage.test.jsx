@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 
@@ -15,4 +15,23 @@ test("Renderiza correctamente la Landing Page", () => {
   expect(video.muted).toBe(true);
   expect(video).toHaveAttribute("playsinline");
   expect(video).toHaveAttribute("controls");
+});
+
+test("Permite consultar definición y características desde la página de inicio", () => {
+  render(
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <LandingPage />
+    </BrowserRouter>
+  );
+
+  fireEvent.click(
+    screen.getByRole("button", { name: /ver detalles de seguridad física/i })
+  );
+
+  expect(
+    screen.getByText(/servicio de vigilancia presencial destinado/i)
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText("Control de acceso de personas y vehículos")
+  ).toBeInTheDocument();
 });
