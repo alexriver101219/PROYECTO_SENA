@@ -20,7 +20,9 @@ function Servicios({ compact = false }) {
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null);
 
   const alternarDetalles = (id) => {
-    setServicioSeleccionado((seleccionado) => (seleccionado === id ? null : id));
+    setServicioSeleccionado((seleccionado) =>
+      seleccionado === id ? null : id,
+    );
   };
 
   return (
@@ -70,6 +72,11 @@ function Servicios({ compact = false }) {
               <button
                 type="button"
                 aria-expanded={detallesAbiertos}
+                aria-label={
+                  (detallesAbiertos
+                    ? "Ocultar detalles de "
+                    : "Ver detalles de ") + servicio.nombre
+                }
                 aria-controls={detallesId}
                 onClick={() => alternarDetalles(servicio.id)}
                 className={`mt-2 inline-flex items-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
@@ -91,29 +98,29 @@ function Servicios({ compact = false }) {
                   : "basis-full mt-3 border-t border-gray-100 pt-3"
               }
             >
-                <p
-                  className={`text-sm leading-relaxed ${
-                    compact ? "text-slate-300" : "text-gray-600"
-                  }`}
-                >
-                  {servicio.descripcion}
-                </p>
-                <h4
-                  className={`mt-3 text-sm font-semibold ${
-                    compact ? "text-white" : "text-gray-800"
-                  }`}
-                >
-                  Características
-                </h4>
-                <ul
-                  className={`mt-2 list-disc space-y-1 pl-5 text-sm ${
-                    compact ? "text-slate-300" : "text-gray-600"
-                  }`}
-                >
-                  {servicio.caracteristicas.map((caracteristica) => (
-                    <li key={caracteristica}>{caracteristica}</li>
-                  ))}
-                </ul>
+              <p
+                className={`text-sm leading-relaxed ${
+                  compact ? "text-slate-300" : "text-gray-600"
+                }`}
+              >
+                {servicio.descripcion}
+              </p>
+              <h4
+                className={`mt-3 text-sm font-semibold ${
+                  compact ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Características
+              </h4>
+              <ul
+                className={`mt-2 list-disc space-y-1 pl-5 text-sm ${
+                  compact ? "text-slate-300" : "text-gray-600"
+                }`}
+              >
+                {servicio.caracteristicas.map((caracteristica) => (
+                  <li key={caracteristica}>{caracteristica}</li>
+                ))}
+              </ul>
             </div>
           </article>
         );

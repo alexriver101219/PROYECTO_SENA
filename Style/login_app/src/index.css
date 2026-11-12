@@ -6,8 +6,19 @@
    CONFIGURACIÓN GLOBAL
    ========================================================================== */
 :root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color-scheme: dark;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    sans-serif;
+  color-scheme: light;
+  color: #0f172a;
 }
 
 html {
@@ -24,7 +35,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 /* Scrollbar Personalizada */
@@ -130,17 +142,21 @@ code {
    ========================================== */
 
 /* 1. CONFIGURACIÓN DE TEXTO Y FONDO PARA INPUTS */
-input, textarea, select {
-  color: #0f172a !important;            /* Texto gris oscuro casi negro */
-  background-color: #f8fafc !important;   /* Fondo gris suave / limpio */
-  border: 1px solid #cbd5e1 !important;   /* Borde definido */
+input,
+textarea,
+select {
+  color: #0f172a !important; /* Texto gris oscuro casi negro */
+  background-color: #f8fafc !important; /* Fondo gris suave / limpio */
+  border: 1px solid #cbd5e1 !important; /* Borde definido */
   border-radius: 0.5rem !important;
 }
 
 /* 2. EFECTO AL HACER CLIC EN EL CAMPO */
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none !important;
-  border-color: #2563eb !important;      /* Borde azul brillante */
+  border-color: #2563eb !important; /* Borde azul brillante */
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
@@ -148,7 +164,7 @@ input:focus, textarea:focus, select:focus {
 ::placeholder,
 ::-webkit-input-placeholder,
 :-ms-input-placeholder {
-  color: #64748b !important;            /* Gris legible para el texto de ayuda */
+  color: #64748b !important; /* Gris legible para el texto de ayuda */
   opacity: 1 !important;
 }
 

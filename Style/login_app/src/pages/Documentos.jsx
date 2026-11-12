@@ -1,136 +1,154 @@
-import React, { useState } from 'react';
-import { jsPDF } from 'jspdf';
-import { Download, Upload, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
-
-const Documentos = () => {
-  const [errorUpload, setErrorUpload] = useState('');
-  const [exitoUpload, setExitoUpload] = useState('');
-
-  // Generador dinámico de Certificado Laboral PDF
-  const generarCertificadoPDF = () => {
-    // 1. Obtener la información del usuario en sesión desde el localStorage
-    const usuarioSesion = JSON.parse(localStorage.getItem('user')) || {};
-    
-    // Extraer datos o definir valores por defecto si no existen
-    const nombreEmpleado = (usuarioSesion.nombre || usuarioSesion.name || 'Alexander Rivera').toUpperCase();
-    const cedulaEmpleado = usuarioSesion.cedula || usuarioSesion.documento || 'Sin registrar';
-
-    const doc = new jsPDF();
-
-    // Encabezado
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.text('SOFT PRO - RECURSOS HUMANOS', 105, 20, { align: 'center' });
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text('CERTIFICADO LABORAL OFICIAL', 105, 30, { align: 'center' });
-    
-    doc.line(20, 35, 190, 35); // Línea divisoria
-
-    // Cuerpo con datos dinámicos
-    const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
-    const cuerpo = `Por medio de la presente se hace constar que el colaborador(a) ${nombreEmpleado}, identificado(a) con documento No. ${cedulaEmpleado}, se encuentra vinculado(a) laboralmente a nuestra organización desempeñando sus funciones en el área de desarrollo de software bajo un contrato a término indefinido.\n\nEste documento se expide a solicitud del interesado el día ${fecha}.`;
-
-    doc.setFontSize(11);
-    doc.text(cuerpo, 20, 50, { maxWidth: 170 });
-
-    // Firma
-    doc.setFont('helvetica', 'bold');
-    doc.text('_________________________________', 20, 110);
-    doc.text('Dirección de Talentos Humanos', 20, 118);
-    doc.text('SOFT PRO S.A.S.', 20, 124);
-
-    // Guardar archivo
-    doc.save(`Certificado_Laboral_${Date.now()}.pdf`);
-  };
-
-  const handleDocumentUpload = (e) => {
-    const file = e.target.files[0];
-    setErrorUpload('');
-    setExitoUpload('');
-
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        setErrorUpload('El documento debe estar en formato PDF.');
-        e.target.value = null;
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) { // 10 MB
-        setErrorUpload('El documento no puede superar los 10 MB.');
-        e.target.value = null;
-        return;
-      }
-
-      setExitoUpload(`Documento "${file.name}" cargado correctamente.`);
-      setTimeout(() => setExitoUpload(''), 4000);
+import { useState } from "react";
+import api, { download, errorMessage, uploadPDF } from "../services/api";
+import { useCollection } from "../hooks/useCollection";
+import Pagination from "../components/Pagination";
+export default function Documentos() {
+  const collection = useCollection("/documentos");
+  const [file, setFile] = useState(null);
+  const [inputKey, setInputKey] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const action = async (handler) => {
+    setBusy(true);
+    setError("");
+    setSuccess("");
+    try {
+      await handler();
+    } catch (error) {
+      setError(error.response ? errorMessage(error) : error.message);
+    } finally {
+      setBusy(false);
     }
   };
-
+  const submit = (event) => {
+    event.preventDefault();
+    action(async () => {
+      await uploadPDF(file);
+      setFile(null);
+      setInputKey((key) => key + 1);
+      setSuccess("Documento guardado correctamente.");
+      collection.refresh();
+    });
+  };
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8">
-      <header className="border-b pb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Módulo de Documentos</h1>
-        <p className="text-sm text-gray-600">Genera o descarga tus certificados e historial laboral en PDF.</p>
-      </header>
-
-      {/* Generación Automática */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <FileText className="w-8 h-8 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-800">Certificado Laboral</h2>
-            </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Genera instantáneamente tu certificado de trabajo personalizado con firma digital verificada (PDF).
-            </p>
-          </div>
-          <button
-            onClick={generarCertificadoPDF}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow transition flex items-center justify-center gap-2"
-          >
-            <Download className="w-4 h-4" /> Generar y Descargar PDF
-          </button>
-        </div>
-
-        {/* Carga de Documentos Adjuntos */}
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <Upload className="w-8 h-8 text-green-600" />
-              <h2 className="text-lg font-semibold text-gray-800">Subir Documentos Personales</h2>
-            </div>
-            <p className="text-sm text-gray-600 mb-2">
-              Adjunta cédula, certificados académicos o EPS para tu expediente (Formato PDF hasta 10 MB).
-            </p>
-
-            {errorUpload && (
-              <div className="mb-3 p-2 bg-red-50 text-red-600 text-xs rounded border border-red-200 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" /> {errorUpload}
-              </div>
-            )}
-
-            {exitoUpload && (
-              <div className="mb-3 p-2 bg-green-50 text-green-600 text-xs rounded border border-green-200 flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4" /> {exitoUpload}
-              </div>
-            )}
-          </div>
-
-          <div className="relative border-2 border-dashed border-gray-300 rounded-md p-4 bg-gray-50 text-center">
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={handleDocumentUpload}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <p className="text-xs text-gray-500 font-medium">Arrastra tu archivo PDF o haz clic aquí para seleccionar</p>
-          </div>
-        </div>
+    <main className="p-6 max-w-6xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Módulo de Documentos</h1>
+        <p>Consulta y conserva tus PDF. Máximo 3 MB por archivo.</p>
       </div>
-    </div>
+      {error && (
+        <p role="alert" className="text-red-700">
+          {error}
+        </p>
+      )}
+      {success && (
+        <p role="status" className="text-green-700">
+          {success}
+        </p>
+      )}
+      <section className="bg-white border rounded-xl p-5 space-y-3">
+        <h2 className="font-bold text-lg">Constancia académica</h2>
+        <p>
+          Se genera con tu perfil laboral registrado. Es un documento de
+          demostración, sin firma digital ni validez laboral oficial.
+        </p>
+        <button
+          disabled={busy}
+          className="bg-blue-600 text-white rounded px-4 py-2"
+          onClick={() =>
+            action(() =>
+              download("/documentos/certificado", "constancia-academica.pdf"),
+            )
+          }
+        >
+          Generar y descargar PDF
+        </button>
+      </section>
+      <form
+        onSubmit={submit}
+        className="bg-white border rounded-xl p-5 space-y-3"
+      >
+        <label className="block font-semibold">
+          Adjuntar PDF
+          <input
+            key={inputKey}
+            type="file"
+            accept="application/pdf,.pdf"
+            disabled={busy}
+            className="block mt-2 w-full p-2"
+            onChange={(event) => {
+              setFile(event.target.files?.[0] || null);
+              setError("");
+            }}
+          />
+        </label>
+        <button
+          disabled={busy || !file}
+          className="bg-blue-600 text-white rounded px-4 py-2 disabled:opacity-50"
+        >
+          {busy ? "Procesando…" : "Guardar documento"}
+        </button>
+      </form>
+      <section className="bg-white border rounded-xl p-5 space-y-3">
+        <h2 className="font-bold text-lg">Documentos guardados</h2>
+        {collection.error && (
+          <p role="alert">
+            {collection.error}{" "}
+            <button onClick={collection.refresh}>Reintentar</button>
+          </p>
+        )}
+        {collection.loading ? (
+          <p role="status">Cargando documentos…</p>
+        ) : (
+          <ul className="divide-y">
+            {collection.items.map((document) => (
+              <li
+                key={document.id}
+                className="flex flex-wrap justify-between gap-3 py-3"
+              >
+                <span>
+                  {document.nombre} ·{" "}
+                  {document.size
+                    ? Math.ceil(document.size / 1024) + " KB"
+                    : "Registro sin archivo"}
+                </span>
+                <span className="flex gap-3">
+                  <button
+                    disabled={busy}
+                    className="text-blue-700"
+                    onClick={() =>
+                      action(() =>
+                        download(
+                          "/documentos/" + document.id + "/download",
+                          document.nombre,
+                        ),
+                      )
+                    }
+                  >
+                    Descargar
+                  </button>
+                  <button
+                    disabled={busy}
+                    className="text-red-700"
+                    onClick={() => {
+                      if (window.confirm("¿Eliminar este documento?"))
+                        action(async () => {
+                          await api.delete("/documentos/" + document.id);
+                          collection.refresh();
+                        });
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </span>
+              </li>
+            ))}
+            {!collection.items.length && <li>No hay documentos guardados.</li>}
+          </ul>
+        )}
+        <Pagination collection={collection} />
+      </section>
+    </main>
   );
-};
-
-export default Documentos;
+}

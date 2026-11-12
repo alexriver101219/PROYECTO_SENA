@@ -48,3 +48,15 @@ dump/
 *.tar
 *.zip
 
+
+.legacy_node_modules/
+.legacy-package-lock.json
+.npm-cache/
+.vercel/
+.env.*
+!.env.example
+!.env.*.example
+
+.mongodb-binaries/
+.test-results.json
+.qa/

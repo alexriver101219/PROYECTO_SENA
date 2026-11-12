@@ -1,56 +1,37 @@
 {
   "name": "login_app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Frontend profesional en React para PROYECTO SENA",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --watchAll=false",
-    "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.{js,jsx,json}\""
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint src"
   },
   "dependencies": {
-    "axios": "^1.17.0",
-    "bootstrap": "^5.3.3",
-    "express-rate-limit": "^8.5.2",
-    "helmet": "^8.2.0",
-    "jspdf": "^4.2.1",
-    "lucide-react": "^1.28.0",
-    "morgan": "^1.11.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.4",
-    "react-scripts": "^5.0.1",
-    "web-vitals": "^5.3.0",
-    "webpack-dev-server": "^5.2.4"
+    "axios": "1.21.1",
+    "lucide-react": "1.72.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "7.18.5"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
-    "@testing-library/jest-dom": "^7.0.0",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "@vitejs/plugin-react": "^6.0.2",
-    "autoprefixer": "^10.5.4",
-    "eslint": "^8.57.0",
-    "eslint-config-react-app": "^7.0.1",
-    "jest": "^27.5.1",
-    "jsonwebtoken": "^9.0.3",
-    "postcss": "^8.5.25",
-    "prettier": "^3.2.5",
-    "supertest": "^7.2.2",
-    "tailwindcss": "^3.4.19"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@eslint/js": "10.0.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.10",
+    "@vitejs/plugin-react": "6.3.0",
+    "autoprefixer": "10.6.2",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "jsdom": "31.0.0",
+    "postcss": "8.5.32",
+    "tailwindcss": "3.4.19",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
   }
 }

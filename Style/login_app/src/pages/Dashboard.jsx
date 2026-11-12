@@ -1,148 +1,91 @@
-﻿import React, { useContext } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import { useAuth } from "../hooks/useAuth";
+import api, { errorMessage } from "../services/api";
 import Servicios from "../components/Servicios";
-import { AuthContext } from "../context/AuthContext";
-import { 
-  FileText, 
-  Users, 
-  Send, 
-  ShieldCheck, 
-  Activity, 
-  AlertTriangle, 
-  UserCheck, 
-  ArrowRight 
-} from "lucide-react";
-
 import { getGreeting, formatDate } from "../utils/formatters";
-
-function Dashboard() {
-  const { user } = useContext(AuthContext) || {};
-  const displayName = user?.name || user?.email?.split("@")?.[0] || "Usuario";
-  const displayEmail = user?.email || "usuario@sesha.com";
-
-  const quickModules = [
-    {
-      title: "Documentos",
-      icon: <FileText className="w-6 h-6 text-blue-600" />,
-      description: "Accede a certificados, órdenes y comprobantes de forma rápida.",
-      to: "/documentos",
-      badge: "PDF / 10MB"
-    },
-    {
-      title: "Empleados",
-      icon: <Users className="w-6 h-6 text-indigo-600" />,
-      description: "Administra el personal y su información operativa.",
-      to: "/empleados",
-      badge: "Directorio"
-    },
-    {
-      title: "Solicitudes",
-      icon: <Send className="w-6 h-6 text-emerald-600" />,
-      description: "Gestiona solicitudes internas con control y trazabilidad.",
-      to: "/solicitudes",
-      badge: "Trámites"
-    },
+export default function Dashboard() {
+  const auth = useAuth();
+  const [metrics, setMetrics] = useState(null);
+  const [error, setError] = useState("");
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    let active = true;
+    api
+      .get("/dashboard")
+      .then(({ data }) => {
+        if (active) {
+          setMetrics(data);
+          setError("");
+        }
+      })
+      .catch((error) => {
+        if (active) setError(errorMessage(error));
+      });
+    return () => {
+      active = false;
+    };
+  }, [version]);
+  const cards = [
+    ["Documentos", metrics?.documentos],
+    ["Solicitudes", metrics?.solicitudes],
+    ["Pendientes", metrics?.pendientes],
+    ...(auth?.user?.role === "admin"
+      ? [["Personal activo", metrics?.empleados]]
+      : []),
   ];
-
-  const metrics = [
-    { label: "Personal activo", value: "124", icon: <UserCheck className="w-5 h-5 text-green-500" /> },
-    { label: "Solicitudes hoy", value: "18", icon: <Activity className="w-5 h-5 text-blue-500" /> },
-    { label: "Riesgos monitoreados", value: "7", icon: <AlertTriangle className="w-5 h-5 text-amber-500" /> },
+  const links = [
+    ["/documentos", "Documentos", "Carga y descarga tus PDF."],
+    ["/solicitudes", "Solicitudes", "Radica trámites y consulta su estado."],
+    ...(auth?.user?.role === "admin"
+      ? [["/empleados", "Empleados", "Administra los perfiles laborales."]]
+      : []),
+    ["/perfil", "Mi perfil", "Consulta tus datos registrados."],
   ];
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-
-      <div className="flex flex-1">
-        <Sidebar />
-
-        <main className="flex-1 p-6 max-w-7xl mx-auto space-y-8 w-full">
-          
-          {/* Banner de Bienvenida */}
-          <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="space-y-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
-                Panel principal
-              </span>
-              <h1 className="text-2xl font-bold text-gray-800">
-                {getGreeting()}, {displayName}
-              </h1>
-              <p className="text-sm text-gray-600">
-                Bienvenido a <span className="font-semibold text-gray-800">SESHA APP</span>. Acceso operativo en tiempo real.
-                <span className="ml-2 font-medium text-gray-400">| {formatDate()}</span>
-              </p>
-              <p className="text-xs text-gray-500 pt-1">{displayEmail}</p>
-            </div>
-
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-200">
-              <ShieldCheck className="w-4 h-4" />
-              Operación en tiempo real
-            </div>
-          </section>
-
-          {/* Tarjetas de Métricas Rápidas */}
-          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {metrics.map((metric) => (
-              <div key={metric.label} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 uppercase">{metric.label}</p>
-                  <p className="text-2xl font-bold text-gray-800 mt-1">{metric.value}</p>
-                </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  {metric.icon}
-                </div>
-              </div>
-            ))}
-          </section>
-
-          {/* Módulos de Acceso Rápido */}
-          <section className="space-y-3">
-            <h2 className="text-lg font-bold text-gray-800">Módulos Principales</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {quickModules.map((module) => (
-                <Link
-                  key={module.title}
-                  to={module.to}
-                  className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition group flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="p-2.5 bg-gray-50 rounded-lg group-hover:bg-blue-50 transition">
-                        {module.icon}
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                        {module.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-bold text-gray-800 group-hover:text-blue-600 transition">
-                      {module.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      {module.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
-                    Acceder al módulo <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          {/* Servicios Operativos / Portafolio */}
-          <section className="space-y-3">
-            <h2 className="text-lg font-bold text-gray-800">Servicios y Cobertura Operativa</h2>
-            <Servicios />
-          </section>
-
-        </main>
-      </div>
-    </div>
+    <main className="max-w-7xl mx-auto p-6 space-y-8">
+      <section className="bg-white border rounded-xl p-6">
+        <p className="text-blue-700 font-semibold">Panel principal</p>
+        <h1 className="text-2xl font-bold">
+          {getGreeting()}, {auth?.user?.name || "Usuario"}
+        </h1>
+        <p>{formatDate()}</p>
+        <p className="text-sm text-slate-500">
+          Demostración académica · Datos guardados en la aplicación
+        </p>
+      </section>
+      {error && (
+        <p role="alert">
+          {error}{" "}
+          <button onClick={() => setVersion((value) => value + 1)}>
+            Reintentar
+          </button>
+        </p>
+      )}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {cards.map(([label, value]) => (
+          <div key={label} className="bg-white border p-5 rounded-xl">
+            <p className="text-sm text-slate-500">{label}</p>
+            <p className="text-3xl font-bold">{value ?? "—"}</p>
+          </div>
+        ))}
+      </section>
+      <section className="grid md:grid-cols-2 gap-4">
+        {links.map(([to, label, description]) => (
+          <Link
+            key={to}
+            to={to}
+            className="bg-white border p-5 rounded-xl hover:border-blue-500"
+          >
+            <h2 className="font-bold text-lg">{label}</h2>
+            <p>{description}</p>
+          </Link>
+        ))}
+      </section>
+      <section>
+        <h2 className="font-bold text-xl mb-4">Servicios y cobertura</h2>
+        <Servicios />
+      </section>
+    </main>
   );
 }
-
-export default Dashboard;

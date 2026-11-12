@@ -1,24 +1,30 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import { TextEncoder, TextDecoder } from 'util';
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-import '@testing-library/jest-dom';
-
-// src/setupTests.js
-
-jest.mock('jspdf', () => {
-  return {
-    jsPDF: jest.fn().mockImplementation(() => ({
-      text: jest.fn(),
-      setFontSize: jest.fn(),
-      setTextColor: jest.fn(),
-      addImage: jest.fn(),
-      addPage: jest.fn(),
-      save: jest.fn(),
-      // Agrega aquí cualquier otro método que use tu aplicación
-    })),
-  };
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, beforeEach, vi } from "vitest";
+vi.mock("./services/api", () => ({
+  default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
+  setCsrfToken: vi.fn(),
+  errorMessage: (error) =>
+    error.response?.data?.message || "No se pudo conectar",
+  uploadPDF: vi.fn(),
+  download: vi.fn(),
+}));
+beforeEach(async () => {
+  const { default: api } = await import("./services/api");
+  vi.resetAllMocks();
+  localStorage.clear();
+  api.get.mockImplementation((path) => {
+    if (path === "/auth/me")
+      return Promise.reject({ response: { status: 401 } });
+    return Promise.resolve({
+      data: {
+        items: [],
+        total: 0,
+        documentos: 0,
+        solicitudes: 0,
+        pendientes: 0,
+      },
+    });
+  });
 });
+afterEach(cleanup);

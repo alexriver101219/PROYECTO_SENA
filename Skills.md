@@ -1,36 +1,8 @@
-# Skills del proyecto SESHA APP
+# Flujos de SESHA APP
 
-Este archivo documenta las habilidades y flujos principales del sistema para facilitar mantenimiento, desarrollo y colaboración.
-
-## 1. Autenticación y usuarios
-
-- Registro de usuarios con dominio @sesha.com.
-- Login con JWT para acceso seguro.
-- Usuarios demo para pruebas locales.
-- Contraseñas demo:
-  - Administrador: correo de ejemplo: <admin@sesha.com> / contraseña: 123456
-  - Empleados: correo de ejemplo: <nombre.apellido@sesha.com> / contraseña: Sesha2026!
-
-## 2. Gestión de módulos
-
-- Empleados
-- Documentos
-- Solicitudes
-- Perfil
-- Dashboard principal
-
-## 3. Reglas de desarrollo
-
-- Mantener el backend y frontend compatibles.
-- Probar cambios en backend y frontend antes de publicar.
-- No introducir cambios innecesarios.
-- Usar JWT para la autenticación.
-
-## 4. Comandos útiles
-
-- Backend:
-  - npm test
-  - npm start
-- Frontend:
-  - npm test -- --watch=false --runInBand
-  - npm run build
+- Autenticación y permisos: cookie HttpOnly, JWT de dos horas y protección CSRF; no almacenar tokens en el navegador.
+- Contraseña académica conservada: admin@sesha.com / 123456. Crear la cuenta con npm run seed antes de publicar.
+- Registrar perfiles laborales con una cuenta administradora y vincularlos mediante correo.
+- Los PDF y solicitudes se guardan en MongoDB; no mostrar éxito antes de persistir.
+- Verificar con npm run lint, npm test, npm run build y npm audit desde la raíz.
+- Consultar README.md para la configuración de Atlas y Vercel. No ejecutar migraciones, semillas o despliegues sobre servicios reales durante pruebas locales.

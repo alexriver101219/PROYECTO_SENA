@@ -1,17 +1,20 @@
-import eslintPluginPrettier from "eslint-plugin-prettier";
-
+import js from "@eslint/js";
+import globals from "globals";
 export default [
+  { ignores: ["node_modules/**", ".legacy_node_modules/**", "coverage/**"] },
+  js.configs.recommended,
   {
-    files: ["**/*.js"],
+    files: ["**/*.js", "**/*.mjs"],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "commonjs"
-    },
-    plugins: {
-      prettier: eslintPluginPrettier
+      sourceType: "commonjs",
+      globals: { ...globals.node, ...globals.jest },
     },
     rules: {
-      "prettier/prettier": "error"
-    }
-  }
+      "no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+  { files: ["**/*.mjs"], languageOptions: { sourceType: "module" } },
 ];

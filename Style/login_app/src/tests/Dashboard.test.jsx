@@ -1,28 +1,37 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
-
-test("Renderiza correctamente el Dashboard", () => {
-  render(
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Dashboard />
-    </BrowserRouter>
+import { AuthContext } from "../context/AuthContext";
+import api from "../services/api";
+function renderDashboard() {
+  return render(
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
+      <AuthContext.Provider value={{ user: { name: "Ana", role: "employee" } }}>
+        <Dashboard />
+      </AuthContext.Provider>
+    </MemoryRouter>,
   );
-
-  expect(screen.getByText(/panel principal/i)).toBeInTheDocument();
-});
-
-test("Despliega la definición y características del servicio seleccionado", () => {
-  render(
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Dashboard />
-    </BrowserRouter>
-  );
-
-  fireEvent.click(screen.getByRole("button", { name: /ver detalles de escolta vip/i }));
-
+}
+test("muestra métricas de API y oculta administración a empleados", async () => {
+  api.get.mockResolvedValue({
+    data: { documentos: 4, solicitudes: 8, pendientes: 2 },
+  });
+  renderDashboard();
+  expect(await screen.findByText("8")).toBeInTheDocument();
   expect(
-    screen.getByText(/servicio de protección personal diseñado/i)
+    screen.queryByRole("link", { name: /empleados/i }),
+  ).not.toBeInTheDocument();
+});
+test("despliega detalles del servicio seleccionado", async () => {
+  renderDashboard();
+  await screen.findAllByText("0");
+  fireEvent.click(
+    screen.getByRole("button", { name: /ver detalles de escolta vip/i }),
+  );
+  expect(
+    screen.getByText(/servicio de protección personal diseñado/i),
   ).toBeInTheDocument();
-  expect(screen.getByText("Análisis y evaluación de riesgos")).toBeInTheDocument();
+  await screen.findAllByText("0");
 });

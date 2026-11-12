@@ -1,16 +1,36 @@
 const mongoose = require("mongoose");
-
-const empleadoSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
-    nombre: { type: String, required: true, trim: true },
-    documento: { type: String, required: true, trim: true },
-    cargo: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      unique: true,
+      sparse: true,
+    },
+    name: { type: String, required: true, trim: true, maxlength: 100 },
+    document: {
+      type: String,
+      required: true,
+      unique: true,
+      match: /^\d{7,10}$/,
+    },
+    position: { type: String, required: true, trim: true, maxlength: 100 },
+    department: { type: String, required: true, trim: true, maxlength: 100 },
+    status: { type: String, enum: ["Activo", "Inactivo"], default: "Activo" },
   },
-  { timestamps: true },
+  {
+    autoCreate: false,
+    autoIndex: false,
+    timestamps: true,
+    toJSON: {
+      transform: (_doc, ret) => {
+        ret.id = String(ret._id);
+        delete ret.__v;
+        return ret;
+      },
+    },
+  },
 );
-
-// Evita OverwriteModelError reutilizando el modelo si ya existe
 module.exports =
-  mongoose.models.Empleado || mongoose.model("Empleado", empleadoSchema);
+  mongoose.models.Empleado ||
+  mongoose.model("Empleado", schema, "perfiles_empleados");

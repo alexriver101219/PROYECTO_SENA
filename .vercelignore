@@ -1,0 +1,12 @@
+**/.legacy_node_modules/**
+**/.legacy-package-lock.json
+.npm-cache/**
+.mongodb-binaries/**
+.qa/**
+**/.test-results.json
+**/build/**
+**/coverage/**
+backend/.env
+.env*
+!.env.example
+AUDITORIA_TECNICA.md
