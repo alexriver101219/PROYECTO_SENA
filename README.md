@@ -127,6 +127,8 @@ Resultado del 13/11/2026: 77 verificaciones funcionales aprobadas. k6 confirmó 
 
 Procedimiento reproducible y alcance: [qa/README.md](qa/README.md). Generador de informes: `qa/generate_reports.py`. Los PDF y herramientas QA se excluyen del paquete de despliegue de Vercel.
 
+Se añadió un cuarto informe, `informe-seguridad-zap-vercel.pdf`, del análisis autorizado sobre `https://sesha-app.vercel.app`: 14 rutas/recursos revisados pasivamente y 22 peticiones activas de XSS/NoSQL en los parámetros GET de paginación de empleados. ZAP terminó con código 0: 0 clases altas, 2 medias, 0 bajas y 4 informativas. Las medias corresponden a CSP inline y CORS en recursos públicos. La API bloqueó un origen ajeno y las dos cuentas de contraste recibieron sus propios perfiles con `no-store`; no se confirmó una fuga. Los conteos permanecieron iguales y la disponibilidad final fue HTTP 200. Es un alcance acotado, distinto al ensayo local, sin carga ni operaciones de escritura durante el escaneo.
+
 ## Documentación de despliegue
 
 - https://vercel.com/docs/project-configuration/vercel-json

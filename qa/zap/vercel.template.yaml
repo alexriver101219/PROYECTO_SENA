@@ -1,0 +1,85 @@
+env:
+  contexts:
+    - name: SESHA Vercel autorizado
+      urls:
+        - https://sesha-app.vercel.app
+      includePaths:
+        - 'https://sesha-app\.vercel\.app/.*'
+      excludePaths:
+        - 'https://sesha-app\.vercel\.app/api/auth/(login|logout|register).*'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+jobs:
+  - type: replacer
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: Sesion solo en API del dominio autorizado
+        url: 'https://sesha-app\.vercel\.app/api/.*'
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: '__SESSION_COOKIE__'
+  - type: requestor
+    requests:
+__READ_REQUESTS__
+  - type: activeScan-config
+    inputVectors:
+      urlQueryStringAndDataDrivenNodes:
+        enabled: true
+        addParam: false
+        odata: false
+      postData:
+        enabled: false
+      urlPath: false
+      httpHeaders:
+        enabled: false
+      cookieData:
+        enabled: false
+      scripts: false
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: activeScan
+    parameters:
+      context: SESHA Vercel autorizado
+      url: https://sesha-app.vercel.app/api/empleados?limit=5&page=1
+      maxRuleDurationInMins: 1
+      maxScanDurationInMins: 3
+      threadPerHost: 1
+      delayInMs: 1500
+      addQueryParam: false
+      handleAntiCSRFTokens: false
+      maxAlertsPerRule: 5
+    policyDefinition:
+      defaultStrength: Low
+      defaultThreshold: 'Off'
+      rules:
+        - id: 40012
+          name: Cross Site Scripting (Reflected)
+          strength: Low
+          threshold: Medium
+        - id: 40033
+          name: NoSQL Injection - MongoDB
+          strength: Low
+          threshold: Medium
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: '__PRIVATE_OUTPUT__'
+      reportFile: zap-vercel-native
+      reportTitle: SESHA - ZAP Vercel
+      reportDescription: Revision pasiva de rutas conocidas y analisis activo acotado a paginacion GET de empleados. No incluye escrituras, pruebas temporizadas ni navegacion DOM.
+      displayReport: false
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: '__PRIVATE_OUTPUT__'
+      reportFile: zap-vercel-native
+      reportTitle: SESHA - ZAP Vercel
+      displayReport: false

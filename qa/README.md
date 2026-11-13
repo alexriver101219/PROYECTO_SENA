@@ -1,7 +1,7 @@
 # Pruebas reproducibles de SESHA
 
-Estas herramientas solo admiten el entorno local desechable `sesha_qa_assessment`.
-Nunca leen `backend/.env`, nunca utilizan Atlas y no deben apuntarse a producción.
+Las herramientas de la campaña local admiten únicamente el entorno desechable `sesha_qa_assessment`.
+Nunca leen `backend/.env` ni utilizan Atlas. La excepción explícita es la campaña `run-zap-vercel.cjs` descrita al final, autorizada por el propietario para su dominio publicado.
 
 1. Usar Node 24 y compilar el frontend: `npm run build`.
 2. Iniciar `node qa/isolated-server.cjs` desde la raíz.
@@ -19,3 +19,13 @@ Solo los resultados numéricos, informes revisados y PDF finales de `docs/prueba
 El puerto 8100 conserva los límites de peticiones; el 8101 los desactiva exclusivamente para medir capacidad de la aplicación, manteniendo autenticación y permisos.
 El frontend compilado se sirve en 4174 y dirige su API a 8101.
 Los resultados locales no representan la capacidad de Vercel o MongoDB Atlas.
+
+## Campaña adicional sobre Vercel
+
+`node qa/run-zap-vercel.cjs` tiene el destino fijo `https://sesha-app.vercel.app`. Solo debe ejecutarse con autorización del propietario. Obtiene una sesión académica, solicita 14 recursos por GET y aplica exclusivamente las reglas 40012 y 40033 a `limit` y `page` de `/api/empleados`. Un hilo, pausa de 1.500 ms y máximo activo de 3 minutos; límites públicos conservados. No hay spider ni operaciones de escritura durante el escaneo. El login previo es el único POST emitido por el orquestador.
+
+Requiere el complemento oficial `ascanrulesBeta` y sus dependencias en `.qa/zap-vercel-tools/plugin/`, instalado mediante el CLI oficial de ZAP con `-addoninstall ascanrulesBeta` y ese perfil privado (`-dir`). Los archivos se copian al perfil temporal de cada ejecución; no se modifica la instalación global.
+
+Después, `node qa/review-zap-vercel.cjs` contrasta CORS y caché con lecturas de dos cuentas académicas (dos logins adicionales), un origen ajeno y acceso anónimo. Solo se conserva estado HTTP, cabeceras seleccionadas y comprobaciones booleanas. `node qa/prepare-vercel-results.cjs` exporta la lista de campos revisada y confirma en el log que ambas reglas finalizaron. Esta campaña registra el despliegue concreto en el exportador; actualizar y verificar esa referencia para otra ejecución.
+
+`python qa/generate_vercel_report.py` crea el PDF adicional, que requiere la misma revisión visual con Poppler. Los originales del escáner permanecen privados en `.qa/zap-vercel-2026-11-13/`; no subirlos a Pages. No usar este procedimiento para medir carga o capacidad de Vercel.

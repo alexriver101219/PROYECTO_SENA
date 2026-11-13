@@ -29,4 +29,10 @@ data = json.loads((ROOT / 'docs/pruebas/2026-11-13/resultados.json').read_text(e
 assert data['functional']['passed'] == data['functional']['total'] == 77
 assert data['performance']['sustained']['targetRps'] == 50
 assert data['security']['riskCounts'] == {'high':0, 'medium':1, 'low':1, 'informational':4}
-print('Publicación verificada: enlaces locales, 3 copias PDF, resultados y patrones de secretos.')
+live = ROOT / 'docs/pruebas/2026-11-13/zap-vercel-resultados.json'
+if live.exists():
+    vercel = json.loads(live.read_text(encoding='utf-8'))
+    assert vercel['riskCounts'] == {'high':0, 'medium':2, 'low':0, 'informational':4}
+    assert sum(rule['requests'] for rule in vercel['execution']['activeEvidence']) == 22
+    assert vercel['checks']['countersUnchanged'] and vercel['checks']['readyStatus'] == 200
+print('Publicación verificada: enlaces locales, copias PDF, resultados y patrones de secretos.')

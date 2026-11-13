@@ -1,0 +1,258 @@
+{
+  "project": "SESHA APP - Proyecto SENA",
+  "date": "2026-11-13",
+  "timezone": "America/Bogota",
+  "deployment": {
+    "id": "dpl_6iTJZdo5F9dMqL1V3EqVfYiqVTFq",
+    "commit": "3adb3b85901b867c5a502f0bad387f876bd28275"
+  },
+  "target": "https://sesha-app.vercel.app",
+  "start": "2026-11-13T16:15:26.627Z",
+  "end": "2026-11-13T16:16:42.507Z",
+  "zapVersion": "2.17.0",
+  "addOns": [
+    "ascanrulesBeta-beta-67.zap",
+    "commonlib-release-1.44.0.zap",
+    "network-beta-0.33.0.zap",
+    "oast-beta-0.26.0.zap"
+  ],
+  "execution": {
+    "code": 0,
+    "stoppedForHealth": false,
+    "passiveRoutes": [
+      "/",
+      "/login",
+      "/register",
+      "/api/health",
+      "/api/ready",
+      "/api/auth/positions",
+      "/api/auth/me",
+      "/api/dashboard",
+      "/api/empleados",
+      "/api/documentos",
+      "/api/solicitudes",
+      "/api/documentos/certificado",
+      "/assets/index-OE31Ad74.js",
+      "/assets/index-ByEeHd90.css"
+    ],
+    "activeRoute": "/api/empleados",
+    "parameters": [
+      "limit",
+      "page"
+    ],
+    "activeRules": [
+      40012,
+      40033
+    ],
+    "activeEvidence": [
+      {
+        "rule": "CrossSiteScriptingScanRule",
+        "seconds": 16.55,
+        "requests": 10,
+        "alerts": 0
+      },
+      {
+        "rule": "MongoDbInjectionScanRule",
+        "seconds": 19.821,
+        "requests": 12,
+        "alerts": 0
+      }
+    ],
+    "activeMinutesLimit": 3,
+    "threads": 1,
+    "delayMs": 1500
+  },
+  "checks": {
+    "before": {
+      "dashboard": {
+        "documentos": 0,
+        "solicitudes": 0,
+        "pendientes": 0,
+        "empleados": 152
+      },
+      "employees": 152,
+      "documents": 0,
+      "requests": 0
+    },
+    "after": {
+      "dashboard": {
+        "documentos": 0,
+        "solicitudes": 0,
+        "pendientes": 0,
+        "empleados": 152
+      },
+      "employees": 152,
+      "documents": 0,
+      "requests": 0
+    },
+    "countersUnchanged": true,
+    "readyStatus": 200,
+    "anonymousDashboardStatus": 401
+  },
+  "limitations": "Sin spider, DOM/AJAX, escrituras, cargas de archivos, fuerza bruta ni reglas temporizadas. Login académico único previo al escaneo. Solo parámetros GET de paginación en escaneo activo.",
+  "riskCounts": {
+    "high": 0,
+    "medium": 2,
+    "low": 0,
+    "informational": 4
+  },
+  "alerts": [
+    {
+      "id": "10055",
+      "reference": "10055-6",
+      "name": "CSP: style-src unsafe-inline",
+      "riskCode": 2,
+      "confidence": "3",
+      "count": 3,
+      "paths": [
+        "/",
+        "/login",
+        "/register"
+      ],
+      "reviewDetail": "La CSP publicada permite estilos inline. Mejora de endurecimiento confirmada; no se demostró explotación XSS. Migrar estilos necesarios y retirar la excepción tras verificar la interfaz."
+    },
+    {
+      "id": "10098",
+      "reference": "10098",
+      "name": "Cross-Domain Misconfiguration",
+      "riskCode": 2,
+      "confidence": "2",
+      "count": 5,
+      "paths": [
+        "/",
+        "/assets/index-ByEeHd90.css",
+        "/assets/index-OE31Ad74.js",
+        "/login",
+        "/register"
+      ],
+      "reviewDetail": "Access-Control-Allow-Origin: * aparece en HTML, JavaScript y CSS públicos. No se observó exposición de datos autenticados: la API rechazó con 403 un origen ajeno con sesión válida y el perfil sin sesión respondió 401. Se conserva la clasificación automática media; el alcance revisado es contenido público."
+    },
+    {
+      "id": "10015",
+      "reference": "10015",
+      "name": "Re-examine Cache-control Directives",
+      "riskCode": 0,
+      "confidence": "1",
+      "count": 3,
+      "paths": [
+        "/",
+        "/api/auth/me",
+        "/api/dashboard"
+      ],
+      "reviewDetail": "La alerta informativa incluye HTML público y respuestas de perfil/dashboard con Cache-Control: no-store. En las lecturas de contraste cada cuenta recibió su propio perfil y el acceso anónimo fue rechazado. No se confirmó fuga por caché."
+    },
+    {
+      "id": "10027",
+      "reference": "10027",
+      "name": "Information Disclosure - Suspicious Comments",
+      "riskCode": 0,
+      "confidence": "1",
+      "count": 1,
+      "paths": [
+        "/assets/index-OE31Ad74.js"
+      ],
+      "reviewDetail": "La evidencia marcada fue la palabra select en el JavaScript compilado. No demuestra por sí sola filtración de secretos; no se confirmó exposición en esta revisión."
+    },
+    {
+      "id": "10050",
+      "reference": "10050-2",
+      "name": "Retrieved from Cache",
+      "riskCode": 0,
+      "confidence": "2",
+      "count": 5,
+      "paths": [
+        "/api/auth/me",
+        "/api/auth/positions",
+        "/api/health",
+        "/api/ready",
+        "/register"
+      ],
+      "reviewDetail": "La regla se activó por la cabecera Age: 0 en API y Age: 200 en una página pública. La presencia de Age por sí sola no demostró contenido privado compartido; las lecturas de dos cuentas devolvieron perfiles correctos con no-store."
+    },
+    {
+      "id": "10109",
+      "reference": "10109",
+      "name": "Modern Web Application",
+      "riskCode": 0,
+      "confidence": "2",
+      "count": 3,
+      "paths": [
+        "/",
+        "/login",
+        "/register"
+      ],
+      "reviewDetail": "Identificación informativa de una aplicación web moderna; no es una explotación demostrada."
+    }
+  ],
+  "manualReview": {
+    "checkedAt": "2026-11-13T16:18:58.780Z",
+    "target": "https://sesha-app.vercel.app",
+    "checks": [
+      {
+        "name": "perfil admin",
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "https://sesha-app.vercel.app",
+          "access-control-allow-credentials": null,
+          "cache-control": "no-store",
+          "age": "0",
+          "x-vercel-cache": "MISS",
+          "vary": "Origin"
+        },
+        "expectedAccount": true
+      },
+      {
+        "name": "API con origen ajeno y sesión",
+        "status": 403,
+        "headers": {
+          "access-control-allow-origin": null,
+          "access-control-allow-credentials": null,
+          "cache-control": "public, max-age=0, must-revalidate",
+          "age": "0",
+          "x-vercel-cache": "MISS",
+          "vary": null
+        }
+      },
+      {
+        "name": "perfil employee",
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "https://sesha-app.vercel.app",
+          "access-control-allow-credentials": null,
+          "cache-control": "no-store",
+          "age": "0",
+          "x-vercel-cache": "MISS",
+          "vary": "Origin"
+        },
+        "expectedAccount": true
+      },
+      {
+        "name": "perfil sin sesión",
+        "status": 401,
+        "headers": {
+          "access-control-allow-origin": null,
+          "access-control-allow-credentials": null,
+          "cache-control": "no-store",
+          "age": "0",
+          "x-vercel-cache": "MISS",
+          "vary": "Origin"
+        }
+      },
+      {
+        "name": "HTML público con origen ajeno",
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "*",
+          "access-control-allow-credentials": null,
+          "cache-control": "public, max-age=0, must-revalidate",
+          "age": "871",
+          "x-vercel-cache": "HIT",
+          "vary": null
+        }
+      }
+    ],
+    "distinctAccounts": true,
+    "leakObserved": false,
+    "note": "No se observó respuesta de otra cuenta en estas lecturas; no constituye auditoría exhaustiva de caché o CORS."
+  }
+}
