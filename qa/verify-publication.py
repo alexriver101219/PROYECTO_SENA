@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 import re
 import json
 from pypdf import PdfReader
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 class Links(HTMLParser):
@@ -16,6 +17,11 @@ pattern = re.compile(r'mongodb\+srv://[^\s]+:[^\s]+@|eyJ[A-Za-z0-9_-]+\.[A-Za-z0
 for directory in ['docs', 'qa']:
     for file in (ROOT / directory).rglob('*'):
         if not file.is_file():
+            continue
+        assert file.suffix not in {'.gz', '.bson', '.zip', '.archive'}, 'Un respaldo no debe publicarse: ' + str(file)
+        if file.suffix in {'.png', '.jpg', '.jpeg'}:
+            with Image.open(file) as picture:
+                picture.verify()
             continue
         if file.suffix == '.pdf':
             reader = PdfReader(file)
@@ -35,4 +41,12 @@ if live.exists():
     assert vercel['riskCounts'] == {'high':0, 'medium':2, 'low':0, 'informational':4}
     assert sum(rule['requests'] for rule in vercel['execution']['activeEvidence']) == 22
     assert vercel['checks']['countersUnchanged'] and vercel['checks']['readyStatus'] == 200
+delivery = ROOT / 'docs/manual/2026-11-13/verificacion-entrega.json'
+if delivery.exists():
+    evidence = json.loads(delivery.read_text(encoding='utf-8'))
+    assert evidence['backup']['passed']
+    assert sum(item['documents'] for item in evidence['backup']['checks']) == 304
+    assert sum(item['indexes'] for item in evidence['backup']['checks']) == 11
+    assert evidence['apiCheck']['fixturesRemoved'] and evidence['apiCheck']['bytesMatch']
+    assert evidence['visualReview']['mobile']['physicalDeviceTested'] is False
 print('Publicación verificada: enlaces locales, copias PDF, resultados y patrones de secretos.')

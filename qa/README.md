@@ -1,7 +1,7 @@
 # Pruebas reproducibles de SESHA
 
 Las herramientas de la campaña local admiten únicamente el entorno desechable `sesha_qa_assessment`.
-Nunca leen `backend/.env` ni utilizan Atlas. La excepción explícita es la campaña `run-zap-vercel.cjs` descrita al final, autorizada por el propietario para su dominio publicado.
+Las pruebas locales nunca leen `backend/.env` ni utilizan Atlas. Las excepciones explícitas son la campaña `run-zap-vercel.cjs` y el respaldo privado descritos más abajo, autorizados por el propietario para su proyecto.
 
 1. Usar Node 24 y compilar el frontend: `npm run build`.
 2. Iniciar `node qa/isolated-server.cjs` desde la raíz.
@@ -29,3 +29,17 @@ Requiere el complemento oficial `ascanrulesBeta` y sus dependencias en `.qa/zap-
 Después, `node qa/review-zap-vercel.cjs` contrasta CORS y caché con lecturas de dos cuentas académicas (dos logins adicionales), un origen ajeno y acceso anónimo. Solo se conserva estado HTTP, cabeceras seleccionadas y comprobaciones booleanas. `node qa/prepare-vercel-results.cjs` exporta la lista de campos revisada y confirma en el log que ambas reglas finalizaron. Esta campaña registra el despliegue concreto en el exportador; actualizar y verificar esa referencia para otra ejecución.
 
 `python qa/generate_vercel_report.py` crea el PDF adicional, que requiere la misma revisión visual con Poppler. Los originales del escáner permanecen privados en `.qa/zap-vercel-2026-11-13/`; no subirlos a Pages. No usar este procedimiento para medir carga o capacidad de Vercel.
+
+## Respaldo completo y restauración local
+
+`node qa/backup-and-verify.cjs` lee `MONGO_URI` exclusivamente desde el archivo privado del backend y exige la base `proyecto_sena`. Exporta todas sus colecciones con `mongodump`, incluyendo documentos, opciones e índices. Utiliza las herramientas oficiales portátiles 100.20.1 instaladas en `.qa/tools/mongodb-tools/mongodb-database-tools-windows-x86_64-100.20.1/bin/`.
+
+El script compara manifiestos del origen antes y después del dump y restaura el archivo con `mongorestore` únicamente en un replica set temporal ligado a `127.0.0.1`. Se comprueban conteos, contenido, opciones e índices. El monitor TTL se deshabilita solo en esa instancia temporal para evitar expiraciones durante la comparación. Nunca se restaura ni se elimina información en Atlas. Al finalizar se apaga y retira la instancia local.
+
+El archivo y los registros se conservan en `.qa/backups/<fecha>/`; `.qa/latest-backup.json` identifica la última ejecución. La configuración temporal que contiene la URI se elimina al terminar. No publicar el archive, BSON, registros, hashes de contraseñas ni sesiones. Este respaldo no incluye usuarios de Atlas, claves o configuración de red; tampoco es una captura global con oplog. Conservar otra copia privada fuera del proyecto.
+
+## Manual ilustrado
+
+`python qa/generate_user_manual.py` genera el manual desde las capturas reales privadas de `.qa/handbook-2026-11-13/`, la verificación del respaldo y la comprobación de limpieza de las muestras. Requiere ReportLab, pypdf, Pillow y fuentes Segoe de Windows. Exporta el PDF, imágenes recortadas para excluir la interfaz personal del navegador y un JSON con campos explícitos a `docs/manual/2026-11-13/`. Revisar visualmente todas las páginas y capturas con Poppler antes de publicar.
+
+La campaña de esta entrega revisó Edge de escritorio y emulación adaptable de 400 × 547 píxeles CSS. No se probó un teléfono físico. La constancia se descargó por la interfaz; la carga y descarga de otro PDF se verificaron por API, porque la herramienta no controló el selector nativo. El documento y la solicitud de prueba se eliminaron después; no se guardaron modificaciones en perfiles existentes ni se creó una cuenta adicional por el navegador.

@@ -153,7 +153,15 @@ Procedimiento reproducible y alcance: [qa/README.md](qa/README.md). Generador de
 
 Se añadió un cuarto informe, `informe-seguridad-zap-vercel.pdf`, del análisis autorizado sobre `https://sesha-app.vercel.app`: 14 rutas/recursos revisados pasivamente y 22 peticiones activas de XSS/NoSQL en los parámetros GET de paginación de empleados. ZAP terminó con código 0: 0 clases altas, 2 medias, 0 bajas y 4 informativas. Las medias corresponden a CSP inline y CORS en recursos públicos. La API bloqueó un origen ajeno y las dos cuentas de contraste recibieron sus propios perfiles con `no-store`; no se confirmó una fuga. Los conteos permanecieron iguales y la disponibilidad final fue HTTP 200. Es un alcance acotado, distinto al ensayo local, sin carga ni operaciones de escritura durante el escaneo.
 
-## Documentación de despliegue
+## Manual y respaldo de la entrega
+
+El [manual ilustrado](docs/manual/2026-11-13/manual-usuario-sesha.pdf) explica los flujos de empleado y administrador con capturas reales de Edge, incluida la revisión móvil emulada de 400 × 547 píxeles CSS. Se publica en el mismo portal de GitHub Pages. El [resumen de verificación](docs/manual/2026-11-13/verificacion-entrega.json) conserva los resultados sin datos de sesiones ni el contenido del respaldo.
+
+Se creó un respaldo lógico completo de `proyecto_sena` y se comprobó su restauración solo en MongoDB temporal local: cinco colecciones, 304 documentos y 11 índices coincidentes. El archivo privado está en la carpeta indicada por `.qa/latest-backup.json`, excluida de Git y Vercel. No incluye usuarios de Atlas, claves ni configuración de red. Procedimiento reproducible: `node qa/backup-and-verify.cjs`; conservar una segunda copia privada fuera del proyecto.
+
+La constancia se descargó desde Edge. La carga y descarga de un PDF de prueba se comprobaron por API con igualdad de bytes, porque el control de aplicaciones no completó el selector nativo de archivos. Se retiraron el PDF y la solicitud de prueba y se conservaron los 152 perfiles. La revisión del formulario de registro no creó otra cuenta; la emulación móvil no sustituye una prueba en un teléfono físico.
+
+## Referencias de despliegue
 
 - https://vercel.com/docs/project-configuration/vercel-json
 - https://vercel.com/docs/functions/runtimes/node-js/node-js-versions

@@ -1,0 +1,104 @@
+{
+  "project": "SESHA APP - Proyecto SENA",
+  "date": "2026-11-13",
+  "timezone": "America/Bogota",
+  "applicationCommit": "6651080cb3873c8af705d20d2af815d4b5f3c873",
+  "target": "https://sesha-app.vercel.app",
+  "backup": {
+    "startedAt": "2026-11-13T18:54:25.187Z",
+    "completedAt": "2026-11-13T18:54:37.183Z",
+    "sourceDatabase": "proyecto_sena",
+    "sourceVersion": "8.0.37",
+    "toolsVersion": "100.20.1",
+    "archiveBytes": 15885,
+    "archiveSha256": "34f554c5ce851a0e5ec646ac69bb016662f2e3275d1a6bcf02b80cdc1f47c3d5",
+    "restoreTarget": "127.0.0.1 temporal aislado",
+    "sourceReadOnly": true,
+    "changedDuringDump": [],
+    "checks": [
+      {
+        "collection": "documentos",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "empleados",
+        "documents": 152,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "perfiles_empleados",
+        "documents": 152,
+        "indexes": 3,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "ratelimits",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "solicituds",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      }
+    ],
+    "passed": true,
+    "scope": "Todas las colecciones, documentos BSON, opciones e índices de proyecto_sena. No incluye usuarios de Atlas, claves, configuración de red ni recuperación a un instante mediante oplog."
+  },
+  "visualReview": {
+    "browser": "Microsoft Edge",
+    "desktop": "1280 x 752 píxeles lógicos",
+    "mobile": {
+      "kind": "Emulación adaptable en Edge",
+      "widthCssPx": 400,
+      "heightCssPx": 547,
+      "physicalDeviceTested": false
+    },
+    "observed": [
+      "Portada",
+      "Registro y 15 cargos",
+      "Login de empleado y administrador",
+      "Paneles y menús por rol",
+      "Perfil con cargo actualizado",
+      "Documentos y descarga de constancia",
+      "Solicitudes por rol",
+      "Directorio y formulario de edición",
+      "Estado Activo/Inactivo disponible",
+      "Navegación y formulario en móvil emulado",
+      "Desplazamiento horizontal hasta Editar en tabla móvil",
+      "Cierre de ambas sesiones"
+    ],
+    "certificateDownloadedBytes": 58222,
+    "registrationAccountCreatedInBrowser": false,
+    "existingProfilesChangedDuringVisualReview": false,
+    "uploadViaBrowserCompleted": false,
+    "uploadLimitation": "El control de aplicaciones no reconoció los campos del selector nativo de archivos. Se canceló ese diálogo y se verificó la carga mediante API."
+  },
+  "apiCheck": {
+    "uploadStatus": 201,
+    "downloadStatus": 200,
+    "bytes": 54654,
+    "bytesMatch": true,
+    "requestStatus": 201,
+    "fixturesRemoved": true,
+    "finalDocuments": 0,
+    "finalRequests": 0,
+    "profilesVerifiedAfterReview": 152,
+    "registrationOptions": 15
+  }
+}
