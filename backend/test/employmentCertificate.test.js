@@ -178,3 +178,25 @@ test("el registro prepara el perfil y revierte la cuenta si falla su creación",
     failure.mockRestore();
   }
 });
+
+test("el catálogo publica los ocho cargos nuevos y el registro conserva cargo, área y rol employee", async () => {
+  const jobs = [
+    ["Escolta de mercancías", "Operaciones"], ["Escolta VIP", "Operaciones"],
+    ["Operador de medios tecnológicos", "Tecnología"], ["Coordinador de escoltas", "Operaciones"],
+    ["Técnico de medios tecnológicos", "Tecnología"], ["Supervisor de medios tecnológicos", "Tecnología"],
+    ["Guarda canino", "Operaciones"], ["Auxiliar de almacén", "Administración"],
+  ];
+  const options = await request(app).get("/api/auth/positions");
+  expect(options.status).toBe(200);
+  for (const [index, [position, department]] of jobs.entries()) {
+    expect(options.body).toContainEqual({ position, department });
+    const response = await request(app).post("/api/auth/register").send({
+      name: "Nuevo cargo " + index, email: `cargo${index}@sesha.com`, password: "Sesha2026!", position,
+    });
+    expect(response.status).toBe(201);
+    expect(response.body.user.role).toBe("employee");
+    const profile = await Empleado.findOne({ user: response.body.user.id });
+    expect(profile.position).toBe(position);
+    expect(profile.department).toBe(department);
+  }
+});

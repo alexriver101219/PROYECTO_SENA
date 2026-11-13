@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const Empleado = require("../models/Empleado");
 const laborPositions = require("../config/laborPositions");
+const { allocations } = require("../services/securityGuardRedistribution");
 
 const quotas = [
   ["Coordinador de operaciones", 4],
@@ -14,6 +15,7 @@ const quotas = [
   ["Supervisor", 4],
   ["Auxiliar de operaciones", 6],
   ["Analista de talento humano", 2],
+  ...allocations.map(({ position, count }) => [position, count]),
 ];
 const aliases = {
   "Coordinador de logística": "Coordinador de operaciones",

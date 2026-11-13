@@ -91,6 +91,30 @@ Los PDF se limitan a 3 MB tanto en cliente como en servidor, por debajo del lím
 
 ## Permisos y comportamiento
 
+### Cargos de registro y distribución del personal
+
+El desplegable Cargo consulta `/api/auth/positions`; su catálogo único está en `backend/config/laborPositions.js`. El registro valida esa selección y asigna el área correspondiente al perfil. Todos los cargos laborales conservan el rol de acceso `employee`.
+
+El 13/11/2026 se reasignaron 44 de los 127 guardas existentes, conservando los 152 perfiles y los demás cargos:
+
+| Cargo | Personas |
+| --- | ---: |
+| Guarda de seguridad | 83 |
+| Escolta de mercancías | 6 |
+| Escolta VIP | 6 |
+| Operador de medios tecnológicos | 4 |
+| Coordinador de escoltas | 2 |
+| Técnico de medios tecnológicos | 2 |
+| Supervisor de medios tecnológicos | 2 |
+| Guarda canino | 20 |
+| Auxiliar de almacén | 2 |
+
+Los tres cargos de medios tecnológicos pertenecen a Tecnología; Auxiliar de almacén, a Administración; los demás cargos nuevos, a Operaciones. El catálogo contiene además los cargos anteriores. Estas cantidades describen la redistribución puntual, no cupos máximos de registro.
+
+La migración `backend/scripts/redistribute-security-guards.js` requiere primero generar un plan privado con `--plan .qa/<archivo>.json`; `--apply` aplica ese mismo plan en una transacción. Comprueba los 127 guardas, los 44 destinos, la huella de los perfiles antes y después, y no aplica el mismo plan dos veces. Solo actualiza cargo y área. El plan incluye los valores anteriores de esos campos y permanece ignorado por Git/Vercel. No se ejecuta automáticamente al arrancar o desplegar.
+
+### Acceso y operaciones
+
 - El registro crea cuentas employee con un perfil laboral ficticio y fecha de ingreso persistida; enviar role, owner u otros campos no permitidos se rechaza.
 - Administrador: gestiona perfiles y revisa solicitudes; puede consultar documentos para la demostración.
 - Empleado: consulta su perfil y gestiona sus propios PDF y solicitudes; puede cancelar solo solicitudes pendientes.
