@@ -1,0 +1,93 @@
+env:
+  contexts:
+    - name: SESHA aislado
+      urls:
+        - http://127.0.0.1:4174
+        - http://127.0.0.1:8101/api/health
+      includePaths:
+        - 'http://127\.0\.0\.1:(4174|8101)/.*'
+      excludePaths:
+        - 'http://127\.0\.0\.1:(4174|8101)/__qa/.*'
+        - 'http://127\.0\.0\.1:(4174|8101)/api/auth/(logout|register).*'
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+jobs:
+  - type: replacer
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: Token sintético solo para API local
+        url: 'http://127\.0\.0\.1:(4174|8101)/api/.*'
+        matchType: req_header
+        matchString: Authorization
+        matchRegex: false
+        replacementString: 'Bearer __QA_BEARER__'
+  - type: requestor
+    requests:
+      - url: http://127.0.0.1:4174/
+        responseCode: 200
+      - url: http://127.0.0.1:4174/login
+        responseCode: 200
+      - url: http://127.0.0.1:4174/register
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/health
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/auth/me
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/dashboard
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/empleados?limit=10&page=1
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/documentos
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/solicitudes
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/documentos/certificado
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/auth/login
+        method: POST
+        headers:
+          - 'Content-Type: application/json'
+        data: '{"email":"admin@sesha.com","password":"incorrecta"}'
+        responseCode: 401
+  - type: spider
+    parameters:
+      context: SESHA aislado
+      url: http://127.0.0.1:4174
+      maxDuration: 1
+      maxDepth: 3
+      maxChildren: 10
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: activeScan
+    parameters:
+      context: SESHA aislado
+      maxRuleDurationInMins: 1
+      maxScanDurationInMins: 3
+      threadPerHost: 2
+      delayInMs: 10
+      maxAlertsPerRule: 10
+    policyDefinition:
+      defaultStrength: Low
+      defaultThreshold: Medium
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: '__QA_OUTPUT__'
+      reportFile: zap-native
+      reportTitle: SESHA - ZAP aislado
+      reportDescription: Exploración tradicional y escaneo activo limitado de frontend compilado y API autenticada con datos sintéticos. No cubre JavaScript DOM ni capacidad de producción.
+      displayReport: false
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: '__QA_OUTPUT__'
+      reportFile: zap-native
+      reportTitle: SESHA - ZAP aislado
+      displayReport: false

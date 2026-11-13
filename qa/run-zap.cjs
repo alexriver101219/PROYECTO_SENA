@@ -1,0 +1,23 @@
+const fs = require("node:fs");
+const path = require("node:path");
+const { spawn } = require("node:child_process");
+const root = path.resolve(__dirname, "..");
+const output = path.join(root, ".qa/assessment-2026-11-13");
+const install = process.env.ZAP_INSTALL || "C:/Program Files/ZAP/Zed Attack Proxy";
+const jar = path.join(install, "zap-2.17.0.jar");
+if (!fs.existsSync(jar)) throw new Error("Indica ZAP_INSTALL con ZAP 2.17.0 instalado");
+const logFile = fs.createWriteStream(path.join(output, "zap-run.log"));
+const start = new Date().toISOString();
+const home = fs.mkdtempSync(path.join(output, "zap-home-"));
+const args = ["-Xmx512m", "-Djava.awt.headless=true", "-jar", jar, "-cmd", "-silent", "-dir", home, "-installdir", install, "-host", "127.0.0.1", "-port", "8091", "-autorun", path.join(output, "zap-private.yaml")];
+const child = spawn("java", args, { cwd: output, windowsHide: true });
+const redact = value => value.toString().replace(/Bearer\s+[A-Za-z0-9_.-]+/g, "Bearer [TOKEN_QA_OMITIDO]");
+child.stdout.on("data", data => { const text = redact(data); logFile.write(text); for (const line of text.split("\n")) if (/Job .* (started|finished)|WARN|ERROR|generated report|warnings:/.test(line)) process.stdout.write(line + "\n"); });
+child.stderr.on("data", data => logFile.write(redact(data)));
+const timeout = setTimeout(() => { console.error("ZAP excedió el límite de ocho minutos; se detendrá únicamente este proceso."); child.kill(); }, 8 * 60000);
+child.on("error", error => { clearTimeout(timeout); console.error(error.message); process.exitCode = 1; });
+child.on("close", code => {
+  clearTimeout(timeout); logFile.end();
+  fs.writeFileSync(path.join(output, "zap-run.json"), JSON.stringify({ start, end: new Date().toISOString(), code, version: "2.17.0", activeMinutesLimit: 3, threads: 2, scope: ["127.0.0.1:4174", "127.0.0.1:8101"] }, null, 2));
+  console.log("ZAP finalizó con código", code); process.exitCode = code || 0;
+});

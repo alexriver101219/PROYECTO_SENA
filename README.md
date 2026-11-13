@@ -63,6 +63,8 @@ Abrir dos terminales desde la raíz:
 
 Visitar http://localhost:5173. El proxy de Vite envía /api al puerto 8000. En producción el navegador usa /api del mismo dominio; no se requiere una URL de localhost ni variables VITE_API_URL o REACT_APP_API_URL.
 
+Vite escucha en `localhost` para utilizar la misma resolución IPv4 o IPv6 del equipo. En Windows, `localhost` puede resolver únicamente a `::1`; limitar Vite a `127.0.0.1` deja esa URL sin conexión. El puerto es estricto: si el 5173 está ocupado, el inicio informa el error en lugar de cambiar silenciosamente de dirección. Si la página no carga, comprobar `http://localhost:5173/` y `http://localhost:5173/api/ready`, y mantener abiertas ambas terminales. Usar Node.js 24 como indica `.nvmrc`; Node.js 23.3.0 provoca errores al iniciar las pruebas del frontend con las dependencias actuales.
+
 ## Publicar en tu proyecto de Vercel
 
 1. Importar o conectar el repositorio existente. Usar como Root Directory la raíz del repositorio, no backend ni Style/login_app.
@@ -74,6 +76,16 @@ Visitar http://localhost:5173. El proxy de Vite envía /api al puerto 8000. En p
 7. Para una Preview Deployment, usar preferentemente otra base de Atlas y otro JWT_SECRET. La API acepta los dominios exactos que Vercel proporciona en VERCEL_URL y VERCEL_PROJECT_PRODUCTION_URL, además de APP_ORIGIN.
 
 Solo el frontend compilado se publica como contenido estático. Las rutas /api llegan a api/index.js; las rutas de React admiten recarga directa. La conexión a MongoDB se reutiliza entre invocaciones. No hay estado de cuentas en mapas de memoria ni archivos persistidos en el disco de la función.
+
+### Acceso estable de Atlas para la demostración
+
+Para este proyecto académico se eligió mantener una entrada permanente `0.0.0.0/0`, sin contratar IP estática en Vercel. Esa entrada permite conexiones desde cualquier IP y mantiene la autenticación de MongoDB; usar únicamente datos ficticios. En Atlas, dentro del proyecto PROYECTO SENA, abrir **Database & Network Access → IP Access List**, editar la entrada `0.0.0.0/0`, convertirla de temporal a permanente y confirmar. Comprobar que quede **Active**, sin fecha de vencimiento. No hace falta volver a desplegar la aplicación por este cambio de red.
+
+Si la entrada ya existe, utilizar **EDIT** en su fila. El diálogo **Add IP Access List Entry** crea otra entrada y no modifica la existente. Si Atlas rechaza guardar, revisar el mensaje concreto de error y si hay un cambio de firewall todavía en curso antes de volver a enviar la operación. Tener abiertas sesiones en Firefox y Edge no demuestra que exista un conflicto de guardado.
+
+La aplicación utiliza `sesha_app_srv`, autenticado por contraseña (SCRAM), con únicamente el rol `readWrite` sobre `proyecto_sena`. Se verificaron los permisos efectivos mediante `connectionStatus`. `MONGO_URI` está actualizado en `backend/.env` y como secreto de producción en Vercel; el despliegue público ya utiliza la nueva conexión. El acceso administrador se conserva separado para mantenimiento. La contraseña se transfirió mediante un archivo temporal ignorado por Git y Vercel, que se eliminó tras verificar el cambio; no compartirla en el chat ni guardarla en archivos rastreados.
+
+Después de aplicar el cambio, verificar `https://sesha-app.vercel.app/api/ready` y el ingreso académico. Una respuesta `ready` confirma disponibilidad actual; la ausencia de vencimiento debe comprobarse en Atlas. Referencia: https://www.mongodb.com/docs/atlas/security/ip-access-list/.
 
 Los PDF se limitan a 3 MB tanto en cliente como en servidor, por debajo del límite de 4.5 MB de peticiones/respuestas de Vercel Functions. Se almacenan en MongoDB y se descargan como adjuntos, con acceso restringido. Para archivos mayores o un uso intensivo se requiere almacenamiento de objetos y un flujo de carga directa.
 
@@ -105,7 +117,17 @@ CI ejecuta instalación reproducible, lint, pruebas, build y auditoría de depen
 
 Consultar CAMBIOS_Y_VALIDACION.md para los resultados de esta corrección. AUDITORIA_TECNICA.md conserva el diagnóstico previo y no describe el estado posterior.
 
-## Referencias de despliegue
+## Informes de pruebas y GitHub Pages
+
+Los tres PDF revisados se conservan en `docs/pruebas/2026-11-13/`, junto al resumen sanitizado `resultados.json`. Es adecuado mantenerlos en el proyecto: se pueden abrir desde VS Code y versionar como evidencias. Los registros privados, sesiones y tokens permanecen fuera de Git en `.qa/`.
+
+Portal de informes: https://alexriver101219.github.io/PROYECTO_SENA/. Su fuente es la carpeta `/docs` de la rama `main`; no requiere modificar el despliegue de SESHA en Vercel.
+
+Resultado del 13/11/2026: 77 verificaciones funcionales aprobadas. k6 confirmó 50 solicitudes/s durante 60 s en el equipo local; 125/s pasó solo 25 s y no mantuvo la confirmación de 60 s. ZAP registró 0 clases altas, 1 media, 1 baja y 4 informativas, con revisión de contexto. La alerta baja se limitó al servidor estático de laboratorio. No se probó capacidad de Vercel/Atlas ni un número máximo de usuarios reales.
+
+Procedimiento reproducible y alcance: [qa/README.md](qa/README.md). Generador de informes: `qa/generate_reports.py`. Los PDF y herramientas QA se excluyen del paquete de despliegue de Vercel.
+
+## Documentación de despliegue
 
 - https://vercel.com/docs/project-configuration/vercel-json
 - https://vercel.com/docs/functions/runtimes/node-js/node-js-versions

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Resultados de pruebas funcionales, rendimiento con k6 y seguridad con OWASP ZAP de SESHA APP, Proyecto SENA.">
+  <title>SESHA APP | Informes de pruebas</title>
+  <style>
+    :root{color-scheme:light;--navy:#142c45;--teal:#087f80;--ink:#26374a;--muted:#526477;--line:#d5e2eb}
+    *{box-sizing:border-box}body{margin:0;background:#f3f7fa;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    header{background:var(--navy);color:white;padding:48px 24px 64px}main,.wrap{max-width:1080px;margin:auto}header small{letter-spacing:.15em;text-transform:uppercase;color:#8be1d9}h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.16;margin:16px 0}header p{max-width:720px;color:#d5e2eb}main{padding:0 24px 48px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:-28px}.metric,.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px}.metric strong{display:block;font-size:1.9rem;color:var(--teal)}.metric span{font-size:.9rem;color:var(--muted)}h2{color:var(--navy);font-size:1.6rem;margin:36px 0 12px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{display:flex;flex-direction:column}.tag{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);font-weight:700}.card h3{font-size:1.3rem;line-height:1.3;margin:12px 0}.card p{color:var(--muted);font-size:.95rem;flex:1}.button{display:inline-block;background:var(--teal);color:white;padding:10px 16px;border-radius:7px;text-align:center;text-decoration:none;font-weight:650}.button:hover{background:#056666}a{color:#076b73}a:focus-visible{outline:3px solid #d88900;outline-offset:4px}.context{background:#e7f1f4;border-left:4px solid var(--teal);padding:16px 22px;margin:28px 0}table{width:100%;border-collapse:collapse;background:white}caption{text-align:left;font-weight:700;margin-bottom:10px}th,td{text-align:left;padding:14px;border-bottom:1px solid var(--line)}th{background:var(--navy);color:white}footer{border-top:1px solid var(--line);padding-top:22px;margin-top:32px;font-size:.9rem;color:var(--muted)}.table-scroll{overflow:auto} @media(max-width:720px){.metrics,.cards{grid-template-columns:1fr}.metrics{margin-top:-20px}.metric{padding:16px 22px}.card{padding:22px}header{padding-top:32px}}
+  </style>
+</head>
+<body>
+<header><div class="wrap"><small>Proyecto SENA · Evidencias de calidad</small><h1>SESHA APP<br>Informes de pruebas</h1><p>Resultados revisados de funcionalidad, carga y seguridad. Evaluación del 13 de noviembre de 2026 con datos sintéticos y MongoDB temporal.</p></div></header>
+<main>
+  <section class="metrics" aria-label="Resultados principales">
+    <div class="metric"><strong>77 / 77</strong><span>Verificaciones funcionales aprobadas</span></div>
+    <div class="metric"><strong>50 solicitudes/s</strong><span>Confirmadas durante 60 s en el equipo local</span></div>
+    <div class="metric"><strong>0 altas · 1 media</strong><span>Clases de alertas ZAP; revisión en el informe</span></div>
+  </section>
+  <h2>Consultar los informes</h2>
+  <section class="cards" aria-label="Informes PDF">
+    <article class="card"><span class="tag">Funcionalidad · 6 páginas</span><h3>Flujos y permisos</h3><p>22 pruebas de backend, 15 de frontend y 40 verificaciones HTTP: autenticación, perfiles, documentos, solicitudes y persistencia.</p><a class="button" href="pruebas/2026-11-13/informe-pruebas-funcionales.pdf">Abrir PDF funcional</a></article>
+    <article class="card"><span class="tag">k6 · 4 páginas</span><h3>Rendimiento y límites</h3><p>Carga mixta, generación de certificados y acceso. Incluye las etapas que fallaron y las condiciones del equipo de pruebas.</p><a class="button" href="pruebas/2026-11-13/informe-rendimiento-k6.pdf">Abrir PDF de k6</a></article>
+    <article class="card"><span class="tag">OWASP ZAP · 4 páginas</span><h3>Seguridad y revisión</h3><p>Escaneo activo autenticado, clasificación de alertas y contraste de cabeceras públicas. Incluye medidas de mejora y límites de cobertura.</p><a class="button" href="pruebas/2026-11-13/informe-seguridad-zap.pdf">Abrir PDF de ZAP</a></article>
+  </section>
+  <div class="context"><strong>Cómo interpretar la capacidad:</strong> el generador, la API y MongoDB compartieron un portátil. Estas cifras no miden la capacidad de Vercel o Atlas, ni equivalen a usuarios simultáneos. No se ejecutó carga ni escaneo activo en producción.</div>
+  <h2>Capacidad observada</h2>
+  <div class="table-scroll"><table><caption>Resumen de los ensayos locales</caption><thead><tr><th>Escenario</th><th>Resultado</th></tr></thead><tbody>
+    <tr><td>50 solicitudes/s durante 60 s</td><td>3.000 respuestas; p95 33,4 ms; cero errores y descartes.</td></tr>
+    <tr><td>125 solicitudes/s durante 25 s</td><td>Aprobado como pico corto; no sostuvo los criterios durante 60 s.</td></tr>
+    <tr><td>100 solicitudes/s durante 60 s</td><td>No aprobado: 16 iteraciones descartadas.</td></tr>
+    <tr><td>Inicio de sesión</td><td>3 solicitudes/s durante 20 s aprobado; a 4/s el p95 superó 1.000 ms.</td></tr>
+  </tbody></table></div>
+  <h2>Seguridad: resultado contextualizado</h2>
+  <p>La alerta media corresponde a <code>style-src 'unsafe-inline'</code> en la CSP, una mejora de endurecimiento pendiente. La alerta baja de <code>X-Powered-By</code> se limitó al servidor auxiliar local y no apareció en las cuatro rutas públicas comprobadas. Las cuatro clases informativas no demuestran por sí mismas una vulnerabilidad explotable. La auditoría de dependencias informó cero vulnerabilidades.</p>
+  <p>Esta evaluación no sustituye una prueba de penetración exhaustiva ni una validación visual completa en navegador. El detalle de cobertura y las restricciones se documentan en cada PDF.</p>
+  <footer><p><a href="pruebas/2026-11-13/resultados.json">Resultados estructurados JSON</a> · <a href="https://github.com/alexriver101219/PROYECTO_SENA">Código y procedimientos</a> · <a href="https://sesha-app.vercel.app">Abrir SESHA APP</a></p><p>Los informes y datos publicados son evidencias de una ejecución concreta. No incluyen credenciales, sesiones ni registros internos del escáner.</p></footer>
+</main>
+</body>
+</html>

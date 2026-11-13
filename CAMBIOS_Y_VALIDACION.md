@@ -74,3 +74,55 @@ Se completaron en Atlas los 29 perfiles faltantes y las fechas de ingreso de los
 Validación de esta actualización: 22 pruebas de backend y 15 de frontend aprobadas, ESLint y compilación aprobados; PDF renderizados y revisados en una sola página, incluyendo campos de longitud máxima. Se comprobó la descarga personalizada con tres usuarios de la demostración local, conservando sus datos temporales al reiniciar el backend. No se desplegó ni se subieron estos cambios automáticamente a GitHub.
 
 La plantilla compartida incluye ahora el logotipo existente de Sesha y una firma ficticia de Mariana Isabel Torres Ríos, Directora de Talento Humano. La firma manuscrita utiliza Allura, distribuida con su licencia OFL en backend/assets/fonts. Se incluyen los recursos en la configuración de Vercel. Se revisaron visualmente el PDF normal y el caso con campos de longitud máxima, ambos en una página; las 22 pruebas del backend y ESLint pasan.
+
+## Reanudación: 13 de noviembre de 2026
+
+Se encontró un fallo de acceso local: Windows resuelve `localhost` únicamente a `::1`, mientras Vite estaba escuchando exclusivamente en `127.0.0.1:5173`. Antes del cambio, `http://localhost:5173/` devolvía `ECONNREFUSED` y la dirección IPv4 respondía 200. Se cambió el host de Vite a `localhost` y se activó `strictPort` para evitar cambios silenciosos de puerto. Después, la página, las rutas de React, los módulos JavaScript y `/api/ready` responden 200 desde `localhost`.
+
+Se verificaron por HTTP el ingreso académico, la cookie de sesión, el perfil laboral, el dashboard, los listados de empleados, documentos y solicitudes, y la descarga de una constancia con cabecera PDF válida. El dashboard local informa 152 perfiles activos. La comprobación del acceso existente fue de lectura; no se ejecutaron migraciones ni semillas sobre Atlas.
+
+El Node predeterminado del equipo es 23.3.0 y no es compatible con las dependencias actuales de pruebas. Con ese ejecutable, los workers del frontend fallaban al cargar `undici`. Se descargó Node 24.22.3 en la caché ignorada del proyecto, sin cambiar la instalación global. Con Node 24, ESLint, las 22 pruebas de backend, las 15 de frontend y la compilación pasan. La auditoría de npm informa 0 vulnerabilidades.
+
+La primera revisión encontró publicado el commit `86a8821` de ayer, con Node 24 y las cinco variables de producción registradas. El sitio público y `/api/health` respondían 200, pero `/api/ready` devolvía 503. Tras ajustar el acceso de red en Atlas, la misma API respondió 200 con `ready`, sin modificar sus credenciales ni ejecutar migraciones. Se confirmó así el bloqueo de red. La regla temporal propuesta fue `0.0.0.0/0` durante seis horas: al caducar, el acceso desde Vercel volverá a depender de las reglas de red vigentes.
+
+La verificación posterior del sitio público detectó otro fallo: `/api/documentos/certificado` devolvía 500 y Vercel registraba `MODULE_NOT_FOUND`. El trazado de archivos de la función omitía las fuentes estándar que PDFKit 0.20.2 carga dinámicamente mediante sus imports internos. Se reprodujo el error en una copia aislada con solo los archivos trazados y se comprobó que incluir `node_modules/pdfkit/js/standard-fonts/**` permite generar el PDF. Se agregó ese patrón a `vercel.json` y se excluyó `output/**` de las fuentes enviadas a Vercel.
+
+Se preparó el despliegue `dpl_Abwgxh31ingsiEqBqRS2YSGebwtu` desde los archivos locales, basado en `86a8821` más las correcciones de esta sesión, inicialmente sin asignarle el dominio público. Tras verificarlo con las cuentas académicas, se promovió a producción en https://sesha-app.vercel.app. Se comprobaron por HTTP la página, salud y disponibilidad, ingreso de administrador y empleado, perfil, dashboard, listados y ambas constancias PDF válidas. El empleado obtiene 403 al consultar Empleados, como corresponde. Los registros del nuevo despliegue no mostraron errores durante la comprobación. No se crearon ni borraron documentos, solicitudes o perfiles en Atlas durante estas pruebas.
+
+La CLI creó automáticamente una clave de acceso de automatización para probar la versión protegida. Se revocó únicamente esa clave al terminar y se conservó la protección de Vercel. No se modificaron las variables de entorno ni se hicieron commits o push a GitHub; la publicación se realizó desde la copia local.
+
+La revisión visual sigue pendiente: el host de acceso al navegador no está disponible y el control de Firefox fue bloqueado por la herramienta porque no admite aplicar su política de URL en ese navegador. Las comprobaciones HTTP y las pruebas de componentes no equivalen a una revisión visual.
+
+## Acceso estable elegido
+
+El autor aprobó la opción sin costo adicional: convertir la entrada `0.0.0.0/0` en permanente para la demostración académica. Se documentó el procedimiento en README.md; su aplicación y la ausencia de vencimiento aún requieren confirmación desde Atlas. También se identificó que la base configurada es `proyecto_sena`, para preparar posteriormente un usuario exclusivo con `readWrite` limitado a esa base.
+
+Confirmación posterior del autor: editó la entrada existente `0.0.0.0/0`, agregó el comentario `SESHA APP - acceso Vercel` y guardó. La captura de **Edit IP Access List Entry** no mostraba controles de duración temporal; el autor volvió a abrir **EDIT** y confirmó que no aparecen horas ni vencimiento. Se registra la entrada como permanente según esa revisión de la interfaz, sin una lectura independiente mediante la API de Atlas. Queda pendiente preparar el usuario exclusivo con `readWrite` limitado a `proyecto_sena`; no se han cambiado sus credenciales ni permisos.
+
+Se abrió Microsoft Edge, pero el control automático fue bloqueado porque la herramienta no pudo determinar la URL actual con suficiente confianza. No se cambió la configuración de Atlas mediante el navegador y no se contrataron servicios de pago.
+
+La captura posterior mostraba **Add IP Access List Entry**, aunque se pretendía modificar la entrada temporal existente. Se identificó un posible intento de duplicación; no se confirmó porque la captura no mostraba un error de guardado. La nueva comprobación HTTP del sitio, `/api/health` y `/api/ready` devolvió 200, con `ready` en la última ruta. Esto confirma disponibilidad actual, pero no demuestra que la regla sea permanente. Se propuso conectar la integración MongoDB Atlas para inspeccionar y aplicar la configuración directamente; la conexión y los cambios siguen pendientes de confirmación.
+
+## Confirmación del origen de los datos locales
+
+Se revisó la versión histórica `e0b7ab4`: el frontend usaba `react-scripts start`, que abría el navegador, y el servidor podía arrancar sin `MONGO_URI`. Su autenticación incluía usuarios en un `Map` de memoria y un ingreso académico de administrador independiente de MongoDB. Por tanto, abrir la aplicación o entrar con la cuenta académica en esa versión no demostraba que los datos estuvieran persistidos en Atlas.
+
+En la comprobación actual, `backend/.env` apunta a un host Atlas y a `proyecto_sena`. Se realizó un `ping` directo y se compararon el total y una huella de los identificadores de los diez perfiles más recientes con `/api/empleados` del backend local: coincidieron, con 152 perfiles en ambos. La conexión de comprobación desactivó creación automática e índices y no modificó datos laborales. El proceso local fue identificado como `node server.js`. La interfaz local tuvo inicialmente un 502 por ausencia del backend; posteriormente el puerto 8000 quedó activo y `/api/ready` respondió 200. Esta evidencia confirma que la aplicación local actual utiliza los datos de Atlas.
+
+## Cambio a la cuenta de aplicación con permisos limitados
+
+El autor creó `sesha_app_srv` con autenticación SCRAM y `readWrite@proyecto_sena`, y confirmó haber retirado el usuario X.509 creado por error. La nueva contraseña se recibió en un archivo local temporal, excluido de Git y Vercel, sin mostrarla en herramientas ni mensajes. Se comprobó el acceso directo a Atlas: `ping` aprobado, 152 perfiles y `connectionStatus` con exactamente un rol, `readWrite` sobre `proyecto_sena`.
+
+Se sustituyó `MONGO_URI` en `backend/.env` y como secreto del entorno de producción de `alex-1364/sesha-app`. Se reinició únicamente el backend identificado en el puerto 8000 y se volvió a iniciar Vite en `http://localhost:5173`. Se verificaron localmente la página, disponibilidad, ingreso de administrador y empleado, perfil, dashboard, listados y ambas constancias PDF. El empleado recibe 403 en Empleados.
+
+Se preparó el despliegue `dpl_AknwdeZ4XQ5Az4uCPMT5Ncxf24oq`, inicialmente sin dominio público, con la nueva variable. Tras superar las mismas comprobaciones HTTP, se promovió a `https://sesha-app.vercel.app` y se confirmó que el dominio apunta a ese despliegue. La verificación pública pasó para ambas cuentas: API disponible, sesiones HttpOnly/Secure con CSRF, listados, constancias y permisos. Los registros del nuevo despliegue no mostraron errores en la ventana de comprobación. El código de negocio no cambió en esta operación; no se repitieron las pruebas unitarias ya aprobadas porque el cambio fue de credenciales y se verificó el flujo real.
+
+Se revocó el acceso temporal de automatización utilizado para probar el despliegue protegido y se eliminó `.qa/sesha-app-password.txt`. Las credenciales operativas permanecen únicamente en la configuración privada necesaria. No se eliminaron perfiles, documentos ni solicitudes, y la cuenta administradora de Atlas se conserva para mantenimiento. No se hicieron commits ni push durante esta operación.
+# Evidencias de pruebas del 13/11/2026
+
+- Funcionales: 22 casos de backend + 15 de frontend + 40 HTTP, todos aprobados; lint y compilación correctos. Persistencia real en MongoDB temporal, datos sintéticos, sin carga ni escaneo activo en Atlas/Vercel.
+- k6 2.3.0: confirmación local de 50 solicitudes/s durante 60 s, 3.000 respuestas, p95 33,4 ms y cero errores/descartes. Pico de 125/s durante 25 s aprobado; confirmaciones de 100/s y 125/s durante 60 s fallaron por descartes (y 10 errores HTTP en 125/s). Login de 3/s durante 20 s aprobado; 4/s excedió el objetivo p95 de 1 s.
+- No extrapolar a usuarios reales ni capacidad de la nube: generador, API y base temporal compartieron un portátil i3-N300 con 7,73 GiB RAM y 0,65 GiB libres al inicio.
+- Protección por IP comprobada con límites activos: solicitud API 121 bloqueada en la ventana de 60 s y autenticación 21 bloqueada en 15 minutos. PDF de exactamente 3 MiB aceptado y +1 byte rechazado; JSON mayor que 16 KiB rechazado.
+- ZAP 2.17.0: ejecución final código 0; 0 clases altas, 1 media, 1 baja y 4 informativas. CSP style-src unsafe-inline requiere seguimiento; X-Powered-By procede del servidor estático auxiliar y no apareció en las cuatro rutas públicas comprobadas. Sin explotación XSS ni filtración de secretos demostrada. npm audit: cero vulnerabilidades.
+- Tres PDF revisados en `docs/pruebas/2026-11-13/`, más resultados sanitizados. Portal estático en `docs/index.html`. Las evidencias privadas permanecen en `.qa/`, ignoradas por Git y Vercel.

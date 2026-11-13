@@ -60,8 +60,10 @@ export default defineConfig({
         "**/.mongodb-binaries/**",
       ],
     },
-    host: "127.0.0.1",
+    // Usa la misma resolución de localhost que el navegador (IPv4 o IPv6).
+    host: "localhost",
     port: 5173,
+    strictPort: true,
     proxy: { "/api": "http://127.0.0.1:8000" },
   },
   build: { outDir: "dist", sourcemap: false },

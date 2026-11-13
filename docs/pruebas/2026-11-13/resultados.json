@@ -1,0 +1,1325 @@
+{
+  "project": "SESHA APP - Proyecto SENA",
+  "date": "2026-11-13",
+  "timezone": "America/Bogota",
+  "generatedAt": "2026-11-13T15:52:33.056Z",
+  "source": {
+    "baseCommit": "86a8821f251d4866dfbdf159db3607cc1500b9e1",
+    "applicationSha256": "e87830f26748c1aa5a823191930648f45f5d309f165aa6f4bb6cc0a8f7e73963",
+    "note": "Base Git más ajustes locales previamente publicados; la huella excluye .env y resultados de pruebas."
+  },
+  "environment": {
+    "measuredAt": "2026-11-13T15:20:41.307Z",
+    "runId": "sesha-qa-1794583240650",
+    "node": "v24.22.3",
+    "cpu": "Intel(R) Core(TM) i3-N300",
+    "logicalCpus": 8,
+    "totalMemoryGB": 7.731925964355469,
+    "freeMemoryGB": 0.6500930786132812,
+    "os": "win32 10.0.26300",
+    "seededProfiles": 152,
+    "database": "MongoDB temporal, replica set de un nodo",
+    "productionUntouched": true,
+    "capacityMode": "Mismo createApp con limits:false; autenticación y autorización conservadas",
+    "strictMode": "Mismo createApp con límites 120/min e intentos 20/15min"
+  },
+  "functional": {
+    "backend": {
+      "total": 22,
+      "passed": 22,
+      "failed": 0
+    },
+    "frontend": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0
+    },
+    "http": {
+      "total": 40,
+      "passed": 40,
+      "failed": 0
+    },
+    "total": 77,
+    "passed": 77,
+    "failed": 0,
+    "tests": [
+      {
+        "suite": "Backend",
+        "name": "la constancia laboral usa la identidad autenticada, sus datos y la fecha actual",
+        "status": "passed",
+        "durationMs": 166.97870000000012
+      },
+      {
+        "suite": "Backend",
+        "name": "la fecha de expedición cambia por el día de Colombia y la de ingreso permanece fija",
+        "status": "passed",
+        "durationMs": 11.92450000000008
+      },
+      {
+        "suite": "Backend",
+        "name": "completar perfiles cubre todos los usuarios y conserva los datos válidos",
+        "status": "passed",
+        "durationMs": 44.729499999999916
+      },
+      {
+        "suite": "Backend",
+        "name": "el registro prepara el perfil y revierte la cuenta si falla su creación",
+        "status": "passed",
+        "durationMs": 600.9256999999998
+      },
+      {
+        "suite": "Backend",
+        "name": "registro persistido: cookie HttpOnly, sin JWT ni hash en respuesta y duplicados rechazados",
+        "status": "passed",
+        "durationMs": 505.52490000000034
+      },
+      {
+        "suite": "Backend",
+        "name": "registro rechaza privilegios, operadores y contraseñas cortas",
+        "status": "passed",
+        "durationMs": 53.64099999999962
+      },
+      {
+        "suite": "Backend",
+        "name": "la clave académica funciona únicamente para una cuenta persistida; logout exige CSRF",
+        "status": "passed",
+        "durationMs": 391.9199000000008
+      },
+      {
+        "suite": "Backend",
+        "name": "JWT falso, expirado y cuenta deshabilitada no dan acceso",
+        "status": "passed",
+        "durationMs": 28.149599999998827
+      },
+      {
+        "suite": "Backend",
+        "name": "sin BD devuelve 503 sin filtrar el error; distingue vida y disponibilidad",
+        "status": "passed",
+        "durationMs": 18.597899999998845
+      },
+      {
+        "suite": "Backend",
+        "name": "validación de CORS, JSON y configuración obligatoria",
+        "status": "passed",
+        "durationMs": 16.672700000000987
+      },
+      {
+        "suite": "Backend",
+        "name": "solo admin gestiona perfiles; los modelos y hashes permanecen separados",
+        "status": "passed",
+        "durationMs": 65.81810000000041
+      },
+      {
+        "suite": "Backend",
+        "name": "perfiles rechazan duplicados, campos inesperados e identificadores inválidos",
+        "status": "passed",
+        "durationMs": 43.1205000000009
+      },
+      {
+        "suite": "Backend",
+        "name": "PDF persiste y solo propietario o admin lo descargan y eliminan",
+        "status": "passed",
+        "durationMs": 92.1846000000005
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza PDF falso y archivos superiores a 3 MB",
+        "status": "passed",
+        "durationMs": 41.77669999999853
+      },
+      {
+        "suite": "Backend",
+        "name": "constancia se genera con el perfil autenticado",
+        "status": "passed",
+        "durationMs": 126.78780000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "solicitudes persisten, aíslan propietarios y solo admin aprueba",
+        "status": "passed",
+        "durationMs": 85.8788999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "el soporte debe ser propio y no se borra mientras esté referenciado",
+        "status": "passed",
+        "durationMs": 58.574900000001435
+      },
+      {
+        "suite": "Backend",
+        "name": "dashboard calcula métricas desde datos persistidos y filtra por usuario",
+        "status": "passed",
+        "durationMs": 44.23040000000037
+      },
+      {
+        "suite": "Backend",
+        "name": "limitación de intentos compartida entre instancias",
+        "status": "passed",
+        "durationMs": 240.7421000000013
+      },
+      {
+        "suite": "Backend",
+        "name": "el contador compartido es atómico bajo concurrencia",
+        "status": "passed",
+        "durationMs": 27.23790000000008
+      },
+      {
+        "suite": "Backend",
+        "name": "migración y semilla son repetibles y conservan las contraseñas existentes",
+        "status": "passed",
+        "durationMs": 1132.2109
+      },
+      {
+        "suite": "Backend",
+        "name": "entrada serverless conserva rutas y rechaza archivos historicos sin contenido",
+        "status": "passed",
+        "durationMs": 38.27919999999904
+      },
+      {
+        "suite": "Frontend",
+        "name": "el ingreso abre el panel completo con su navegación",
+        "status": "passed",
+        "durationMs": 653.6834999999992
+      },
+      {
+        "suite": "Frontend",
+        "name": "un error de render muestra una recuperación en lugar de dejar la página vacía",
+        "status": "passed",
+        "durationMs": 22.064400000002934
+      },
+      {
+        "suite": "Frontend",
+        "name": "muestra métricas de API y oculta administración a empleados",
+        "status": "passed",
+        "durationMs": 206.28790000000026
+      },
+      {
+        "suite": "Frontend",
+        "name": "despliega detalles del servicio seleccionado",
+        "status": "passed",
+        "durationMs": 92.03459999999995
+      },
+      {
+        "suite": "Frontend",
+        "name": "no anuncia carga exitosa si falla la persistencia",
+        "status": "passed",
+        "durationMs": 308.83960000000025
+      },
+      {
+        "suite": "Frontend",
+        "name": "Documentos solicita la constancia laboral personalizada",
+        "status": "passed",
+        "durationMs": 214.96259999999984
+      },
+      {
+        "suite": "Frontend",
+        "name": "Mi perfil muestra fecha de ingreso y usa el mismo generador",
+        "status": "passed",
+        "durationMs": 87.74359999999979
+      },
+      {
+        "suite": "Frontend",
+        "name": "Renderiza correctamente la Landing Page",
+        "status": "passed",
+        "durationMs": 121.44809999999961
+      },
+      {
+        "suite": "Frontend",
+        "name": "Permite consultar definición y características desde la página de inicio",
+        "status": "passed",
+        "durationMs": 142.9659999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "login presenta el error real y no inicia una sesión fallida",
+        "status": "passed",
+        "durationMs": 574.2685000000001
+      },
+      {
+        "suite": "Frontend",
+        "name": "registro actualiza sesión y no guarda credenciales en localStorage",
+        "status": "passed",
+        "durationMs": 1019.247199999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "un token antiguo en localStorage no permite entrar",
+        "status": "passed",
+        "durationMs": 46.51899999999978
+      },
+      {
+        "suite": "Frontend",
+        "name": "logout limpia usuario y CSRF después de confirmar el cierre del servidor",
+        "status": "passed",
+        "durationMs": 109.17319999999972
+      },
+      {
+        "suite": "Frontend",
+        "name": "sin permisos administrativos la ruta de empleados redirige",
+        "status": "passed",
+        "durationMs": 13.499199999999746
+      },
+      {
+        "suite": "Frontend",
+        "name": "una solicitud fallida conserva el motivo y nunca simula éxito",
+        "status": "passed",
+        "durationMs": 568.5264000000002
+      },
+      {
+        "suite": "HTTP",
+        "name": "F01 - Inicio compilado y recarga directa de ruta React",
+        "status": "passed",
+        "durationMs": 13.654999999999973
+      },
+      {
+        "suite": "HTTP",
+        "name": "F02 - Salud y disponibilidad de MongoDB temporal",
+        "status": "passed",
+        "durationMs": 8.415300000000002
+      },
+      {
+        "suite": "HTTP",
+        "name": "F03 - Dashboard exige autenticación",
+        "status": "passed",
+        "durationMs": 4.007200000000012
+      },
+      {
+        "suite": "HTTP",
+        "name": "F04 - Credenciales incorrectas se rechazan",
+        "status": "passed",
+        "durationMs": 300.92240000000004
+      },
+      {
+        "suite": "HTTP",
+        "name": "F05 - Ingreso admin con cookie HttpOnly Secure Strict y CSRF",
+        "status": "passed",
+        "durationMs": 271.9234999999999
+      },
+      {
+        "suite": "HTTP",
+        "name": "F06 - Ingreso de dos empleados independientes",
+        "status": "passed",
+        "durationMs": 512.5372000000002
+      },
+      {
+        "suite": "HTTP",
+        "name": "F07 - Perfil autenticado tiene fecha y datos laborales",
+        "status": "passed",
+        "durationMs": 6.234299999999848
+      },
+      {
+        "suite": "HTTP",
+        "name": "F08 - Empleado no consulta administración de personal",
+        "status": "passed",
+        "durationMs": 4.025000000000091
+      },
+      {
+        "suite": "HTTP",
+        "name": "F09 - Listado admin paginado y sin hashes",
+        "status": "passed",
+        "durationMs": 10.72609999999986
+      },
+      {
+        "suite": "HTTP",
+        "name": "F10 - Escritura con cookie y sin CSRF se bloquea",
+        "status": "passed",
+        "durationMs": 2.665899999999965
+      },
+      {
+        "suite": "HTTP",
+        "name": "F11 - Admin crea perfil persistido en MongoDB",
+        "status": "passed",
+        "durationMs": 11.85570000000007
+      },
+      {
+        "suite": "HTTP",
+        "name": "F12 - Admin modifica fecha y cargo",
+        "status": "passed",
+        "durationMs": 8.120799999999917
+      },
+      {
+        "suite": "HTTP",
+        "name": "F13 - Fecha laboral futura se rechaza",
+        "status": "passed",
+        "durationMs": 4.924099999999953
+      },
+      {
+        "suite": "HTTP",
+        "name": "F14 - Documento duplicado se rechaza",
+        "status": "passed",
+        "durationMs": 5.787199999999984
+      },
+      {
+        "suite": "HTTP",
+        "name": "F15 - Inactivación conserva el perfil y el borrado físico no está expuesto",
+        "status": "passed",
+        "durationMs": 14.251700000000028
+      },
+      {
+        "suite": "HTTP",
+        "name": "F16 - Constancia laboral válida y nombre de archivo personalizado",
+        "status": "passed",
+        "durationMs": 64.99170000000004
+      },
+      {
+        "suite": "HTTP",
+        "name": "F17 - Carga PDF guarda los bytes en MongoDB",
+        "status": "passed",
+        "durationMs": 13.828700000000026
+      },
+      {
+        "suite": "HTTP",
+        "name": "F18 - Listado y descarga conservan el PDF",
+        "status": "passed",
+        "durationMs": 19.265100000000075
+      },
+      {
+        "suite": "HTTP",
+        "name": "F19 - Otro empleado no descarga el documento",
+        "status": "passed",
+        "durationMs": 6.1887000000001535
+      },
+      {
+        "suite": "HTTP",
+        "name": "F20 - Admin puede revisar el documento",
+        "status": "passed",
+        "durationMs": 7.204600000000028
+      },
+      {
+        "suite": "HTTP",
+        "name": "F21 - Archivo falso con extensión PDF se rechaza",
+        "status": "passed",
+        "durationMs": 6.944799999999759
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22 - Archivo superior a 3 MiB se rechaza",
+        "status": "passed",
+        "durationMs": 21.797199999999975
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22b - Límite exacto de 3 MiB se acepta",
+        "status": "passed",
+        "durationMs": 107.42229999999972
+      },
+      {
+        "suite": "HTTP",
+        "name": "F23 - Empleado crea solicitud con soporte propio",
+        "status": "passed",
+        "durationMs": 11.246899999999641
+      },
+      {
+        "suite": "HTTP",
+        "name": "F24 - Solicitud de otra cuenta no aparece en su listado",
+        "status": "passed",
+        "durationMs": 6.4679000000001
+      },
+      {
+        "suite": "HTTP",
+        "name": "F25 - Soporte ajeno no se puede asociar",
+        "status": "passed",
+        "durationMs": 5.780500000000302
+      },
+      {
+        "suite": "HTTP",
+        "name": "F26 - Adjunto referenciado queda protegido contra borrado",
+        "status": "passed",
+        "durationMs": 7.456499999999778
+      },
+      {
+        "suite": "HTTP",
+        "name": "F27 - Dashboard calcula sus documentos y pendientes",
+        "status": "passed",
+        "durationMs": 21.132000000000062
+      },
+      {
+        "suite": "HTTP",
+        "name": "F28 - Empleado no aprueba solicitudes",
+        "status": "passed",
+        "durationMs": 4.382399999999961
+      },
+      {
+        "suite": "HTTP",
+        "name": "F29 - Admin aprueba y conserva el cambio",
+        "status": "passed",
+        "durationMs": 9.16190000000006
+      },
+      {
+        "suite": "HTTP",
+        "name": "F30 - Empleado no cancela una solicitud ya aprobada",
+        "status": "passed",
+        "durationMs": 7.880200000000059
+      },
+      {
+        "suite": "HTTP",
+        "name": "F31 - Admin retira la solicitud sintética",
+        "status": "passed",
+        "durationMs": 8.140600000000177
+      },
+      {
+        "suite": "HTTP",
+        "name": "F32 - Propietario elimina PDF ya no referenciado",
+        "status": "passed",
+        "durationMs": 14.465099999999893
+      },
+      {
+        "suite": "HTTP",
+        "name": "F33 - Registro público crea cuenta y perfil persistidos",
+        "status": "passed",
+        "durationMs": 277.3487
+      },
+      {
+        "suite": "HTTP",
+        "name": "F34 - Registro duplicado y elevación de rol se rechazan",
+        "status": "passed",
+        "durationMs": 5.981600000000071
+      },
+      {
+        "suite": "HTTP",
+        "name": "F35 - Operador NoSQL como correo se rechaza",
+        "status": "passed",
+        "durationMs": 2.090700000000197
+      },
+      {
+        "suite": "HTTP",
+        "name": "F36 - JWT manipulado no autoriza acceso",
+        "status": "passed",
+        "durationMs": 2.0239000000001397
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37 - Origen no permitido y JSON inválido se rechazan",
+        "status": "passed",
+        "durationMs": 6.186100000000351
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37b - JSON superior a 16 KiB se rechaza con 413",
+        "status": "passed",
+        "durationMs": 2.992999999999938
+      },
+      {
+        "suite": "HTTP",
+        "name": "F38 - Salir exige CSRF y revoca la sesión anterior",
+        "status": "passed",
+        "durationMs": 13.4058
+      }
+    ]
+  },
+  "protection": {
+    "api": {
+      "allowed": 120,
+      "windowSeconds": 60,
+      "firstBlockedRequest": 121,
+      "status": 429
+    },
+    "auth": {
+      "allowed": 20,
+      "windowSeconds": 900,
+      "firstBlockedRequest": 21,
+      "status": 429
+    },
+    "scope": "por IP, contadores en MongoDB temporal",
+    "passed": true
+  },
+  "performance": {
+    "runs": [
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "10s",
+        "label": "warmup",
+        "start": "2026-11-13T15:32:10.951Z",
+        "end": "2026-11-13T15:32:21.121Z",
+        "p95Ms": 13.22295,
+        "p99Ms": 66.0609,
+        "avgMs": 9.047660784313724,
+        "maxMs": 86.16,
+        "pdfP95Ms": 84.15008999999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 51,
+        "achievedRps": 5.092066814506341,
+        "requestMix": {
+          "dashboard": 24,
+          "employees": 11,
+          "requests": 8,
+          "documents": 6,
+          "certificate": 2
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "25s",
+        "label": "mixed-5",
+        "start": "2026-11-13T15:32:21.123Z",
+        "end": "2026-11-13T15:32:46.303Z",
+        "p95Ms": 12.066579999999998,
+        "p99Ms": 50.21575200000005,
+        "avgMs": 8.1517952,
+        "maxMs": 60.4378,
+        "pdfP95Ms": 58.46145,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 125,
+        "achievedRps": 4.998974690295121,
+        "requestMix": {
+          "dashboard": 53,
+          "employees": 24,
+          "requests": 24,
+          "documents": 18,
+          "certificate": 6
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 25,
+        "duration": "25s",
+        "label": "mixed-25",
+        "start": "2026-11-13T15:32:46.304Z",
+        "end": "2026-11-13T15:33:11.456Z",
+        "p95Ms": 32.37905,
+        "p99Ms": 50.841425,
+        "avgMs": 8.419100958466453,
+        "maxMs": 70.5676,
+        "pdfP95Ms": 56.9757,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 626,
+        "achievedRps": 25.02849950459164,
+        "requestMix": {
+          "dashboard": 254,
+          "employees": 124,
+          "requests": 124,
+          "documents": 93,
+          "certificate": 31
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 50,
+        "duration": "25s",
+        "label": "mixed-50",
+        "start": "2026-11-13T15:33:11.457Z",
+        "end": "2026-11-13T15:33:36.601Z",
+        "p95Ms": 32.024584999999995,
+        "p99Ms": 48.941092999999995,
+        "avgMs": 8.24232232,
+        "maxMs": 88.2253,
+        "pdfP95Ms": 55.93475999999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 1250,
+        "achievedRps": 49.99215263181708,
+        "requestMix": {
+          "dashboard": 504,
+          "employees": 250,
+          "requests": 248,
+          "documents": 186,
+          "certificate": 62
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 3,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "25s",
+        "label": "mixed-100",
+        "start": "2026-11-13T15:33:36.602Z",
+        "end": "2026-11-13T15:34:01.763Z",
+        "p95Ms": 39.98632,
+        "p99Ms": 65.54294899999988,
+        "avgMs": 11.317858119999972,
+        "maxMs": 129.2784,
+        "pdfP95Ms": 84.20154000000001,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 2500,
+        "achievedRps": 99.85372587462588,
+        "requestMix": {
+          "dashboard": 1000,
+          "employees": 500,
+          "requests": 500,
+          "documents": 375,
+          "certificate": 125
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 6,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 200,
+        "duration": "25s",
+        "label": "mixed-200",
+        "start": "2026-11-13T15:34:01.764Z",
+        "end": "2026-11-13T15:34:26.936Z",
+        "p95Ms": 487.24580999999984,
+        "p99Ms": 658.887578,
+        "avgMs": 211.29275086049833,
+        "maxMs": 737.1416,
+        "pdfP95Ms": 556.365,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 4939,
+        "achievedRps": 197.4966517639668,
+        "requestMix": {
+          "dashboard": 1976,
+          "employees": 988,
+          "requests": 988,
+          "documents": 741,
+          "certificate": 246
+        },
+        "droppedIterations": 62,
+        "maxActiveVus": 95,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "recovery",
+        "start": "2026-11-13T15:34:26.937Z",
+        "end": "2026-11-13T15:34:47.099Z",
+        "p95Ms": 11.3888,
+        "p99Ms": 46.2193,
+        "avgMs": 7.2216178217821785,
+        "maxMs": 54.9735,
+        "pdfP95Ms": 53.22266,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 101,
+        "achievedRps": 5.046751355684832,
+        "requestMix": {
+          "dashboard": 41,
+          "employees": 20,
+          "requests": 20,
+          "documents": 15,
+          "certificate": 5
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 1,
+        "duration": "20s",
+        "label": "login-1",
+        "start": "2026-11-13T15:34:47.100Z",
+        "end": "2026-11-13T15:35:07.247Z",
+        "p95Ms": 301.84617,
+        "p99Ms": 310.927714,
+        "avgMs": 270.01262499999996,
+        "maxMs": 313.1981,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 20,
+        "achievedRps": 0.9997274443068586,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 2,
+        "duration": "20s",
+        "label": "login-2",
+        "start": "2026-11-13T15:35:07.248Z",
+        "end": "2026-11-13T15:35:27.646Z",
+        "p95Ms": 306.738,
+        "p99Ms": 339.6401800000001,
+        "avgMs": 272.9705951219512,
+        "maxMs": 357.4329,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 41,
+        "achievedRps": 2.0227645174956477,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 3,
+        "duration": "20s",
+        "label": "login-3",
+        "start": "2026-11-13T15:35:27.647Z",
+        "end": "2026-11-13T15:35:48.052Z",
+        "p95Ms": 310.6925,
+        "p99Ms": 327.34764,
+        "avgMs": 270.6159803278689,
+        "maxMs": 327.8763,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 61,
+        "achievedRps": 3.0092787261590943,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 4,
+        "duration": "20s",
+        "label": "login-4",
+        "start": "2026-11-13T15:35:48.053Z",
+        "end": "2026-11-13T15:36:09.760Z",
+        "p95Ms": 2802.29391,
+        "p99Ms": 2944.0667589999994,
+        "avgMs": 1615.4250912500002,
+        "maxMs": 2988.1392,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 80,
+        "achievedRps": 3.7082032993905725,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 10,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 150,
+        "duration": "25s",
+        "label": "refine-150",
+        "start": "2026-11-13T15:38:08.652Z",
+        "end": "2026-11-13T15:38:34.093Z",
+        "p95Ms": 275.34337999999997,
+        "p99Ms": 389.28152399999993,
+        "avgMs": 59.004824245661,
+        "maxMs": 568.0209,
+        "pdfP95Ms": 394.5800999999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3745,
+        "achievedRps": 149.6962024495759,
+        "requestMix": {
+          "dashboard": 1501,
+          "employees": 748,
+          "requests": 748,
+          "documents": 561,
+          "certificate": 187
+        },
+        "droppedIterations": 5,
+        "maxActiveVus": 43,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 125,
+        "duration": "25s",
+        "label": "refine-125",
+        "start": "2026-11-13T15:38:34.098Z",
+        "end": "2026-11-13T15:38:59.341Z",
+        "p95Ms": 36.918025,
+        "p99Ms": 54.2388,
+        "avgMs": 10.439462252079322,
+        "maxMs": 96.7657,
+        "pdfP95Ms": 65.676625,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3126,
+        "achievedRps": 124.96993485620327,
+        "requestMix": {
+          "dashboard": 1254,
+          "employees": 624,
+          "requests": 624,
+          "documents": 468,
+          "certificate": 156
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 4,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 125,
+        "duration": "60s",
+        "label": "confirmation-125",
+        "start": "2026-11-13T15:38:59.342Z",
+        "end": "2026-11-13T15:40:16.824Z",
+        "p95Ms": 106.82897999999996,
+        "p99Ms": 400.59643999999867,
+        "avgMs": 68.6515086452912,
+        "maxMs": 25688.3099,
+        "pdfP95Ms": 244.34257999999997,
+        "failedRate": 0.0016786973308712439,
+        "businessFailedRate": 0.0016786973308712439,
+        "requests": 5957,
+        "achievedRps": 78.59214851243118,
+        "requestMix": {
+          "dashboard": 2400,
+          "employees": 1200,
+          "requests": 1199,
+          "documents": 897,
+          "certificate": 299
+        },
+        "droppedIterations": 3154,
+        "maxActiveVus": 58,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "60s",
+        "label": "confirmation-100",
+        "start": "2026-11-13T15:40:16.828Z",
+        "end": "2026-11-13T15:41:18.856Z",
+        "p95Ms": 189.89410000000004,
+        "p99Ms": 634.3787639999999,
+        "avgMs": 36.80205582289062,
+        "maxMs": 1087.0157,
+        "pdfP95Ms": 434.56335999999993,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 5985,
+        "achievedRps": 99.72479771532937,
+        "requestMix": {
+          "dashboard": 2397,
+          "employees": 1196,
+          "requests": 1196,
+          "documents": 897,
+          "certificate": 299
+        },
+        "droppedIterations": 16,
+        "maxActiveVus": 55,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "final-recovery",
+        "start": "2026-11-13T15:41:18.861Z",
+        "end": "2026-11-13T15:41:39.042Z",
+        "p95Ms": 21.5686,
+        "p99Ms": 48.6074,
+        "avgMs": 7.1359009900990085,
+        "maxMs": 53.1311,
+        "pdfP95Ms": 52.22636,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 101,
+        "achievedRps": 5.046739806085268,
+        "requestMix": {
+          "dashboard": 41,
+          "employees": 20,
+          "requests": 20,
+          "documents": 15,
+          "certificate": 5
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 50,
+        "duration": "60s",
+        "label": "confirmation-50",
+        "start": "2026-11-13T15:42:41.639Z",
+        "end": "2026-11-13T15:43:41.832Z",
+        "p95Ms": 33.415144999999974,
+        "p99Ms": 52.88983099999988,
+        "avgMs": 8.514168700000013,
+        "maxMs": 185.5379,
+        "pdfP95Ms": 68.95990499999986,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3000,
+        "achievedRps": 49.97588821650533,
+        "requestMix": {
+          "dashboard": 1200,
+          "employees": 600,
+          "requests": 600,
+          "documents": 450,
+          "certificate": 150
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 7,
+        "passed": true
+      }
+    ],
+    "sustained": {
+      "kind": "mixed",
+      "targetRps": 50,
+      "duration": "60s",
+      "label": "confirmation-50",
+      "start": "2026-11-13T15:42:41.639Z",
+      "end": "2026-11-13T15:43:41.832Z",
+      "p95Ms": 33.415144999999974,
+      "p99Ms": 52.88983099999988,
+      "avgMs": 8.514168700000013,
+      "maxMs": 185.5379,
+      "pdfP95Ms": 68.95990499999986,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 3000,
+      "achievedRps": 49.97588821650533,
+      "requestMix": {
+        "dashboard": 1200,
+        "employees": 600,
+        "requests": 600,
+        "documents": 450,
+        "certificate": 150
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 7,
+      "passed": true
+    },
+    "shortPeak": {
+      "kind": "mixed",
+      "targetRps": 125,
+      "duration": "25s",
+      "label": "refine-125",
+      "start": "2026-11-13T15:38:34.098Z",
+      "end": "2026-11-13T15:38:59.341Z",
+      "p95Ms": 36.918025,
+      "p99Ms": 54.2388,
+      "avgMs": 10.439462252079322,
+      "maxMs": 96.7657,
+      "pdfP95Ms": 65.676625,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 3126,
+      "achievedRps": 124.96993485620327,
+      "requestMix": {
+        "dashboard": 1254,
+        "employees": 624,
+        "requests": 624,
+        "documents": 468,
+        "certificate": 156
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 4,
+      "passed": true
+    },
+    "firstShortFailure": {
+      "kind": "mixed",
+      "targetRps": 150,
+      "duration": "25s",
+      "label": "refine-150",
+      "start": "2026-11-13T15:38:08.652Z",
+      "end": "2026-11-13T15:38:34.093Z",
+      "p95Ms": 275.34337999999997,
+      "p99Ms": 389.28152399999993,
+      "avgMs": 59.004824245661,
+      "maxMs": 568.0209,
+      "pdfP95Ms": 394.5800999999999,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 3745,
+      "achievedRps": 149.6962024495759,
+      "requestMix": {
+        "dashboard": 1501,
+        "employees": 748,
+        "requests": 748,
+        "documents": 561,
+        "certificate": 187
+      },
+      "droppedIterations": 5,
+      "maxActiveVus": 43,
+      "passed": false
+    },
+    "loginPassed": {
+      "kind": "login",
+      "targetRps": 3,
+      "duration": "20s",
+      "label": "login-3",
+      "start": "2026-11-13T15:35:27.647Z",
+      "end": "2026-11-13T15:35:48.052Z",
+      "p95Ms": 310.6925,
+      "p99Ms": 327.34764,
+      "avgMs": 270.6159803278689,
+      "maxMs": 327.8763,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 61,
+      "achievedRps": 3.0092787261590943,
+      "requestMix": {
+        "dashboard": 0,
+        "employees": 0,
+        "requests": 0,
+        "documents": 0,
+        "certificate": 0
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 1,
+      "passed": true
+    },
+    "loginFailed": {
+      "kind": "login",
+      "targetRps": 4,
+      "duration": "20s",
+      "label": "login-4",
+      "start": "2026-11-13T15:35:48.053Z",
+      "end": "2026-11-13T15:36:09.760Z",
+      "p95Ms": 2802.29391,
+      "p99Ms": 2944.0667589999994,
+      "avgMs": 1615.4250912500002,
+      "maxMs": 2988.1392,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 80,
+      "achievedRps": 3.7082032993905725,
+      "requestMix": {
+        "dashboard": 0,
+        "employees": 0,
+        "requests": 0,
+        "documents": 0,
+        "certificate": 0
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 10,
+      "passed": false
+    },
+    "criteria": {
+      "mixedP95Ms": 500,
+      "certificateP95Ms": 1500,
+      "loginP95Ms": 1000,
+      "errorRateLessThan": 0.01,
+      "droppedIterations": 0
+    },
+    "note": "Cargas generadas y servidas en el mismo equipo, con MongoDB temporal y límites de tasa desactivados solo en el puerto de capacidad. No representa capacidad de Vercel/Atlas ni número de usuarios simultáneos."
+  },
+  "security": {
+    "version": "2.17.0",
+    "start": "2026-11-13T15:48:23.770Z",
+    "end": "2026-11-13T15:50:10.149Z",
+    "code": 0,
+    "activeMinutesLimit": 3,
+    "threads": 2,
+    "scope": [
+      "127.0.0.1:4174",
+      "127.0.0.1:8101"
+    ],
+    "riskCounts": {
+      "high": 0,
+      "medium": 1,
+      "low": 1,
+      "informational": 4
+    },
+    "alerts": [
+      {
+        "id": "10055",
+        "reference": "10055-6",
+        "name": "CSP: style-src unsafe-inline",
+        "riskCode": 2,
+        "risk": "Medium (High)",
+        "confidence": "3",
+        "cwe": "693",
+        "count": 3,
+        "paths": [
+          "/",
+          "/register",
+          "/sitemap.xml"
+        ],
+        "description": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks. Including (but not limited to) Cross Site Scripting (XSS), and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page — covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.",
+        "solution": "Ensure that your web server, application server, load balancer, etc. is properly configured to set the Content-Security-Policy header.",
+        "review": "Confirmada como mejora de endurecimiento",
+        "reviewDetail": "La CSP pública conserva style-src 'unsafe-inline'. No se demostró explotación XSS. Evaluar estilos externos y retirar esta excepción mediante pruebas de interfaz."
+      },
+      {
+        "id": "10037",
+        "reference": "10037",
+        "name": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+        "riskCode": 1,
+        "risk": "Low (Medium)",
+        "confidence": "2",
+        "cwe": "497",
+        "count": 5,
+        "paths": [
+          "/",
+          "/login",
+          "/register",
+          "/sitemap.xml"
+        ],
+        "description": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to.",
+        "solution": "Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers.",
+        "review": "Limitada al arnés local",
+        "reviewDetail": "El servidor estático auxiliar expresa X-Powered-By: Express. No se observó esa cabecera en las cuatro rutas públicas contrastadas; no se atribuye como vulnerabilidad de producción."
+      },
+      {
+        "id": "10027",
+        "reference": "10027",
+        "name": "Information Disclosure - Suspicious Comments",
+        "riskCode": 0,
+        "risk": "Informational (Low)",
+        "confidence": "1",
+        "cwe": "615",
+        "count": 1,
+        "paths": [
+          "/assets/index-OE31Ad74.js"
+        ],
+        "description": "The response appears to contain suspicious comments which may help an attacker.",
+        "solution": "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.",
+        "review": "No se confirmó filtración",
+        "reviewDetail": "La evidencia marcada fue la palabra 'select' en JavaScript compilado. Por sí sola no demuestra exposición de secretos ni datos privados."
+      },
+      {
+        "id": "10104",
+        "reference": "10104",
+        "name": "User Agent Fuzzer",
+        "riskCode": 0,
+        "risk": "Informational (Medium)",
+        "confidence": "2",
+        "cwe": "0",
+        "count": 6,
+        "paths": [
+          "/api/documentos/certificado",
+          "/assets"
+        ],
+        "description": "Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.",
+        "solution": "",
+        "review": "Informativa",
+        "reviewDetail": "Describe características o comportamiento observado por el escáner; no demuestra por sí sola una vulnerabilidad explotable."
+      },
+      {
+        "id": "10109",
+        "reference": "10109",
+        "name": "Modern Web Application",
+        "riskCode": 0,
+        "risk": "Informational (Medium)",
+        "confidence": "2",
+        "cwe": "-1",
+        "count": 5,
+        "paths": [
+          "/",
+          "/login",
+          "/register",
+          "/sitemap.xml"
+        ],
+        "description": "The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.",
+        "solution": "This is an informational alert and so no changes are required.",
+        "review": "Informativa",
+        "reviewDetail": "Describe características o comportamiento observado por el escáner; no demuestra por sí sola una vulnerabilidad explotable."
+      },
+      {
+        "id": "10111",
+        "reference": "10111",
+        "name": "Authentication Request Identified",
+        "riskCode": 0,
+        "risk": "Informational (High)",
+        "confidence": "3",
+        "cwe": "-1",
+        "count": 1,
+        "paths": [
+          "/api/auth/login"
+        ],
+        "description": "The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.",
+        "solution": "This is an informational alert rather than a vulnerability and so there is nothing to fix.",
+        "review": "Informativa",
+        "reviewDetail": "Describe características o comportamiento observado por el escáner; no demuestra por sí sola una vulnerabilidad explotable."
+      }
+    ],
+    "productionHeaders": {
+      "timestamp": "2026-11-13T15:51:36.984Z",
+      "base": "https://sesha-app.vercel.app",
+      "method": "cuatro solicitudes GET; sin escaneo activo ni prueba de carga",
+      "results": [
+        {
+          "route": "/",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/login",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/health",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/ready",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "no-store",
+            "x-powered-by": null
+          }
+        }
+      ]
+    },
+    "npmAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "scopeNote": "Escaneo activo local autenticado con token sintético, crawler tradicional y dos hilos. Sin DOM/AJAX spider ni prueba de penetración exhaustiva. Duración activa máxima configurada: 3 minutos."
+  }
+}

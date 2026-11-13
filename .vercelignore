@@ -3,6 +3,10 @@
 .npm-cache/**
 .mongodb-binaries/**
 .qa/**
+output/**
+qa/**
+docs/**
+tmp/**
 **/.test-results.json
 **/build/**
 **/coverage/**
