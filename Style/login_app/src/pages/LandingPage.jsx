@@ -129,7 +129,7 @@ function LandingPage() {
             <div className="w-full bg-slate-900/90 border border-teal-500/30 rounded-2xl p-1.5 shadow-2xl shadow-teal-950/50">
               <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
                 <video 
-                  aria-label="Demostración de SESHA APP"
+                  aria-label="Presentación de SESHA APP"
                   autoPlay
                   loop
                   muted

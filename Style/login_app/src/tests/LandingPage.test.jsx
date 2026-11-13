@@ -9,7 +9,7 @@ test("Renderiza correctamente la Landing Page", () => {
     </BrowserRouter>
   );
 
-  const video = screen.getByLabelText(/demostración de sesha app/i);
+  const video = screen.getByLabelText(/presentación de sesha app/i);
   expect(video).toHaveAttribute("autoplay");
   expect(video).toHaveAttribute("loop");
   expect(video.muted).toBe(true);

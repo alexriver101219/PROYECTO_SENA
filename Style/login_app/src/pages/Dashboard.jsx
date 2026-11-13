@@ -51,7 +51,7 @@ export default function Dashboard() {
         </h1>
         <p>{formatDate()}</p>
         <p className="text-sm text-slate-500">
-          Demostración académica · Datos guardados en la aplicación
+          Gestión de personal, documentos y solicitudes
         </p>
       </section>
       {error && (

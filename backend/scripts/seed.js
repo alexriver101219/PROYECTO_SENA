@@ -19,7 +19,7 @@ async function seed() {
   await Promise.all([User.createIndexes(), Empleado.createIndexes()]);
   const users = [
     {
-      name: "Administrador académico",
+      name: "Administrador",
       email: "admin@sesha.com",
       password: "123456",
       role: "admin",
@@ -78,7 +78,7 @@ async function seed() {
   }
   await completeLaborProfiles({ apply: true });
   console.log(
-    "Cuentas académicas preparadas. Las cuentas existentes conservaron sus contraseñas.",
+    "Cuentas iniciales preparadas. Las cuentas existentes conservaron sus contraseñas.",
   );
 }
 if (require.main === module)
