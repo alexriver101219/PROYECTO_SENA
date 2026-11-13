@@ -22,13 +22,14 @@ PUBLIC = ROOT / 'docs/manual/2026-11-13'
 ASSETS = PUBLIC / 'capturas'
 ASSETS.mkdir(parents=True, exist_ok=True)
 backup = json.loads((ROOT / '.qa/latest-backup.json').read_text(encoding='utf-8'))['result']
-fixture = json.loads((SHOTS / 'api-fixtures.json').read_text(encoding='utf-8'))
+fixture = json.loads((SHOTS / 'revision-fixtures.json').read_text(encoding='utf-8'))
 assert backup['passed'] and fixture['cleaned'] and fixture['bytesMatch']
 assert fixture['final'] == {'documents': 0, 'requests': 0}
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 proof = {
-    'project': 'SESHA APP - Proyecto SENA', 'date': '2026-11-13', 'timezone': 'America/Bogota',
+    'project': 'SESHA APP', 'date': '2026-11-13', 'timezone': 'America/Bogota',
     'applicationCommit': commit, 'target': 'https://sesha-app.vercel.app',
+    'presentationUpdate': {'applicationCommit': commit, 'revisedScreenshots': ['Ingreso', 'Panel del administrador', 'Historial de solicitudes'], 'scope': 'Actualización de textos y capturas de la presentación. Se conservan las comprobaciones anteriores de los demás módulos y del respaldo.'},
     'backup': {key: backup[key] for key in ['startedAt', 'completedAt', 'sourceDatabase', 'sourceVersion', 'toolsVersion', 'archiveBytes', 'archiveSha256', 'restoreTarget', 'sourceReadOnly', 'changedDuringDump', 'checks', 'passed', 'scope']},
     'visualReview': {
         'browser': 'Microsoft Edge', 'desktop': '1280 x 752 píxeles lógicos',
@@ -55,17 +56,17 @@ def crop(source, name, box):
 
 fig = {
     'employeeNav': crop('05-panel-empleado', 'menu-empleado', (5,116,1273,176)),
-    'adminNav': crop('10-panel-admin', 'menu-administrador', (5,116,1273,176)),
+    'adminNav': crop('10-panel-admin-v2', 'menu-administrador', (5,116,1273,350)),
     'register': crop('02-registro', 'registro', (411,280,861,747)),
     'registerButton': crop('03-registro-final', 'boton-registro', (450,574,824,623)),
-    'login': crop('04-login', 'ingreso', (416,175,863,688)),
+    'login': crop('04-login-v2', 'ingreso', (416,175,863,688)),
     'profile': crop('09-perfil', 'perfil-empleado', (211,200,1062,576)),
     'documents': crop('07-documento-guardado', 'documentos', (82,175,1195,726)),
     'requests': crop('08-solicitudes-empleado', 'solicitud-empleado', (82,200,1195,695)),
     'directory': crop('11-empleados', 'directorio', (25,195,1247,722)),
     'edit': crop('12-editar-empleado', 'edicion-campos', (380,158,892,728)),
     'status': crop('13-estado-empleado', 'edicion-estado', (380,158,892,728)),
-    'review': crop('14-solicitudes-admin', 'solicitud-administrador', (81,482,1190,724)),
+    'review': crop('14-solicitudes-admin-v2', 'solicitud-administrador', (81,482,1190,724)),
     'mobileForm': crop('15-movil-solicitudes', 'movil-formulario', (163,181,563,729)),
     'mobileTable': crop('17-movil-tabla-acciones', 'movil-tabla', (163,181,563,729)),
 }
@@ -104,14 +105,14 @@ def chrome(c,doc):
     c.saveState();c.setFillColor(NAVY);c.rect(0,PAGE[1]-14*mm,PAGE[0],14*mm,fill=1,stroke=0)
     c.setFillColor(colors.white);c.setFont('SegoeBold',9);c.drawString(14*mm,PAGE[1]-9*mm,'SESHA APP  /  MANUAL DE USUARIO')
     c.setStrokeColor(TEAL);c.line(14*mm,13*mm,PAGE[0]-14*mm,13*mm)
-    c.setFillColor(INK);c.setFont('Segoe',8);c.drawString(14*mm,8*mm,'Proyecto SENA · Capturas reales de Edge · 13/11/2026 · Datos académicos ficticios')
+    c.setFillColor(INK);c.setFont('Segoe',8);c.drawString(14*mm,8*mm,'SESHA APP · Capturas reales de Edge · Actualizado 13/11/2026')
     c.drawRightString(PAGE[0]-14*mm,8*mm,str(doc.page));c.restoreState()
 
 s=[p('Manual breve de usuario','TitleS'),p('Registro, documentos, solicitudes y administración de perfiles laborales.'),Spacer(1,7),
    p('<b>Acceso:</b> <link href="https://sesha-app.vercel.app" color="#087f80">https://sesha-app.vercel.app</link> · <b>Versión de aplicación:</b> '+commit[:12]+' · <b>Fecha:</b> 13 de noviembre de 2026.'),
-   p('Solicita al responsable las credenciales académicas. El cargo laboral seleccionado al registrarse no concede permisos de administrador.'),Spacer(1,10),
+   p('Solicita al responsable tus credenciales de acceso. El cargo laboral seleccionado al registrarse no concede permisos de administrador.'),Spacer(1,10),
    table([['Rol','Qué puede hacer'],['Empleado','Consultar su perfil, descargar su constancia, guardar y descargar sus PDF, crear solicitudes y consultar su estado.'],['Administrador','Consultar todos los documentos y solicitudes; gestionar perfiles laborales; aprobar o rechazar solicitudes.']], [WIDTH*.18,WIDTH*.82]),
-   p('Menú de empleado','SubS'),image('employeeNav',WIDTH),p('Menú de administrador','SubS'),image('adminNav',WIDTH),Spacer(1,8),
+   p('Menú de empleado','SubS'),image('employeeNav',WIDTH),p('Panel y menú del administrador','SubS'),image('adminNav',WIDTH),Spacer(1,8),
    p('Este manual describe las funciones disponibles. Los ejemplos de documento y solicitud se crearon para la revisión y se retiraron después. La base conserva 152 perfiles y el registro ofrece 15 cargos. Las capturas excluyen controles y datos personales del navegador.','SmallS')]
 
 s += [PageBreak()]+heading('1. Crear una cuenta e ingresar','El registro prepara una cuenta de empleado y su perfil laboral. No necesitas seleccionar un rol de acceso.')
@@ -149,7 +150,7 @@ s += [PageBreak()]+heading('7. Revisar solicitudes como administrador','El admin
 s += [image('review',735),Spacer(1,10),
       p('En <b>Estado</b>, selecciona <b>Aprobado</b>, <b>Rechazado</b> o <b>Pendiente</b>. La selección se guarda automáticamente. El administrador también puede eliminar solicitudes.'),Spacer(1,8),
       table([['Operación','Empleado','Administrador'],['Documentos','Propios','Consulta y gestión de todos'],['Solicitudes','Propias; elimina las pendientes','Consulta todas; decide estado y elimina'],['Perfiles laborales','Consulta su perfil','Crea, consulta, edita e inactiva'],['Roles y contraseñas de cuentas','No se administran desde estos módulos','No hay un panel de gestión de roles o contraseñas']], [WIDTH*.24,WIDTH*.36,WIDTH*.40]),
-      p('La solicitud ilustrada es una prueba académica, creada por API y eliminada tras capturar la pantalla. No corresponde a un trámite real.','SmallS')]
+      p('La solicitud ilustrada es un ejemplo de prueba, creado por API y eliminado tras capturar la pantalla. No corresponde a un trámite real.','SmallS')]
 
 s += [PageBreak()]+heading('8. Usar la aplicación en una pantalla pequeña','Revisión en la emulación adaptable de Edge: 400 × 547 píxeles CSS, sin simular limitaciones de red.')
 s += [columns([image('mobileForm',250),p('El menú se distribuye en varias filas y el formulario mantiene sus controles dentro del ancho disponible. Desplázate verticalmente para llegar al botón de envío.','SmallS')],
@@ -167,10 +168,12 @@ s += [table([['Colección','Documentos','Índices','Comparación restaurada']]+[
       p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/" color="#087f80">Portal de informes y manual</link> · <link href="https://www.mongodb.com/docs/database-tools/mongodump/" color="#087f80">mongodump</link> · <link href="https://www.mongodb.com/docs/database-tools/mongorestore/" color="#087f80">mongorestore</link>','SmallS')]
 
 target=ROOT/'output/pdf/manual-usuario-sesha.pdf'
-SimpleDocTemplate(str(target),pagesize=PAGE,leftMargin=14*mm,rightMargin=14*mm,topMargin=22*mm,bottomMargin=18*mm,title='SESHA APP - Manual breve de usuario',author='Proyecto SENA').build(s,onFirstPage=chrome,onLaterPages=chrome)
+SimpleDocTemplate(str(target),pagesize=PAGE,leftMargin=14*mm,rightMargin=14*mm,topMargin=22*mm,bottomMargin=18*mm,title='SESHA APP - Manual breve de usuario',author='SESHA APP').build(s,onFirstPage=chrome,onLaterPages=chrome)
 reader=PdfReader(target)
 text='\n'.join(page.extract_text() or '' for page in reader.pages)
 assert all(len(page.extract_text() or '')>100 for page in reader.pages)
+assert len(reader.pages) == 10
+assert not re.search(r'acad[eé]mic', text, re.IGNORECASE)
 assert not re.search(r'mongodb\+srv://|sesha_session=|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+',text)
 shutil.copy2(target,PUBLIC/target.name)
 print(json.dumps({'pdf':target.name,'pages':len(reader.pages),'bytes':target.stat().st_size,'croppedImages':len(fig)}))

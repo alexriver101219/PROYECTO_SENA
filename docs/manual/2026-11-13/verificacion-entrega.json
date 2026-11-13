@@ -1,9 +1,18 @@
 {
-  "project": "SESHA APP - Proyecto SENA",
+  "project": "SESHA APP",
   "date": "2026-11-13",
   "timezone": "America/Bogota",
-  "applicationCommit": "6651080cb3873c8af705d20d2af815d4b5f3c873",
+  "applicationCommit": "2d8bf959e16131a034c9949573083ad5d156d3b1",
   "target": "https://sesha-app.vercel.app",
+  "presentationUpdate": {
+    "applicationCommit": "2d8bf959e16131a034c9949573083ad5d156d3b1",
+    "revisedScreenshots": [
+      "Ingreso",
+      "Panel del administrador",
+      "Historial de solicitudes"
+    ],
+    "scope": "Actualización de textos y capturas de la presentación. Se conservan las comprobaciones anteriores de los demás módulos y del respaldo."
+  },
   "backup": {
     "startedAt": "2026-11-13T18:54:25.187Z",
     "completedAt": "2026-11-13T18:54:37.183Z",

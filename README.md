@@ -155,7 +155,7 @@ Se añadió un cuarto informe, `informe-seguridad-zap-vercel.pdf`, del análisis
 
 ## Manual y respaldo de la entrega
 
-El [manual ilustrado](docs/manual/2026-11-13/manual-usuario-sesha.pdf) explica los flujos de empleado y administrador con capturas reales de Edge, incluida la revisión móvil emulada de 400 × 547 píxeles CSS. Se publica en el mismo portal de GitHub Pages. El [resumen de verificación](docs/manual/2026-11-13/verificacion-entrega.json) conserva los resultados sin datos de sesiones ni el contenido del respaldo.
+El [manual ilustrado](docs/manual/2026-11-13/manual-usuario-sesha.pdf) explica los flujos de empleado y administrador con capturas reales de Edge, incluida la revisión móvil emulada de 400 × 547 píxeles CSS. Se publica en el mismo portal de GitHub Pages. Sus textos y las capturas de ingreso, panel e historial se actualizaron con la presentación actual de SESHA APP. El [resumen de verificación](docs/manual/2026-11-13/verificacion-entrega.json) identifica la versión de aplicación y conserva los resultados sin datos de sesiones ni el contenido del respaldo.
 
 Se creó un respaldo lógico completo de `proyecto_sena` y se comprobó su restauración solo en MongoDB temporal local: cinco colecciones, 304 documentos y 11 índices coincidentes. El archivo privado está en la carpeta indicada por `.qa/latest-backup.json`, excluida de Git y Vercel. No incluye usuarios de Atlas, claves ni configuración de red. Procedimiento reproducible: `node qa/backup-and-verify.cjs`; conservar una segunda copia privada fuera del proyecto.
 
