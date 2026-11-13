@@ -1,7 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const mongoose = require("mongoose");
+const { createDemoProfile } = require("./laborProfiles");
 const { HttpError } = require("../utils/http");
+const laborPositions = require("../config/laborPositions");
 function session(user) {
   const token = jwt.sign(
     { version: user.sessionVersion || 0 },
@@ -17,12 +20,20 @@ function session(user) {
   return { success: true, token, user: user.toJSON() };
 }
 async function register(data) {
+  const { position, ...account } = data;
+  const job = laborPositions.find((item) => item.position === position);
+  if (position !== undefined && !job)
+    throw new HttpError(400, "Selecciona un cargo válido");
   if (await User.exists({ email: data.email }))
     throw new HttpError(409, "El usuario ya existe");
-  const user = await User.create({
-    ...data,
-    password: await bcrypt.hash(data.password, 12),
-    role: "employee",
+  const password = await bcrypt.hash(data.password, 12);
+  const user = await mongoose.connection.transaction(async (transaction) => {
+    const [created] = await User.create(
+      [{ ...account, password, role: "employee" }],
+      { session: transaction },
+    );
+    await createDemoProfile(created, { session: transaction, job });
+    return created;
   });
   return session(user);
 }

@@ -8,6 +8,7 @@ vi.mock("./services/api", () => ({
     error.response?.data?.message || "No se pudo conectar",
   uploadPDF: vi.fn(),
   download: vi.fn(),
+  downloadEmploymentCertificate: vi.fn(),
 }));
 beforeEach(async () => {
   const { default: api } = await import("./services/api");
@@ -16,6 +17,13 @@ beforeEach(async () => {
   api.get.mockImplementation((path) => {
     if (path === "/auth/me")
       return Promise.reject({ response: { status: 401 } });
+    if (path === "/auth/positions")
+      return Promise.resolve({
+        data: [
+          { position: "Guarda de seguridad", department: "Operaciones" },
+          { position: "Auxiliar de tecnología", department: "Tecnología" },
+        ],
+      });
     return Promise.resolve({
       data: {
         items: [],

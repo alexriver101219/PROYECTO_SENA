@@ -5,7 +5,7 @@ Aplicación académica para gestionar perfiles laborales, solicitudes y document
 ## Requisitos y estructura
 
 - Node.js 24 LTS y npm 11. Las versiones de dependencias quedan fijadas en un único package-lock.json.
-- MongoDB local para desarrollo o una base Atlas dedicada al proyecto.
+- MongoDB Atlas o un MongoDB local configurado como replica set. El registro de cuenta y perfil usa una transacción para evitar datos incompletos.
 - Instalación desde la raíz: npm ci. En PowerShell, si npm.ps1 está bloqueado, usar npm.cmd.
 
   backend/
@@ -79,16 +79,17 @@ Los PDF se limitan a 3 MB tanto en cliente como en servidor, por debajo del lím
 
 ## Permisos y comportamiento
 
-- El registro crea cuentas employee; enviar role, owner u otros campos no permitidos se rechaza.
+- El registro crea cuentas employee con un perfil laboral ficticio y fecha de ingreso persistida; enviar role, owner u otros campos no permitidos se rechaza.
 - Administrador: gestiona perfiles y revisa solicitudes; puede consultar documentos para la demostración.
 - Empleado: consulta su perfil y gestiona sus propios PDF y solicitudes; puede cancelar solo solicitudes pendientes.
-- Para asociar una cuenta a un perfil, registrar primero la cuenta y luego indicar su correo al crear o editar el perfil como administrador.
+- Las cuentas nuevas reciben automáticamente un perfil de demostración. Para corregir sus datos laborales, editar el perfil existente desde Empleados; también se puede registrar personal sin cuenta con el correo opcional vacío.
 - Los adjuntos usados en solicitudes no se borran mientras estén referenciados.
 - La sesión JWT dura dos horas, se guarda en cookie HttpOnly/Secure/SameSite=Strict en producción y usa protección CSRF para operaciones autenticadas. Logout revoca las sesiones anteriores de esa cuenta.
 - El servidor verifica firma, audiencia, emisor, estado de cuenta y permisos en cada petición. Los roles no se aceptan del almacenamiento del navegador.
 - Sin MongoDB no se informa éxito: /api/ready y operaciones de datos responden 503.
 - El alta pública con dominio @sesha.com es una convención de la demostración; no verifica titularidad de un buzón real. No se presenta como directorio corporativo con identidad verificada.
-- La constancia PDF usa el perfil guardado del usuario autenticado y se identifica como académica, sin firma digital ni validez laboral oficial. No se generan nóminas ficticias como si fueran pagos reales.
+- La constancia laboral PDF usa el nombre del usuario autenticado y su documento, cargo, área y fecha de ingreso guardados. La fecha de expedición se calcula al descargar en la zona America/Bogota. Documentos y Mi perfil comparten el mismo generador; el pie identifica los datos ficticios de demostración.
+- La fecha de ingreso puede editarse desde Empleados. Se rechazan fechas imposibles o futuras. Para completar perfiles históricos y fechas faltantes, ejecutar primero `node backend/scripts/complete-labor-profiles.js` y luego agregar `--apply` para guardar. Las contraseñas y los datos laborales válidos se conservan.
 - Los listados se paginan y los contadores de intentos se comparten en MongoDB entre instancias de Vercel.
 
 ## Pruebas y mantenimiento

@@ -10,40 +10,40 @@ No se publicó en Vercel, no se ejecutó la migración ni la semilla contra Atla
 
 ## Cambios principales
 
-| Hallazgo inicial | Corrección |
-| --- | --- |
-| Operaciones sin autenticación | Autenticación común, permisos de administrador y filtros de propietario |
-| Login demo y JWT de respaldo | Login contra MongoDB; sin secreto por defecto; contraseña académica conservada en la semilla |
-| Registro con identidad duplicada | Persistencia antes de iniciar sesión, índice único, error 409 y ausencia de mapas alternativos |
-| Hashes expuestos | Password excluido de consultas y serialización |
-| Colisión de modelos | User para cuentas históricas y Empleado para perfiles independientes |
-| Éxito sin guardar | Errores 503 y comprobaciones separadas de vida/disponibilidad |
-| Pantallas simuladas | Empleados, solicitudes, documentos, perfil e indicadores conectados a la API |
-| PDF desde datos manipulables | Constancia generada por servidor con el perfil autenticado, identificada como académica |
-| Subidas sin persistencia | PDF guardados en MongoDB, hasta 3 MB, con verificación de tipo y cabecera, descarga restringida y como adjunto |
-| Sesión inconsistente | Cookie HttpOnly, Secure en producción, SameSite Strict, CSRF y revocación al salir |
-| Herramientas duplicadas | Un único frontend Vite y una instalación npm mediante workspaces |
-| Dependencias vulnerables | Actualizaciones, versiones fijadas y override específico de minimatch |
-| Reglas y pruebas insuficientes | ESLint con reglas efectivas, Vitest, integración con MongoDB temporal y CI |
-| Configuración de despliegue ausente | Entrada serverless, rutas SPA/API, cabeceras, reutilización de conexión y guía de Vercel |
-| Índices modificados al arrancar | Migración explícita y repetible; pruebas de idempotencia |
-| Limitación local a cada proceso | Contadores atómicos compartidos en MongoDB con expiración TTL |
+| Hallazgo inicial                    | Corrección                                                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Operaciones sin autenticación       | Autenticación común, permisos de administrador y filtros de propietario                                        |
+| Login demo y JWT de respaldo        | Login contra MongoDB; sin secreto por defecto; contraseña académica conservada en la semilla                   |
+| Registro con identidad duplicada    | Persistencia antes de iniciar sesión, índice único, error 409 y ausencia de mapas alternativos                 |
+| Hashes expuestos                    | Password excluido de consultas y serialización                                                                 |
+| Colisión de modelos                 | User para cuentas históricas y Empleado para perfiles independientes                                           |
+| Éxito sin guardar                   | Errores 503 y comprobaciones separadas de vida/disponibilidad                                                  |
+| Pantallas simuladas                 | Empleados, solicitudes, documentos, perfil e indicadores conectados a la API                                   |
+| PDF desde datos manipulables        | Constancia generada por servidor con el perfil autenticado, identificada como académica                        |
+| Subidas sin persistencia            | PDF guardados en MongoDB, hasta 3 MB, con verificación de tipo y cabecera, descarga restringida y como adjunto |
+| Sesión inconsistente                | Cookie HttpOnly, Secure en producción, SameSite Strict, CSRF y revocación al salir                             |
+| Herramientas duplicadas             | Un único frontend Vite y una instalación npm mediante workspaces                                               |
+| Dependencias vulnerables            | Actualizaciones, versiones fijadas y override específico de minimatch                                          |
+| Reglas y pruebas insuficientes      | ESLint con reglas efectivas, Vitest, integración con MongoDB temporal y CI                                     |
+| Configuración de despliegue ausente | Entrada serverless, rutas SPA/API, cabeceras, reutilización de conexión y guía de Vercel                       |
+| Índices modificados al arrancar     | Migración explícita y repetible; pruebas de idempotencia                                                       |
+| Limitación local a cada proceso     | Contadores atómicos compartidos en MongoDB con expiración TTL                                                  |
 
 Los registros históricos sin propietario o sin contenido no se reconstruyen ni se asignan automáticamente a una persona. Permanecen para revisión del administrador. Un registro sin archivo devuelve 410 al intentar descargarlo.
 
 ## Comprobaciones realizadas
 
-| Comprobación | Resultado |
-| --- | --- |
-| Integración del backend | 18 pruebas aprobadas |
-| Componentes y sesión del frontend | 13 pruebas aprobadas en 8 archivos |
-| Análisis ESLint | Backend y frontend aprobados sin advertencias |
-| Compilación Vite | Aprobada |
-| npm audit del árbol completo | 0 vulnerabilidades conocidas reportadas |
-| npm ci en directorio aislado, dry-run offline | Archivo de bloqueo y manifiestos compatibles; no equivale a ejecutar CI en Linux |
-| Comprobación HTTP local | Ruta React, proxy, ingreso académico, cookie/CSRF, guardado y consulta de solicitud y cierre de sesión aprobados |
-| Entrada serverless | Rutas y respuesta 503 por configuración ausente verificadas |
-| git diff --check | Aprobado |
+| Comprobación                                  | Resultado                                                                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Integración del backend                       | 18 pruebas aprobadas                                                                                             |
+| Componentes y sesión del frontend             | 13 pruebas aprobadas en 8 archivos                                                                               |
+| Análisis ESLint                               | Backend y frontend aprobados sin advertencias                                                                    |
+| Compilación Vite                              | Aprobada                                                                                                         |
+| npm audit del árbol completo                  | 0 vulnerabilidades conocidas reportadas                                                                          |
+| npm ci en directorio aislado, dry-run offline | Archivo de bloqueo y manifiestos compatibles; no equivale a ejecutar CI en Linux                                 |
+| Comprobación HTTP local                       | Ruta React, proxy, ingreso académico, cookie/CSRF, guardado y consulta de solicitud y cierre de sesión aprobados |
+| Entrada serverless                            | Rutas y respuesta 503 por configuración ausente verificadas                                                      |
+| git diff --check                              | Aprobado                                                                                                         |
 
 Las pruebas usan MongoDB temporal con datos sintéticos, sin leer el archivo de entorno de producción ni conectarse a Atlas. Se descargó el binario oficial de MongoDB para la integración. Los servidores temporales de comprobación se cerraron al terminar.
 
@@ -64,3 +64,13 @@ El procedimiento completo y los permisos de las cuentas están en [README.md](RE
 El diagnóstico local registró `useContext: dispatcher is null`, con React y su renderizador cargados desde dos versiones de caché de Vite en la misma página. Se fijó la resolución única de React y React DOM y se incluyeron sus entradas de ejecución en la optimización inicial. Se verificó que los módulos servidos compartan la misma versión de caché.
 
 Se agregó una prueba del ingreso con la aplicación y navegación completas, una pantalla de recuperación ante errores de render y diagnóstico limitado al servidor local de desarrollo. También se fijó el color de texto del tema claro para las pantallas privadas. Las 13 pruebas del frontend, ESLint y la compilación pasan. Una pestaña abierta con módulos antiguos necesita recarga completa con Ctrl+Shift+R.
+
+## Constancias laborales personalizadas
+
+Se unificaron los botones de Documentos y Mi perfil bajo la constancia laboral de Sesha. Incluye nombre autenticado, documento ficticio, cargo, área, fecha de ingreso persistida y fecha de expedición actual en America/Bogota. La fecha de ingreso puede editarse desde Empleados y no admite fechas futuras o imposibles.
+
+Se completaron en Atlas los 29 perfiles faltantes y las fechas de ingreso de los 123 perfiles existentes. Las 152 cuentas tienen ahora datos laborales completos; se conservaron contraseñas y datos previamente válidos. Los registros nuevos crean cuenta y perfil en una transacción, y las pruebas utilizan un replica set temporal para comprobar la reversión ante fallos.
+
+Validación de esta actualización: 22 pruebas de backend y 15 de frontend aprobadas, ESLint y compilación aprobados; PDF renderizados y revisados en una sola página, incluyendo campos de longitud máxima. Se comprobó la descarga personalizada con tres usuarios de la demostración local, conservando sus datos temporales al reiniciar el backend. No se desplegó ni se subieron estos cambios automáticamente a GitHub.
+
+La plantilla compartida incluye ahora el logotipo existente de Sesha y una firma ficticia de Mariana Isabel Torres Ríos, Directora de Talento Humano. La firma manuscrita utiliza Allura, distribuida con su licencia OFL en backend/assets/fonts. Se incluyen los recursos en la configuración de Vercel. Se revisaron visualmente el PDF normal y el caso con campos de longitud máxima, ambos en una página; las 22 pruebas del backend y ESLint pasan.

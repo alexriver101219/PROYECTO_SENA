@@ -29,13 +29,32 @@ api.interceptors.response.use(
   },
 );
 export async function download(path, filename) {
-  const response = await api.get(path, { responseType: "blob" });
+  let response;
+  try {
+    response = await api.get(path, { responseType: "blob" });
+  } catch (error) {
+    if (error.response?.data instanceof Blob) {
+      try {
+        error.response.data = JSON.parse(await error.response.data.text());
+      } catch {
+        /* Conserva el error HTTP original. */
+      }
+    }
+    throw error;
+  }
   const url = URL.createObjectURL(response.data);
   const link = document.createElement("a");
   link.href = url;
-  link.download = filename;
+  const suggested =
+    response.headers["content-disposition"]?.match(/filename="?([^";]+)/)?.[1];
+  link.download = filename || suggested || "documento.pdf";
+  document.body.appendChild(link);
   link.click();
+  link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+export function downloadEmploymentCertificate() {
+  return download("/documentos/certificado");
 }
 export async function uploadPDF(file) {
   if (!file || file.type !== "application/pdf" || file.size > 3 * 1024 * 1024)

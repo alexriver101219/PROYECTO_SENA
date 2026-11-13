@@ -72,6 +72,9 @@ test("registro rechaza privilegios, operadores y contraseñas cortas", async () 
     { ...valid, role: "admin" },
     { ...valid, password: "x" },
     { ...valid, email: { $ne: null } },
+    { ...valid, position: "Cargo inexistente" },
+    { ...valid, position: "Administrador" },
+    { ...valid, position: { $ne: null } },
   ]) {
     expect(
       (await request(app).post("/api/auth/register").send(body)).status,

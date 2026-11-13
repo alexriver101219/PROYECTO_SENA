@@ -2,6 +2,7 @@ import { useState } from "react";
 import api, { errorMessage } from "../services/api";
 import { useCollection } from "../hooks/useCollection";
 import Pagination from "../components/Pagination";
+import { formatEmploymentDate, todayInBogota } from "../utils/formatters";
 const empty = {
   name: "",
   document: "",
@@ -9,6 +10,7 @@ const empty = {
   department: "",
   status: "Activo",
   email: "",
+  hireDate: "",
 };
 export default function Empleados() {
   const collection = useCollection("/empleados");
@@ -43,6 +45,7 @@ export default function Empleados() {
       department: employee.department,
       status: employee.status,
       email: employee.user?.email || "",
+      hireDate: employee.hireDate || "",
     });
     setEditing(employee.id);
     setError("");
@@ -102,6 +105,7 @@ export default function Empleados() {
                   "Cargo",
                   "Departamento",
                   "Estado",
+                  "Fecha de ingreso",
                   "Acciones",
                 ].map((title) => (
                   <th className="p-3" key={title}>
@@ -119,6 +123,9 @@ export default function Empleados() {
                   <td className="p-3">{employee.department}</td>
                   <td className="p-3">{employee.status}</td>
                   <td className="p-3">
+                    {formatEmploymentDate(employee.hireDate)}
+                  </td>
+                  <td className="p-3">
                     <button
                       className="text-blue-700"
                       onClick={() => edit(employee)}
@@ -130,7 +137,7 @@ export default function Empleados() {
               ))}
               {!filtered.length && (
                 <tr>
-                  <td colSpan="6" className="p-6">
+                  <td colSpan="7" className="p-6">
                     No hay empleados para mostrar.
                   </td>
                 </tr>
@@ -192,9 +199,25 @@ export default function Empleados() {
                 </label>
               ))}
               <p className="text-xs text-slate-500">
-                Para vincular un perfil, la persona debe registrar primero su
-                cuenta @sesha.com.
+                Las cuentas nuevas ya tienen un perfil: usa Editar para
+                actualizarlo. Puedes registrar personal sin cuenta dejando el
+                correo vacío.
               </p>
+              <label className="block text-sm">
+                Fecha de ingreso
+                <input
+                  type="date"
+                  name="hireDate"
+                  required
+                  min="1950-01-01"
+                  max={todayInBogota()}
+                  className="block w-full p-2 mt-1"
+                  value={form.hireDate}
+                  onChange={(event) =>
+                    setForm({ ...form, hireDate: event.target.value })
+                  }
+                />
+              </label>
               <label className="block text-sm">
                 Estado
                 <select

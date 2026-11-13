@@ -11,6 +11,7 @@ const Solicitud = require("../models/Solicitud");
 const RateLimit = require("../models/RateLimit");
 const { connectDB } = require("../config/db");
 const { validateConfig } = require("../config/env");
+const { completeLaborProfiles } = require("../services/laborProfiles");
 async function migrate() {
   validateConfig();
   await connectDB();
@@ -61,6 +62,7 @@ async function migrate() {
   if (legacy) await User.collection.dropIndex(legacy.name);
   for (const Model of [User, Empleado, Documento, Solicitud, RateLimit])
     await Model.createIndexes();
+  await completeLaborProfiles({ apply: true });
   console.log(
     "Migración completada. Los registros históricos sin propietario se conservan para revisión del administrador.",
   );

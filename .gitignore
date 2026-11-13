@@ -60,3 +60,7 @@ dump/
 .mongodb-binaries/
 .test-results.json
 .qa/
+output/
+
+.vercel
+.env*

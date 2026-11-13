@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { dateInBogota, validDateOnly } = require("../utils/dates");
 const schema = new mongoose.Schema(
   {
     user: {
@@ -17,6 +18,18 @@ const schema = new mongoose.Schema(
     position: { type: String, required: true, trim: true, maxlength: 100 },
     department: { type: String, required: true, trim: true, maxlength: 100 },
     status: { type: String, enum: ["Activo", "Inactivo"], default: "Activo" },
+    hireDate: {
+      type: String,
+      required: true,
+      default: () => dateInBogota(),
+      validate: {
+        validator: (value) =>
+          validDateOnly(value) &&
+          value >= "1950-01-01" &&
+          value <= dateInBogota(),
+        message: "Fecha de ingreso inválida",
+      },
+    },
   },
   {
     autoCreate: false,

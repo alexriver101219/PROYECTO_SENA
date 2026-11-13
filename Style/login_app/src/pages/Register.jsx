@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Shield,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import logo from "../assets/Sesha_logo.png";
+import api from "../services/api";
 
 function Register() {
   const auth = useAuth();
@@ -22,12 +23,26 @@ function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    position: "",
   });
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [positions, setPositions] = useState([]);
+  const [positionsError, setPositionsError] = useState(false);
+
+  const loadPositions = () => {
+    setPositionsError(false);
+    return api.get("/auth/positions").then(
+      ({ data }) => setPositions(data),
+      () => setPositionsError(true),
+    );
+  };
+  useEffect(() => {
+    loadPositions();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -60,6 +75,7 @@ function Register() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        position: formData.position,
       });
 
       navigate("/dashboard");
@@ -160,6 +176,44 @@ function Register() {
             </div>
           </div>
 
+          <div className="space-y-1.5">
+            <label
+              htmlFor="position"
+              className="text-xs font-semibold text-gray-700 block"
+            >
+              Cargo
+            </label>
+            <select
+              id="position"
+              required
+              value={formData.position}
+              onChange={handleChange}
+              disabled={!positions.length}
+              className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">
+                {positions.length ? "Selecciona tu cargo" : "Cargando cargos…"}
+              </option>
+              {positions.map(({ position }) => (
+                <option key={position} value={position}>
+                  {position}
+                </option>
+              ))}
+            </select>
+            {positionsError && (
+              <p role="alert" className="text-xs text-red-700">
+                No se pudieron cargar los cargos.{" "}
+                <button
+                  type="button"
+                  onClick={loadPositions}
+                  className="underline"
+                >
+                  Reintentar
+                </button>
+              </p>
+            )}
+          </div>
+
           {/* Contraseña */}
           <div className="space-y-1.5">
             <label
@@ -229,7 +283,7 @@ function Register() {
           {/* Botón de Envio */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !positions.length}
             className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg shadow transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed pt-2"
           >
             {loading ? (

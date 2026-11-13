@@ -9,6 +9,10 @@ const User = require("../models/User");
 const Empleado = require("../models/Empleado");
 const { connectDB } = require("../config/db");
 const { validateConfig } = require("../config/env");
+const {
+  demoHireDate,
+  completeLaborProfiles,
+} = require("../services/laborProfiles");
 async function seed() {
   validateConfig();
   await connectDB();
@@ -66,11 +70,13 @@ async function seed() {
           position: entry.position,
           department: entry.department,
           status: "Activo",
+          hireDate: demoHireDate(user._id),
         },
       },
       { upsert: true, runValidators: true },
     );
   }
+  await completeLaborProfiles({ apply: true });
   console.log(
     "Cuentas académicas preparadas. Las cuentas existentes conservaron sus contraseñas.",
   );

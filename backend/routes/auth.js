@@ -6,16 +6,19 @@ const Empleado = require("../models/Empleado");
 const { authenticate } = require("../middlewares/authMiddleware");
 const { asyncHandler } = require("../utils/http");
 const v = require("../utils/validation");
+const laborPositions = require("../config/laborPositions");
+router.get("/positions", (_req, res) => res.json(laborPositions));
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
-    v.fields(req.body, ["name", "email", "password"]);
+    v.fields(req.body, ["name", "email", "password", "position"]);
     sendSession(
       res,
       await service.register({
         name: v.text(req.body.name, "Nombre", 3, 100),
         email: v.email(req.body.email),
         password: v.password(req.body.password),
+        position: req.body.position,
       }),
       201,
     );

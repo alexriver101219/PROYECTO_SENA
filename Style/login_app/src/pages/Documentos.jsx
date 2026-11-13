@@ -1,5 +1,10 @@
 import { useState } from "react";
-import api, { download, errorMessage, uploadPDF } from "../services/api";
+import api, {
+  download,
+  downloadEmploymentCertificate,
+  errorMessage,
+  uploadPDF,
+} from "../services/api";
 import { useCollection } from "../hooks/useCollection";
 import Pagination from "../components/Pagination";
 export default function Documentos() {
@@ -48,21 +53,17 @@ export default function Documentos() {
         </p>
       )}
       <section className="bg-white border rounded-xl p-5 space-y-3">
-        <h2 className="font-bold text-lg">Constancia académica</h2>
+        <h2 className="font-bold text-lg">Constancia laboral</h2>
         <p>
-          Se genera con tu perfil laboral registrado. Es un documento de
-          demostración, sin firma digital ni validez laboral oficial.
+          Descarga tu constancia con nombre, documento, cargo, fecha de ingreso
+          y fecha de expedición actual.
         </p>
         <button
           disabled={busy}
           className="bg-blue-600 text-white rounded px-4 py-2"
-          onClick={() =>
-            action(() =>
-              download("/documentos/certificado", "constancia-academica.pdf"),
-            )
-          }
+          onClick={() => action(downloadEmploymentCertificate)}
         >
-          Generar y descargar PDF
+          Descargar constancia laboral
         </button>
       </section>
       <form

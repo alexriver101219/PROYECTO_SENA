@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Empleado = require("../models/Empleado");
+const { demoHireDate } = require("../services/laborProfiles");
 
 const COUNT = 120;
 const PASSWORD = "Sesha2026!";
@@ -41,7 +42,7 @@ const jobs = [
   ["Talento Humano", "Analista de talento humano"],
   ["Tecnología", "Auxiliar de tecnología"],
   ["Administración", "Asistente administrativo"],
-  ["Logística", "Coordinador de logística"],
+  ["Operaciones", "Coordinador de operaciones"],
 ];
 
 async function main() {
@@ -125,6 +126,7 @@ async function main() {
         department: entry.department,
         position: entry.position,
         status: "Activo",
+        hireDate: demoHireDate(entry._id),
       }),
   );
   for (const profile of profiles) await profile.validate();

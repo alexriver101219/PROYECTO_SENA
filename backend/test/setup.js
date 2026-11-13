@@ -1,11 +1,12 @@
-const { MongoMemoryServer } = require("mongodb-memory-server");
+const { MongoMemoryReplSet } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 let memory;
 beforeAll(async () => {
   process.env.NODE_ENV = "test";
   process.env.JWT_SECRET = "sesha-test-only-secret-with-more-than-32-bytes";
   process.env.APP_ORIGIN = "http://localhost:5173";
-  memory = await MongoMemoryServer.create({
+  memory = await MongoMemoryReplSet.create({
+    replSet: { count: 1 },
     binary: {
       downloadDir: require("path").resolve(
         __dirname,

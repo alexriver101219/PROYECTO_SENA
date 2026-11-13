@@ -4,6 +4,7 @@ const User = require("../models/User");
 const { authenticate, adminOnly } = require("../middlewares/authMiddleware");
 const { asyncHandler, HttpError } = require("../utils/http");
 const v = require("../utils/validation");
+const { hireDate } = require("../utils/dates");
 router.use(authenticate, adminOnly);
 router.get(
   "/",
@@ -28,6 +29,7 @@ async function employee(body) {
     "department",
     "status",
     "email",
+    "hireDate",
   ]);
   const data = {
     name: v.text(body.name, "Nombre", 3, 100),
@@ -36,6 +38,7 @@ async function employee(body) {
     department: v.text(body.department, "Departamento", 2, 100),
     status: body.status || "Activo",
   };
+  if (body.hireDate !== undefined) data.hireDate = hireDate(body.hireDate);
   if (
     !/^\d{7,10}$/.test(data.document) ||
     !["Activo", "Inactivo"].includes(data.status)

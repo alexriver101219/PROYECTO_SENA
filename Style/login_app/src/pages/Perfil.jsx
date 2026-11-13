@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { download, errorMessage } from "../services/api";
+import { downloadEmploymentCertificate, errorMessage } from "../services/api";
+import { formatEmploymentDate } from "../utils/formatters";
 export default function Perfil() {
   const auth = useAuth();
   const { refresh } = auth;
@@ -13,7 +14,7 @@ export default function Perfil() {
     setBusy(true);
     setError("");
     try {
-      await download("/documentos/certificado", "constancia-academica.pdf");
+      await downloadEmploymentCertificate();
     } catch (error) {
       setError(errorMessage(error));
     } finally {
@@ -36,6 +37,7 @@ export default function Perfil() {
               ["Cargo", auth.profile.position],
               ["Departamento", auth.profile.department],
               ["Estado", auth.profile.status],
+              ["Fecha de ingreso", formatEmploymentDate(auth.profile.hireDate)],
             ].map(([label, value]) => (
               <div key={label}>
                 <dt className="text-sm text-slate-500">{label}</dt>
@@ -51,10 +53,10 @@ export default function Perfil() {
         )}
       </section>
       <section className="bg-white p-6 rounded-xl border space-y-3">
-        <h2 className="font-bold text-lg">Constancia del proyecto académico</h2>
+        <h2 className="font-bold text-lg">Constancia laboral</h2>
         <p>
-          Los datos provienen de tu perfil registrado. No incluye firma digital
-          ni constituye un certificado laboral oficial.
+          Se genera con tu nombre, documento, cargo y fecha de ingreso
+          registrados, junto con la fecha actual de expedición.
         </p>
         {error && (
           <p role="alert" className="text-red-700">
@@ -66,7 +68,7 @@ export default function Perfil() {
           className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
           onClick={certificate}
         >
-          {busy ? "Generando…" : "Descargar constancia"}
+          {busy ? "Generando…" : "Descargar constancia laboral"}
         </button>
       </section>
     </main>

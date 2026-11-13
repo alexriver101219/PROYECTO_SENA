@@ -33,6 +33,10 @@ test("registro actualiza sesión y no guarda credenciales en localStorage", asyn
   const user = userEvent.setup();
   await user.type(screen.getByLabelText(/nombre completo/i), "Ana Díaz");
   await user.type(screen.getByLabelText(/correo/i), "ana.diaz@sesha.com");
+  await user.selectOptions(
+    screen.getByLabelText("Cargo"),
+    "Auxiliar de tecnología",
+  );
   await user.type(screen.getByLabelText(/^contraseña/i), "Sesha2026!");
   await user.type(screen.getByLabelText(/confirmar contraseña/i), "Sesha2026!");
   await user.click(screen.getByRole("button", { name: /registrarse/i }));
@@ -41,6 +45,7 @@ test("registro actualiza sesión y no guarda credenciales en localStorage", asyn
       name: "Ana Díaz",
       email: "ana.diaz@sesha.com",
       password: "Sesha2026!",
+      position: "Auxiliar de tecnología",
     }),
   );
   expect(screen.getByTestId("identity")).toHaveTextContent("Ana Díaz");
