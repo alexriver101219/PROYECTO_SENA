@@ -7,7 +7,8 @@ const pause=()=>new Promise(resolve=>setTimeout(resolve,1600));
 async function request(route,options={}){await pause();return fetch(base+route,{...options,redirect:'error',signal:AbortSignal.timeout(30000)});}
 (async()=>{
  const checks=[];const profiles=[];
- for(const account of [{email:'admin@sesha.com',password:'123456',role:'admin'},{email:'carlos.mendoza@sesha.com',password:'Sesha2026!',role:'employee'}]){
+ if(!process.env.SESHA_QA_ADMIN_PASSWORD || !process.env.SESHA_QA_EMPLOYEE_PASSWORD) throw Error('Configure SESHA_QA_ADMIN_PASSWORD and SESHA_QA_EMPLOYEE_PASSWORD before running QA.');
+ for(const account of [{email:'admin@sesha.com',password:process.env.SESHA_QA_ADMIN_PASSWORD,role:'admin'},{email:'carlos.mendoza@sesha.com',password:process.env.SESHA_QA_EMPLOYEE_PASSWORD,role:'employee'}]){
   const login=await request('/api/auth/login',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({email:account.email,password:account.password})});
   assert.equal(login.status,200);const cookie=login.headers.get('set-cookie').split(';')[0];await login.arrayBuffer();
   const me=await request('/api/auth/me',{headers:{Cookie:cookie,Origin:base}});assert.equal(me.status,200);
