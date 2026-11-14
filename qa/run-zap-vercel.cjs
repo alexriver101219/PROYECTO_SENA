@@ -31,6 +31,7 @@ async function counters(cookie) {
   return {dashboard:values[0],employees:values[1].total,documents:values[2].total,requests:values[3].total};
 }
 async function main() {
+  if(!process.env.SESHA_QA_ADMIN_PASSWORD) throw Error('Configure SESHA_QA_ADMIN_PASSWORD before running QA.');
   if(!fs.existsSync(jar))throw Error('ZAP 2.17.0 no está instalado en la ruta esperada.');
   const betaDir=path.join(root,'.qa/zap-vercel-tools/plugin');
   const betaFiles=fs.existsSync(betaDir)?fs.readdirSync(betaDir).filter(name=>name.endsWith('.zap')):[];
@@ -38,7 +39,7 @@ async function main() {
   const home=await request('/'); if(home.status!==200)throw Error('Inicio no accesible');
   const html=await home.text();
   const assets=[...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+\.(?:js|css))"/g)].map(m=>m[1]);
-  const login=await request('/api/auth/login',{method:'POST',data:{email:'admin@sesha.com',password:'123456'}});
+  const login=await request('/api/auth/login',{method:'POST',data:{email:'admin@sesha.com',password:process.env.SESHA_QA_ADMIN_PASSWORD}});
   if(login.status!==200)throw Error('No se obtuvo la sesión académica: HTTP '+login.status);
   const cookie=login.headers.get('set-cookie')?.split(';')[0];
   if(!cookie?.startsWith('sesha_session='))throw Error('No se recibió la cookie esperada.');
