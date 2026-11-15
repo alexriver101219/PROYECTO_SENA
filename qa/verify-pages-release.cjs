@@ -8,6 +8,16 @@ const directory = path.join(root, "docs/pruebas", date);
 const manifest = JSON.parse(fs.readFileSync(path.join(directory, "documentos.json"), "utf8"));
 const expected = ["informe-pruebas-funcionales.pdf", "informe-rendimiento-k6.pdf", "informe-seguridad-zap.pdf", "informe-seguridad-zap-vercel.pdf"];
 assert.deepEqual(manifest.files.map((item) => item.file).sort(), expected.sort());
+const technicalDirectory = path.join(root, "docs/informes", date);
+const technicalManifest = path.join(technicalDirectory, "documento.json");
+const additional = [];
+if (fs.existsSync(technicalManifest)) {
+  const technical = JSON.parse(fs.readFileSync(technicalManifest, "utf8"));
+  assert.equal(technical.file, "informe-tecnico-consolidado-sesha.pdf");
+  for (const file of [technical.file, "documento.json"]) additional.push({
+    file: `informes/${date}/${file}`, route: `informes/${date}/${file}`, local: path.join(technicalDirectory, file),
+  });
+}
 const digest = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 const records = [];
 async function request(route, stamp) {
@@ -28,15 +38,18 @@ async function main() {
     if (i < max - 1) await new Promise((resolve) => setTimeout(resolve, 10000));
   }
   assert.ok(ready, "Pages todavía no refleja esta edición");
-  await Promise.all([...expected, "resultados.json", "zap-vercel-resultados.json", "documentos.json"].map(async (file) => {
-    const localFile = fs.readFileSync(path.join(directory, file));
-    const remote = await request(`pruebas/${date}/${file}`, revision);
+  const downloads = [...expected, "resultados.json", "zap-vercel-resultados.json", "documentos.json"].map((file) => ({
+    file, route: `pruebas/${date}/${file}`, local: path.join(directory, file),
+  })).concat(additional);
+  await Promise.all(downloads.map(async ({ file, route, local }) => {
+    const localFile = fs.readFileSync(local);
+    const remote = await request(route, revision);
     assert.equal(remote.status, 200);
     if (file.endsWith(".pdf")) assert.equal(remote.bytes.subarray(0, 5).toString(), "%PDF-");
     assert.equal(digest(remote.bytes), digest(localFile), `La copia remota difiere: ${file}`);
     records.push({ file, status: remote.status, bytes: remote.bytes.length, identical: true });
   }));
-  const output = path.join(root, ".qa", `reports-${date}`, "pages-verification.json");
+  const output = path.join(root, ".qa", `reports-${date}`, additional.length ? "pages-verification-with-technical-report.json" : "pages-verification.json");
   const result = { target: base, checkedAt: new Date().toISOString(), date, verified: true,
     records: records.sort((a, b) => a.file.localeCompare(b.file)), credentialsUsed: false };
   fs.writeFileSync(output, JSON.stringify(result, null, 2));

@@ -1,0 +1,16 @@
+{
+    "date":  "2026-11-14",
+    "title":  "Informe técnico consolidado de SESHA APP",
+    "file":  "informe-tecnico-consolidado-sesha.pdf",
+    "pages":  36,
+    "bytes":  1093288,
+    "period":  "27/07/2026 a 14/11/2026, más una captura sin fecha",
+    "tables":  10,
+    "historicalCaptures":  8,
+    "nonfunctionalReportCaptures":  6,
+    "author":  "Alexander Rivera Sánchez",
+    "instructor":  "Alexander Mosquera Aguirre",
+    "ficha":  "3186701",
+    "format":  "APA 7 con alineación izquierda y elementos institucionales solicitados por el aprendiz",
+    "note":  "Integra bitácoras, evidencias históricas de Jest y capturas de informes verificados de k6 y ZAP; las capturas de informes no representan nuevas ejecuciones."
+}

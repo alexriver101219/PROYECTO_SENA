@@ -5,6 +5,9 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Fecha inválida");
 const directory = path.join(root, "docs/pruebas", date);
 const read = (name) => JSON.parse(fs.readFileSync(path.join(directory, name), "utf8"));
 const data = read("resultados.json"), vercel = read("zap-vercel-resultados.json"), documents = read("documentos.json");
+const technicalPath = path.join(root, "docs/informes", date, "documento.json");
+const technical = fs.existsSync(technicalPath) ? JSON.parse(fs.readFileSync(technicalPath, "utf8")) : null;
+if (technical && (technical.file !== "informe-tecnico-consolidado-sesha.pdf" || !Number.isInteger(technical.pages) || technical.pages < 1)) throw new Error("Informe técnico no válido");
 const esc = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 const risk = (counts) => `${counts.high} altas · ${counts.medium} medias · ${counts.low} bajas`;
 const num = (value, digits = 1) => new Intl.NumberFormat("es-CO", { maximumFractionDigits: digits }).format(value);
@@ -25,6 +28,7 @@ const html = `<!doctype html>
 <div class="metric"><strong>${data.functional.passed} / ${data.functional.total}</strong><span>Comprobaciones funcionales locales aprobadas</span></div>
 <div class="metric"><strong>${confirmed ? confirmed.targetRps + " solicitudes/s" : "Sin confirmación"}</strong><span>${confirmed ? "Confirmadas durante 60 s en el equipo local" : "Ninguna etapa de 60 s cumplió todos los umbrales"}</span></div>
 <div class="metric"><strong>${risk(data.security.riskCounts)}</strong><span>Clases del nuevo ensayo ZAP local</span></div></section>
+${technical ? `<h2>Informe técnico consolidado</h2><article class="card"><span class="tag">Bitácoras y evidencias · ${technical.pages} páginas</span><h3>Evolución, seguridad y validación de SESHA APP</h3><p>Periodo documentado: ${esc(technical.period)}. Incluye introducción, objetivos, arquitectura, conclusiones y referencias APA 7; ${technical.tables} tablas, ${technical.historicalCaptures} capturas históricas de Jest y ${technical.nonfunctionalReportCaptures} capturas de informes verificados de k6 y ZAP. Mantiene los resultados fallidos y las alertas pendientes.</p><p>Aprendiz: ${esc(technical.author)} · Ficha ${esc(technical.ficha)} · SENA 2026.</p><a class="button" href="informes/${date}/${technical.file}">Abrir informe técnico PDF</a></article>` : ""}
 <h2>Informes de pruebas actualizados</h2><section class="cards" aria-label="Informes PDF actuales">
 ${card("Funcionalidad", "Flujos, permisos y persistencia", `${data.functional.backend.passed} pruebas de backend, ${data.functional.frontend.passed} de frontend y ${data.functional.http.passed} verificaciones HTTP. Incluye el cambio de contraseña, el alta administrativa y las cuarentenas transaccionales. Las ${data.functional.production.passed} comprobaciones de publicación se presentan por separado.`, "informe-pruebas-funcionales.pdf")}
 ${card("k6 local", "Rendimiento y límites", `${performance.runs.length} etapas de carga y refinamiento. ${failed.length} etapas quedaron fuera de umbral; el PDF incluye latencias, errores, descartes y condiciones del equipo.`, "informe-rendimiento-k6.pdf")}
