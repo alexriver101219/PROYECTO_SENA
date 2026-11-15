@@ -15,7 +15,7 @@ const corsPath = path.join(directory, "cors-revalidacion.json");
 const corsReview = fs.existsSync(corsPath) ? JSON.parse(fs.readFileSync(corsPath, "utf8")) : null;
 if (technical && (technical.file !== "informe-tecnico-consolidado-sesha.pdf" || !Number.isInteger(technical.pages) || technical.pages < 1)) throw new Error("Informe técnico no válido");
 const esc = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-const risk = (counts) => `${counts.high} altas · ${counts.medium} medias · ${counts.low} bajas`;
+const risk = (counts) => `${counts.high} ${counts.high === 1 ? "alta" : "altas"} · ${counts.medium} ${counts.medium === 1 ? "media" : "medias"} · ${counts.low} ${counts.low === 1 ? "baja" : "bajas"}`;
 const num = (value, digits = 1) => new Intl.NumberFormat("es-CO", { maximumFractionDigits: digits }).format(value);
 const performance = data.performance, confirmed = performance.sustained;
 const files = Object.fromEntries(documents.files.map((item) => [item.file, item]));
@@ -40,7 +40,7 @@ ${technical ? `<h2>Informe técnico consolidado</h2><article class="card"><span 
 ${card("Funcionalidad", "Flujos, permisos y persistencia", `${data.functional.backend.passed} pruebas de backend, ${data.functional.frontend.passed} de frontend y ${data.functional.http.passed} verificaciones HTTP. Incluye el cambio de contraseña, el alta administrativa y las cuarentenas transaccionales. Las ${data.functional.production.passed} comprobaciones de publicación se presentan por separado.`, "informe-pruebas-funcionales.pdf")}
 ${card("k6 local", "Rendimiento y límites", `${performance.runs.length} etapas de carga y refinamiento. ${failed.length} etapas quedaron fuera de umbral; el PDF incluye latencias, errores, descartes y condiciones del equipo.`, "informe-rendimiento-k6.pdf")}
 ${card("OWASP ZAP local", "Seguridad del entorno aislado", `${risk(data.security.riskCounts)} y ${data.security.riskCounts.informational} clases informativas. Escaneo autenticado con cuentas ficticias, MongoDB temporal y análisis de las cabeceras publicadas.`, "informe-seguridad-zap.pdf")}
-${card("OWASP ZAP en Vercel", "Seguridad del sitio publicado", `${risk(vercel.riskCounts)} y ${vercel.riskCounts.informational} clases informativas. Revisión autenticada de rutas conocidas y ${activeRequests} peticiones activas acotadas a paginación GET.`, "informe-seguridad-zap-vercel.pdf")}
+${card("OWASP ZAP en Vercel", "Seguridad del sitio publicado", `Ensayo autenticado inicial: ${risk(vercel.riskCounts)} y ${vercel.riskCounts.informational} clases informativas. ${activeRequests} peticiones activas acotadas a paginación GET.${corsReview ? " El PDF incluye la corrección posterior de CORS: de cinco instancias a cero en las cinco rutas públicas revalidadas." : ""}`, "informe-seguridad-zap-vercel.pdf")}
 </section>
 <div class="context"><strong>Cómo leer la capacidad:</strong> k6, la API y MongoDB compartieron el portátil. Estas cifras describen ese entorno local; la capacidad de Vercel/Atlas y el número de usuarios simultáneos requieren una evaluación propia. En Vercel se mantuvieron los límites de seguridad y no se generó carga.</div>
 <h2>Capacidad observada en la nueva campaña</h2><div class="table-scroll"><table><caption>Confirmación, picos y límites</caption><thead><tr><th>Escenario</th><th>Observación</th></tr></thead><tbody>

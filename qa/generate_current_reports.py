@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from xml.sax.saxutils import escape
 from reportlab.lib import colors
+from reportlab import rl_config
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
@@ -19,6 +20,8 @@ from reportlab.graphics.charts.barcharts import VerticalBarChart
 from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parent.parent
+rl_config.useA85 = False
+ONLY_VERCEL = '--vercel-only' in sys.argv
 DATE = os.environ.get('REPORT_DATE', '2026-11-15')
 assert re.fullmatch(r'\d{4}-\d{2}-\d{2}', DATE)
 PUBLIC = ROOT / 'docs/pruebas' / DATE
@@ -26,6 +29,8 @@ OUT = ROOT / 'output/pdf'
 OUT.mkdir(parents=True, exist_ok=True)
 D = json.loads((PUBLIC / 'resultados.json').read_text(encoding='utf-8'))
 V = json.loads((PUBLIC / 'zap-vercel-resultados.json').read_text(encoding='utf-8')) if (PUBLIC / 'zap-vercel-resultados.json').exists() else None
+CORS_PATH = PUBLIC / 'cors-revalidacion.json'
+CORS = json.loads(CORS_PATH.read_text(encoding='utf-8')) if CORS_PATH.exists() else None
 NAVY, TEAL, INK, MUTED, AMBER = [colors.HexColor(value) for value in ['#142c45', '#087f80', '#26374a', '#526477', '#a75809']]
 pdfmetrics.registerFont(TTFont('Segoe', 'C:/Windows/Fonts/segoeui.ttf'))
 pdfmetrics.registerFont(TTFont('SegoeBold', 'C:/Windows/Fonts/segoeuib.ttf'))
@@ -76,14 +81,17 @@ def chrome(canvas, doc):
 def intro(title, subtitle):
     return [Spacer(1, 8*mm), p(title, 'TitleS'), p(subtitle), Spacer(1, 5*mm)]
 
-def provenance():
+def provenance(initial_campaign=False):
     return [h('Trazabilidad y conservación'), p('Aplicación de referencia: commit <b>'+safe(D['source']['commit'][:12])+'</b>. La identificación SHA-256 completa, las horas y los resultados numéricos están en <b>resultados.json</b>.'),
-        p('Los informes del 13 y 14/11/2026 se conservan en sus carpetas históricas. Esta edición publica una campaña nueva, sin modificar las evidencias anteriores.'),
+        p('Los informes del 13 y 14/11/2026 se conservan en sus carpetas históricas. ' + ('Esta revisión documental conserva la campaña autenticada original y la revalidación posterior, con fechas y alcances diferenciados. Actualizar este PDF no ejecuta nuevas pruebas.' if initial_campaign else 'Esta edición publica una campaña nueva, sin modificar las evidencias anteriores.')),
         p('No se publican contraseñas, cookies, tokens, cadenas de conexión, cuerpos de respuestas privadas ni registros crudos de los escáneres. Los archivos originales permanecen en .qa/, excluidos de Git y Pages.', 'SmallS')]
 
-manifest = []
+manifest = [entry for entry in json.loads((PUBLIC / 'documentos.json').read_text(encoding='utf-8'))['files']
+            if entry['file'] != 'informe-seguridad-zap-vercel.pdf'] if ONLY_VERCEL else []
 def build(name, story):
-    target = OUT / name
+    if ONLY_VERCEL and name != 'informe-seguridad-zap-vercel.pdf':
+        return
+    target = OUT / ('informe-seguridad-zap-vercel-actualizado.pdf' if ONLY_VERCEL else name)
     SimpleDocTemplate(str(target), pagesize=A4, leftMargin=18*mm, rightMargin=18*mm, topMargin=24*mm, bottomMargin=23*mm,
         title=name.replace('-', ' ').removesuffix('.pdf'), author='SESHA APP - Proyecto SENA').build(story, onFirstPage=chrome, onLaterPages=chrome)
     reader = PdfReader(target)
@@ -91,6 +99,8 @@ def build(name, story):
     assert all(len(page.extract_text() or '') > 100 for page in reader.pages), 'Página vacía'
     assert not re.search(r'mongodb\+srv://|sesha_session=|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+', text)
     shutil.copy2(target, PUBLIC / name)
+    if ONLY_VERCEL:
+        shutil.copy2(target, OUT / name)
     entry = {'file': name, 'pages': len(reader.pages), 'bytes': target.stat().st_size}
     manifest.append(entry); print(json.dumps(entry))
 
@@ -163,10 +173,10 @@ s += [h('Conclusión y siguiente alcance'), p('Esta campaña permite comparar ej
 build('informe-rendimiento-k6.pdf', s)
 
 def risk_metric(risk):
-    return f"{risk['high']} altas | {risk['medium']} medias | {risk['low']} bajas"
+    return f"{risk['high']} {'alta' if risk['high'] == 1 else 'altas'} | {risk['medium']} {'media' if risk['medium'] == 1 else 'medias'} | {risk['low']} {'baja' if risk['low'] == 1 else 'bajas'}"
 
-def alert_pages(data):
-    story = [PageBreak(), h('Hallazgos por clase'), p('Se agrupan por referencia y nombre. Varias instancias de la misma regla no representan vulnerabilidades independientes.'),
+def alert_pages(data, initial_campaign=False):
+    story = [PageBreak(), h('Hallazgos del ensayo original' if initial_campaign else 'Hallazgos por clase'), p('Se agrupan por referencia y nombre. Varias instancias de la misma regla no representan vulnerabilidades independientes.'),
         table([['Referencia', 'Clase', 'Riesgo', 'Instancias']] + [[item['reference'], item['name'], ['Informativo', 'Bajo', 'Medio', 'Alto'][item['riskCode']], item['count']] for item in data['alerts']], [.15, .49, .18, .18])]
     for item in data['alerts']:
         story += [KeepTogether([h(item['reference']+' - '+item['name']), p(safe(item['review']))]),
@@ -195,25 +205,45 @@ if V is None:
     sys.exit(0)
 risk = V['riskCounts']; E = V['execution']; C = V['checks']
 s = intro('Seguridad: ZAP en Vercel', 'Revisión autenticada del sitio de producción, autorizada y limitada a lecturas y dos reglas activas de bajo impacto.')
+if CORS:
+    assert CORS['verified'] and CORS['before']['corsInstances'] == 5 and CORS['after']['corsInstances'] == 0
+    s = intro('Seguridad: ZAP en Vercel', 'Estado de la corrección de CORS y conservación de la campaña autenticada original. Corte documental: '+DAY+'.')
+    s += [p('CORS corregido: 5 instancias a 0', 'MetricS'),
+        p('La alerta 10098, Cross-Domain Misconfiguration, se reprodujo en cinco recursos públicos y dejó de aparecer en esas mismas rutas después de restringir la cabecera de origen. El escaneo original se conserva íntegro en las secciones siguientes.'),
+        h('Corrección aplicada'),
+        p('vercel.json devuelve Access-Control-Allow-Origin: https://sesha-app.vercel.app en las páginas y los archivos estáticos. La regla excluye /api, que conserva los controles de origen y autenticación de Express.'),
+        table([['Control', 'Antes', 'Después'],
+            ['Instancias ZAP de la regla 10098', '5', '0'],
+            ['Cabecera de recursos públicos', '*', 'Dominio de SESHA'],
+            ['API sin sesión / origen ajeno', '401 / 403', '401 / 403'],
+            ['Verificaciones HTTP', '21', '21']], [.52, .20, .28]),
+        h('Trazabilidad de la revalidación'),
+        p('ZAP '+safe(CORS['after']['version'])+'. Fin: '+local(CORS['after']['end'])+' (Colombia).<br/>Commit: <font size="8">'+safe(CORS['commit'])+'</font>.<br/>Despliegue verificado: <font size="8">'+safe(CORS['deploymentId'])+'</font>.'),
+        h('Alcance y límites'),
+        p('La revalidación fue pasiva: cinco recursos públicos, sin sesiones, spider, escaneo activo, carga ni escrituras de negocio. Las 42 comprobaciones HTTP suman el contraste anterior y posterior. No se repitió la campaña autenticada completa y este resultado no certifica ausencia total de vulnerabilidades.'),
+        p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/pruebas/'+DATE+'/cors-revalidacion.json" color="#087f80">Evidencia comparada de CORS y alcance de las comprobaciones</link>', 'SmallS'),
+        PageBreak(), h('Campaña autenticada original: resultados conservados')]
+else:
+    s += [h('Resultados del ensayo autenticado')]
 s += [p(risk_metric(risk), 'MetricS'), p(f"Además: {risk['informational']} clases informativas. ZAP {V['zapVersion']} terminó con código {E['code']}."),
     h('Destino y versión'), p(safe(V['target'])+'<br/>Commit: <b>'+safe(V['deployment']['commit'][:12])+'</b><br/>Despliegue: '+safe(V['deployment']['id'])),
     p('Inicio: '+local(V['start'])+'<br/>Fin: '+local(V['end'])+' (Colombia).'),
     h('Controles antes y después'), table([['Control', 'Resultado'], ['Disponibilidad final', 'HTTP '+str(C['readyStatus'])], ['Dashboard anónimo', 'HTTP '+str(C['anonymousDashboardStatus'])],
         ['Conteos de negocio', 'Sin cambios' if C['countersUnchanged'] else 'Diferencia observada: revisar contexto'], ['Interrupción por salud', 'Sí' if E['stoppedForHealth'] else 'No']], [.47, .53]),
     p('Las sesiones fueron iniciadas por el propietario mediante un formulario local con campos enmascarados. Las contraseñas no se guardaron ni se incorporaron a los scripts. Los informes públicos no contienen sesiones.', 'SmallS')]
-s += [PageBreak(), h('Reglas activas y alcance real'), table([['Regla completada', 'Peticiones', 'Alertas', 'Segundos']] +
+s += [PageBreak(), h('Reglas activas del ensayo original' if CORS else 'Reglas activas y alcance real'), table([['Regla completada', 'Peticiones', 'Alertas', 'Segundos']] +
     [[item['rule'], item['requests'], item['alerts'], number(item['seconds'])] for item in E['activeEvidence']], [.50, .17, .16, .17]),
     p('Se analizaron limit y page en GET /api/empleados. Regla 40012: XSS reflejado; regla 40033: inyección NoSQL MongoDB. Un hilo, pausa de 1.500 ms y límite activo de tres minutos. Las protecciones de producción permanecieron habilitadas.'),
     h('Rutas y recursos revisados pasivamente'), table([['Ruta conocida']] + [[item] for item in dict.fromkeys(E['passiveRoutes'])], [1]),
     p('La sesión del administrador se añadió únicamente a la API del dominio autorizado. No se usaron spider, formularios de escritura, carga de archivos, fuerza bruta ni pruebas de carga en Vercel.', 'SmallS')]
-s += alert_pages(V)
-s += [PageBreak(), h('Contraste autenticado de CORS y caché'), table([['Lectura', 'HTTP', 'Cache-Control', 'ACAO']] +
+s += alert_pages(V, initial_campaign=bool(CORS))
+s += [PageBreak(), h('Contraste autenticado del ensayo original' if CORS else 'Contraste autenticado de CORS y caché'), table([['Lectura', 'HTTP', 'Cache-Control', 'ACAO']] +
     [[item['name'], item['status'], item['headers'].get('cache-control') or '-', 'Origen SESHA' if item['headers'].get('access-control-allow-origin') == V['target'] else item['headers'].get('access-control-allow-origin') or '-'] for item in V['manualReview']['checks']], [.36, .12, .30, .22]),
     p('En la tabla, «Origen SESHA» corresponde exactamente a https://sesha-app.vercel.app. Los valores completos se conservan en el JSON revisado.', 'SmallS'),
     p('Se verificó que administrador y empleado recibieran sus perfiles respectivos y que el acceso anónimo fuera rechazado. La API con una sesión válida y un origen ajeno se contrastó por separado del HTML público.'),
     p('CORS comodín en un recurso público no equivale automáticamente a exponer datos autenticados. Se conserva la severidad que reportó ZAP y se documenta el alcance de las lecturas; no se afirma una auditoría exhaustiva de caché.'),
     h('Límites y conservación'), p(safe(V['limitations'])),
     p('Los contadores ordinarios de seguridad y los registros del proveedor pueden variar por estas peticiones. El contraste de preservación se refiere a cuentas/perfiles, documentos y solicitudes, no a esos contadores técnicos.'),
-    p('<link href="https://www.zaproxy.org/docs/alerts/40012/" color="#087f80">ZAP 40012</link> | <link href="https://www.zaproxy.org/docs/alerts/40033/" color="#087f80">ZAP 40033</link>', 'SmallS')]+provenance()
+    p('<link href="https://www.zaproxy.org/docs/alerts/40012/" color="#087f80">ZAP 40012</link> | <link href="https://www.zaproxy.org/docs/alerts/40033/" color="#087f80">ZAP 40033</link>', 'SmallS')]+provenance(initial_campaign=bool(CORS))
 build('informe-seguridad-zap-vercel.pdf', s)
-(PUBLIC / 'documentos.json').write_text(json.dumps({'date': DATE, 'files': manifest}, indent=2), encoding='utf-8')
+(PUBLIC / 'documentos.json').write_text(json.dumps({'date': DATE, 'files': manifest}, indent=2)+'\n', encoding='utf-8', newline='\n')
