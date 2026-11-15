@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-15",
+  "author": "Alexander Rivera Sánchez",
+  "mainSlides": 18,
+  "supportSlides": 4,
+  "mainSeconds": 940,
+  "files": [
+    {
+      "file": "guia-ensayo.html",
+      "bytes": 15927,
+      "sha256": "3efa979e8f7c78921909a56570b621f0927695c81839cdef016e1b6cebc4cb3b"
+    },
+    {
+      "file": "SESHA-paquete-exposicion.zip",
+      "bytes": 10566768,
+      "sha256": "79ee59f706d358d7a0b8277605ba7923b87902038f58edd45ffc9d2a82fefabb"
+    },
+    {
+      "file": "SESHA-sustentacion-final.pdf",
+      "bytes": 10574246,
+      "sha256": "d35ae7177fd4a75a5a4918c79e3db89240e14da4373b1f95db08ebce52ea61b2"
+    },
+    {
+      "file": "SESHA-sustentacion-final.pptx",
+      "bytes": 2088539,
+      "sha256": "36cf3b7543018abf64d30d4d6c7ebad2262ae3f05034dacfb41806a4c3eac238"
+    }
+  ]
+}

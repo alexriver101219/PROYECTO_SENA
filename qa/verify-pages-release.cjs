@@ -12,6 +12,18 @@ const documentationDate = "2026-11-15";
 const technicalDirectory = path.join(root, "docs/informes", documentationDate);
 const technicalManifest = path.join(technicalDirectory, "documento.json");
 const additional = [];
+const presentationDirectory = path.join(root, "docs/presentacion", documentationDate);
+const presentationManifest = path.join(presentationDirectory, "archivos.json");
+if (fs.existsSync(presentationManifest)) {
+  const presentation = JSON.parse(fs.readFileSync(presentationManifest, "utf8"));
+  assert.equal(presentation.mainSlides, 18);
+  assert.equal(presentation.supportSlides, 4);
+  for (const file of [...presentation.files.map((item) => item.file), "archivos.json"]) {
+    assert.equal(path.basename(file), file);
+    additional.push({ file: `presentacion/${documentationDate}/${file}`, route: `presentacion/${documentationDate}/${file}`,
+      local: path.join(presentationDirectory, file) });
+  }
+}
 if (fs.existsSync(technicalManifest)) {
   const technical = JSON.parse(fs.readFileSync(technicalManifest, "utf8"));
   assert.equal(technical.file, "informe-tecnico-consolidado-sesha.pdf");
