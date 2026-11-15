@@ -7,13 +7,13 @@
   "files": [
     {
       "file": "guia-ensayo.html",
-      "bytes": 15927,
-      "sha256": "3efa979e8f7c78921909a56570b621f0927695c81839cdef016e1b6cebc4cb3b"
+      "bytes": 15908,
+      "sha256": "cb4fe43e5905ceae750ee13c453be479622a864bdddf4fd0ab856a0c7a97afef"
     },
     {
       "file": "SESHA-paquete-exposicion.zip",
-      "bytes": 10566768,
-      "sha256": "79ee59f706d358d7a0b8277605ba7923b87902038f58edd45ffc9d2a82fefabb"
+      "bytes": 10566756,
+      "sha256": "434b65168e12458e873d76170dfa95d87c35482fa412dcb5d95d8fb3e369bf58"
     },
     {
       "file": "SESHA-sustentacion-final.pdf",
