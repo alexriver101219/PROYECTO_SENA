@@ -2,13 +2,13 @@
   "date": "2026-11-15",
   "title": "Informe técnico consolidado de SESHA APP",
   "file": "informe-tecnico-consolidado-sesha.pdf",
-  "pages": 45,
-  "currentPages": 9,
+  "pages": 46,
+  "currentPages": 10,
   "historicalPages": 36,
-  "bytes": 1389367,
-  "sha256": "892646a5c5266567e5c4d8823dd442d0d2986d373398cb80fc418f4c6fee31d9",
+  "bytes": 1376227,
+  "sha256": "87db061cd524aac6bbe67bf2eaed02b1e1322d239a5424b53e00c9d64d5b07b3",
   "period": "27/07/2026 a 15/11/2026, más una captura histórica sin fecha",
-  "tables": 15,
+  "tables": 16,
   "historicalTables": 10,
   "historicalCaptures": 8,
   "nonfunctionalReportCaptures": 6,
@@ -17,6 +17,12 @@
   "ficha": "3186701",
   "applicationCommit": "3667358435062f345fffc2dc49d33ba1141e5c35",
   "format": "Referencias APA 7, alineación izquierda y elementos institucionales.",
-  "note": "Parte vigente de 9 páginas con la campaña repetida de funcionales, k6 y ZAP; entrega histórica íntegra de 36 páginas rotulada.",
+  "note": "Parte vigente de 10 páginas con campaña funcional, k6, ZAP y cierre de CORS; entrega histórica íntegra de 36 páginas rotulada.",
+  "corsRevalidation": {
+    "commit": "20e24bd915972094a4c73ddb5a8567352b725526",
+    "instancesBefore": 5,
+    "instancesAfter": 0,
+    "httpChecks": 42
+  },
   "evidence": "../../actualizaciones/2026-11-15/verificacion.json"
 }

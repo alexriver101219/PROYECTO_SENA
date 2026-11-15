@@ -10,5 +10,16 @@
   "hyperlinksUnchanged": true,
   "vaultPatternMatchesInUpdatedPDF": 0,
   "pdfSha256": "c656982339c2072848e46fb4822630ca8f8639fdbe633f6b12d11d569327a1e8",
-  "pdfBytes": 8431083
+  "pdfBytes": 8431083,
+  "subsequentPresentationUpdate": {
+    "reason": "Cierre documentado de CORS",
+    "date": "2026-11-15",
+    "pdfSha256": "ec7b997bcbabc6588dc17b43b03a837ac7b7d62328be9d7dd04f7c4ff4761c8d",
+    "pdfBytes": 8573224,
+    "vaultPatternMatches": 0,
+    "contentSlidesUpdated": [
+      16,
+      21
+    ]
+  }
 }

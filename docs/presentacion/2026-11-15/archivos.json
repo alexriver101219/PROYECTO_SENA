@@ -7,28 +7,28 @@
   "files": [
     {
       "file": "guia-ensayo.html",
-      "bytes": 15908,
-      "sha256": "cb4fe43e5905ceae750ee13c453be479622a864bdddf4fd0ab856a0c7a97afef"
+      "bytes": 15951,
+      "sha256": "7cec15c35564216c7e710f116a537c399961e7ab1e8fcb80dbe448562da8b6b9"
     },
     {
       "file": "revision-seguridad.json",
-      "bytes": 495,
-      "sha256": "bc8b289127a26c4b546d4d8ed2ae973b6ae9664a2595425cd0316899148cb43c"
+      "bytes": 802,
+      "sha256": "4f82ecb87b04bc71f557744c782d9521439985774e841c11f271c23e0d91251b"
     },
     {
       "file": "SESHA-paquete-exposicion.zip",
-      "bytes": 10237318,
-      "sha256": "5f77d993c4e91163c915623f4b1eb053a59e19a2e3653a1e15df0ca74af5e000"
+      "bytes": 10349333,
+      "sha256": "683a73fbbaf6765433f929381226118464453c236731bc48e18611a16b662051"
     },
     {
       "file": "SESHA-sustentacion-final.pdf",
-      "bytes": 8431083,
-      "sha256": "c656982339c2072848e46fb4822630ca8f8639fdbe633f6b12d11d569327a1e8"
+      "bytes": 8573224,
+      "sha256": "ec7b997bcbabc6588dc17b43b03a837ac7b7d62328be9d7dd04f7c4ff4761c8d"
     },
     {
       "file": "SESHA-sustentacion-final.pptx",
-      "bytes": 2088539,
-      "sha256": "36cf3b7543018abf64d30d4d6c7ebad2262ae3f05034dacfb41806a4c3eac238"
+      "bytes": 2088588,
+      "sha256": "e4820aa45b8333e13c62cfb8f770457d16db1cb10eb6c9e571de319ede4cf9d6"
     }
   ]
 }

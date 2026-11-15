@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timezone
 import re
 import shutil
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -17,10 +18,13 @@ from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
+from reportlab import rl_config
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
 
 ROOT = Path(__file__).resolve().parent.parent
+rl_config.useA85 = False
 DATE = '2026-11-15'
+TECHNICAL_ONLY = '--technical-only' in sys.argv
 OUT = ROOT / 'output/pdf'
 MANUAL = ROOT / 'docs/manual' / DATE
 TECH = ROOT / 'docs/informes' / DATE
@@ -38,6 +42,8 @@ accounts = read('.qa/access-accounts-complete-2026-11-15/verification.json')
 account_changes = read('.qa/access-accounts-complete-2026-11-15/applied.json')
 campaign = read('docs/pruebas/2026-11-15/resultados.json')
 remote_campaign = read('docs/pruebas/2026-11-15/zap-vercel-resultados.json')
+CORS_PATH = ROOT / 'docs/pruebas/2026-11-15/cors-revalidacion.json'
+CORS_REVIEW = json.loads(CORS_PATH.read_text(encoding='utf-8')) if CORS_PATH.exists() else None
 FC, PERF, ZS = campaign['functional'], campaign['performance'], campaign['security']
 TOTAL = FC['total']
 APP_COMMIT = campaign['source']['commit']
@@ -77,7 +83,8 @@ proof = {
     'historicalEvidence': {'previousReportDate': '2026-11-14', 'reportDate': DATE, 'newK6Run': True, 'newZAPRun': True, 'newBackupRun': False},
     'publicContent': 'Sin contraseñas, tokens, correos de empleados, documentos personales ni respaldos.'
 }
-(EVIDENCE / 'verificacion.json').write_text(json.dumps(proof, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+if not TECHNICAL_ONLY:
+    (EVIDENCE / 'verificacion.json').write_text(json.dumps(proof, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 NAVY, TEAL, INK, PALE = [colors.HexColor(value) for value in ['#142c45', '#087f80', '#26374a', '#eef5f8']]
 pdfmetrics.registerFont(TTFont('Segoe', 'C:/Windows/Fonts/segoeui.ttf'))
@@ -260,18 +267,21 @@ mp('11. Versión y alcance de esta guía', [
     p('<link href="https://github.com/alexriver101219/PROYECTO_SENA/blob/4fdbd9686367fbada6aee3c62761e0ded956e5bc/SOLICITUDES.md" color="#087f80">Flujo y controles de solicitudes</link>'),
     p('La guía no contiene credenciales. Para obtener ayuda sobre tus datos o un trámite concreto, utiliza el canal interno autorizado de SESHA.', 'SmallS')])
 
-manual_target = OUT / 'manual-usuario-sesha.pdf'
-build(manual_target, manual, landscape(A4), 'Manual de usuario')
+manual_target = (MANUAL if TECHNICAL_ONLY else OUT) / 'manual-usuario-sesha.pdf'
+if not TECHNICAL_ONLY:
+    build(manual_target, manual, landscape(A4), 'Manual de usuario')
 manual_reader = PdfReader(manual_target)
 assert len(manual_reader.pages) == 12, f'Revisar paginación del manual: {len(manual_reader.pages)}'
-shutil.copy2(manual_target, MANUAL / manual_target.name)
+if not TECHNICAL_ONLY:
+    shutil.copy2(manual_target, MANUAL / manual_target.name)
 manual_meta = {'date': DATE, 'title': 'Manual de usuario de SESHA APP', 'file': manual_target.name, 'pages': len(manual_reader.pages),
     'bytes': manual_target.stat().st_size, 'sha256': hashlib.sha256(manual_target.read_bytes()).hexdigest(),
     'applicationChangesPublished': True, 'applicationCommit': APP_COMMIT, 'evidence': '../../actualizaciones/2026-11-15/verificacion.json',
     'revision': 'Campaña completa de pruebas repetidas',
     'currentSections': ['Acceso y contraseña', 'Constancia y PDF', 'Desprendible quincenal', 'Permisos y ajuste de nómina', 'Revisión administrativa', 'Ayuda y seguridad'],
     'historicalScreenshotsDate': '2026-11-14', 'newBrowserVisualReview': False}
-(MANUAL / 'verificacion-entrega.json').write_text(json.dumps(manual_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+if not TECHNICAL_ONLY:
+    (MANUAL / 'verificacion-entrega.json').write_text(json.dumps(manual_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 # La parte vigente va primero. La entrega de 36 páginas se incorpora íntegra
 # como anexo histórico rotulado, sin reescribir resultados ni eliminar fallos.
@@ -285,7 +295,7 @@ tp('Informe técnico consolidado', [Spacer(1, 12), figure(LOGO, 67), Spacer(1, 1
     p('<b>Aprendiz:</b> Alexander Rivera Sánchez<br/><b>Instructor:</b> Alexander Mosquera Aguirre<br/><b>Ficha:</b> 3186701<br/><b>Institución:</b> SENA 2026'),
     p('<b>Fecha de corte:</b> 15 de noviembre de 2026.<br/><b>Periodo documentado:</b> 27/07/2026 a 15/11/2026, más una captura histórica sin fecha.'),
     p('La parte I presenta el estado vigente y la campaña repetida del 15/11. La parte II conserva la edición del 14/11 como anexo histórico, incluidas sus pruebas fallidas, capturas y referencias.'),
-    p('Resumen', 'SubS'), p(f"La aplicación incorpora desprendibles quincenales privados y solicitudes de personal con identidad del servidor, fechas y soporte opcional. La nueva campaña registra {TOTAL} comprobaciones funcionales locales aprobadas. k6: {capacity}. ZAP local: {risks(ZS)}. ZAP en Vercel: {risks(remote_campaign)}. Estos resultados se limitan al entorno y casos ejecutados, sin certificar seguridad absoluta ni capacidad de producción."),
+    p('Resumen', 'SubS'), p(f"La aplicación incorpora desprendibles quincenales privados y solicitudes de personal con identidad del servidor, fechas y soporte opcional. La nueva campaña registra {TOTAL} comprobaciones funcionales locales aprobadas. k6: {capacity}. ZAP local: {risks(ZS)}. ZAP en Vercel, ensayo inicial: {risks(remote_campaign)}. {'Revalidación posterior de CORS: cinco instancias a cero en cinco rutas públicas. ' if CORS_REVIEW else ''}Estos resultados se limitan al entorno y casos ejecutados, sin certificar seguridad absoluta ni capacidad de producción."),
     p('Presentación con alineación izquierda y elementos institucionales; referencias según APA 7. Las fechas operativas corresponden a America/Bogota.', 'SmallS')])
 
 tp('Parte I. Introducción y objetivos vigentes', [
@@ -332,11 +342,28 @@ tp('Validación del 15/11/2026 y sus límites', [
     table([['Evidencia', 'Resultado y alcance'], ['Funcionales locales', f"{FC['backend']['passed']} backend + {FC['frontend']['passed']} interfaz + {FC['http']['passed']} HTTP = {TOTAL} aprobadas; ejecución nueva."],
         ['Producción', f"{FC['production']['passed']} comprobaciones aprobadas sin escrituras de negocio; compilado contrastado."],
         ['k6 local', capacity], ['Etapas k6 fallidas', str(sum(not item['passed'] for item in PERF['runs']))+'; se conservan con sus errores, latencias y descartes.'],
-        ['ZAP local', risks(ZS)], ['ZAP Vercel', risks(remote_campaign)],
+        ['ZAP local', risks(ZS)], ['ZAP Vercel: ensayo inicial', risks(remote_campaign)],
         ['Dependencias', str(ZS['npmAudit']['total'])+' vulnerabilidades conocidas en npm audit.'], ['Alcance funcional nuevo', 'Fechas, identidad, N/A, adjuntos, aislamiento, aprobación y nómina quincenal.']], [TW * .29, TW * .71]),
     p('Trazabilidad de la aplicación', 'SubS'), p(f'Commit de referencia: <font size="8">{APP_COMMIT}</font>.<br/>Despliegue: <font size="8">{APP_DEPLOYMENT}</font>.<br/>Las horas, la huella del código medido, los intentos iniciales y los resultados completos se conservan en los JSON sanitizados (SESHA APP, 2026c, 2026d).'),
     p('El escáner del código actual no dejó hallazgos pendientes y la compilación no presentó coincidencias. Los hallazgos históricos y los falsos positivos revisados siguen documentados; no se declara un historial libre de exposición.'),
     p('Los intentos iniciales fallidos y las correcciones del ensayo se conservan en el informe funcional. No se completó revisión visual nueva, prueba en teléfono físico ni carga sobre Vercel/Atlas. Los resultados del anexo mantienen su corte del 14/11.', 'SmallS')])
+
+if CORS_REVIEW:
+    assert CORS_REVIEW['verified'] and CORS_REVIEW['after']['corsInstances'] == 0
+    tp('Cierre de la alerta de CORS en Vercel', [
+        p('La campaña autenticada inicial registró una alerta media 10098, Cross-Domain Misconfiguration, con cinco instancias en recursos públicos. Ese resultado se conserva como evidencia del ensayo original; no representa por sí solo el estado posterior a la corrección.'),
+        p('Corrección aplicada', 'SubS'),
+        p('Se añadió una regla en vercel.json para que las páginas y los recursos estáticos devuelvan Access-Control-Allow-Origin: https://sesha-app.vercel.app. El patrón excluye /api, que mantiene la validación de origen de Express. El cambio no altera roles, cuentas, contraseñas, datos de negocio ni cálculos de nómina.'),
+        table([['Comprobación', 'Antes', 'Después'],
+            ['ZAP 10098: instancias en cinco rutas públicas', '5', '0'],
+            ['Cabecera de recursos estáticos', '*', 'Dominio de SESHA'],
+            ['API sin sesión / con origen ajeno', '401 / 403', '401 / 403'],
+            ['Controles HTTP del contraste', '21', '21']], [TW * .53, TW * .20, TW * .27]),
+        Spacer(1, 9), p('Trazabilidad y publicación', 'SubS'),
+        p(f"Commit de corrección: <font size='8'>{CORS_REVIEW['commit']}</font>.<br/>Despliegue verificado: <font size='8'>{CORS_REVIEW['deploymentId']}</font>.<br/>GitHub CI y Vercel finalizaron correctamente. La configuración está guardada localmente y publicada en producción."),
+        p('Alcance de la revalidación', 'SubS'),
+        p('ZAP 2.17.0 realizó una nueva lectura pasiva de las mismas cinco rutas públicas. El contraste HTTP sumó 42 comprobaciones antes y después del cambio. No se repitieron el escaneo autenticado, las reglas activas ni la carga. Cero instancias de esta alerta en ese alcance no certifica ausencia total de vulnerabilidades.'),
+        p('SESHA APP. (2026e, 15 de noviembre). <i>Revalidación de CORS y controles HTTP</i> [Evidencia técnica]. <link href="https://alexriver101219.github.io/PROYECTO_SENA/pruebas/2026-11-15/cors-revalidacion.json" color="#087f80">Resultados comparados y alcance</link>.', 'RefS')])
 
 tp('Conclusiones y referencias de la actualización', [
     p('La ampliación conserva el control de identidad en el servidor y conecta la radicación con MongoDB. El formulario unifica datos personales, fechas y soportes, mientras el historial distingue consulta del empleado y decisión administrativa.'),
@@ -359,7 +386,7 @@ tp('Parte II. Anexo histórico íntegro', [Spacer(1, 25), p('Informe consolidado
 current_part = RENDER / 'informe-parte-vigente.pdf'
 build(current_part, tech, A4, 'Informe técnico', institutional=True)
 current_reader = PdfReader(current_part)
-assert len(current_reader.pages) == 9, f'Revisar paginación técnica: {len(current_reader.pages)}'
+assert len(current_reader.pages) == (10 if CORS_REVIEW else 9), f'Revisar paginación técnica: {len(current_reader.pages)}'
 writer = PdfWriter()
 writer.append(current_reader, import_outline=False)
 writer.add_outline_item(title='Parte I - Estado vigente al 15/11/2026', page_number=0)
@@ -373,20 +400,22 @@ for index, page in enumerate(historical.pages):
     c.save(); writer.add_page(page); writer.pages[-1].merge_page(PdfReader(overlay).pages[0])
 writer.add_metadata({'/Title': 'SESHA APP - Informe técnico consolidado actualizado al 15/11/2026', '/Author': 'Alexander Rivera Sánchez',
     '/Subject': 'Parte vigente y anexo histórico conservado; SENA 2026, ficha 3186701'})
-tech_target = OUT / 'informe-tecnico-consolidado-sesha.pdf'
+tech_name = 'informe-tecnico-consolidado-sesha.pdf'
+tech_target = OUT / ('informe-tecnico-consolidado-sesha-actualizado.pdf' if TECHNICAL_ONLY else tech_name)
 writer.compress_identical_objects()
 with tech_target.open('wb') as stream:
     writer.write(stream)
-shutil.copy2(tech_target, TECH / tech_target.name)
-technical_meta = {'date': DATE, 'title': 'Informe técnico consolidado de SESHA APP', 'file': tech_target.name,
+shutil.copy2(tech_target, TECH / tech_name)
+technical_meta = {'date': DATE, 'title': 'Informe técnico consolidado de SESHA APP', 'file': tech_name,
     'pages': len(writer.pages), 'currentPages': len(current_reader.pages), 'historicalPages': len(historical.pages),
     'bytes': tech_target.stat().st_size, 'sha256': hashlib.sha256(tech_target.read_bytes()).hexdigest(),
-    'period': '27/07/2026 a 15/11/2026, más una captura histórica sin fecha', 'tables': 15, 'historicalTables': 10,
+    'period': '27/07/2026 a 15/11/2026, más una captura histórica sin fecha', 'tables': 16 if CORS_REVIEW else 15, 'historicalTables': 10,
     'historicalCaptures': 8, 'nonfunctionalReportCaptures': 6, 'author': 'Alexander Rivera Sánchez', 'instructor': 'Alexander Mosquera Aguirre',
     'ficha': '3186701', 'applicationCommit': APP_COMMIT, 'format': 'Referencias APA 7, alineación izquierda y elementos institucionales.',
-    'note': 'Parte vigente de 9 páginas con la campaña repetida de funcionales, k6 y ZAP; entrega histórica íntegra de 36 páginas rotulada.',
+    'note': f'Parte vigente de {len(current_reader.pages)} páginas con campaña funcional, k6, ZAP y cierre de CORS; entrega histórica íntegra de 36 páginas rotulada.',
+    'corsRevalidation': {'commit': CORS_REVIEW['commit'], 'instancesBefore': 5, 'instancesAfter': 0, 'httpChecks': 42} if CORS_REVIEW else None,
     'evidence': '../../actualizaciones/2026-11-15/verificacion.json'}
-(TECH / 'documento.json').write_text(json.dumps(technical_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+(TECH / 'documento.json').write_text(json.dumps(technical_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 for file in [manual_target, tech_target]:
     reader = PdfReader(file)
