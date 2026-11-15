@@ -12,6 +12,7 @@ async function connectDB() {
         serverSelectionTimeoutMS: 5000,
         connectTimeoutMS: 5000,
         autoIndex: process.env.NODE_ENV !== "production",
+        autoCreate: process.env.NODE_ENV !== "production",
       })
       .catch((error) => {
         connecting = null;

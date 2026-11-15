@@ -1,0 +1,20 @@
+title = "SESHA: reglas estándar y contraseñas incrustadas"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sesha-hardcoded-password"
+description = "Contraseña literal en código o herramientas operativas"
+regex = '''(?i)\b(?:password|passwd|pwd)\b['"]?\s*[:=]\s*['"]([^'"\r\n]{6,72})['"]'''
+secretGroup = 1
+keywords = ["password", "PASSWORD", "passwd", "pwd"]
+
+[[rules.allowlists]]
+description = "Fixtures explícitas que no se usan en cuentas reales"
+regexTarget = "secret"
+regexes = ['''^test-only-''', '''^reference-credential-never-used-for-login$''']
+
+[[rules.allowlists]]
+description = "Pruebas aisladas: solo la regla de contraseñas genéricas"
+paths = ['''(^|[/\\])(test|tests|__tests__)[/\\]''']

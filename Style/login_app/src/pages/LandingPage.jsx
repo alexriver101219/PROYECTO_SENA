@@ -78,8 +78,7 @@ function LandingPage() {
 
       {/* 🔹 HERO SECTION (Fondo con Glow y Estilo Moderno) */}
       <section 
-        className="relative max-w-none mx-0 my-0 rounded-none bg-transparent shadow-none py-10 lg:py-14 px-4 sm:px-8 xl:px-12 border-b border-slate-800/80 bg-cover bg-center flex-1 flex items-center overflow-hidden"
-        style={{ backgroundImage: `linear-gradient(to right, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.88)), url(${fondo})` }}
+        className="sesha-hero relative max-w-none mx-0 my-0 rounded-none bg-transparent shadow-none py-10 lg:py-14 px-4 sm:px-8 xl:px-12 border-b border-slate-800/80 bg-cover bg-center flex-1 flex items-center overflow-hidden"
       >
         {/* Luz de fondo decorativa */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>

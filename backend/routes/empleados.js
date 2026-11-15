@@ -5,6 +5,8 @@ const { authenticate, adminOnly } = require("../middlewares/authMiddleware");
 const { asyncHandler, HttpError } = require("../utils/http");
 const v = require("../utils/validation");
 const { hireDate } = require("../utils/dates");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 router.use(authenticate, adminOnly);
 router.get(
   "/",
@@ -55,7 +57,19 @@ async function employee(body) {
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const created = await Empleado.create(await employee(req.body));
+    let created;
+    if (Object.hasOwn(req.body || {}, "initialPassword")) {
+      const { initialPassword, ...body } = req.body;
+      const password = await bcrypt.hash(v.newPassword(initialPassword), 12);
+      const email = v.email(body.email);
+      const data = await employee({ ...body, email: "" });
+      if (!body.hireDate) throw new HttpError(400, "Indica la fecha de ingreso verificada");
+      created = await mongoose.connection.transaction(async (session) => {
+        const [user] = await User.create([{ name: data.name, email, password, role: "employee" }], { session });
+        const [profile] = await Empleado.create([{ ...data, user: user._id }], { session });
+        return profile;
+      });
+    } else created = await Empleado.create(await employee(req.body));
     res.status(201).json(await created.populate("user", "email"));
   }),
 );

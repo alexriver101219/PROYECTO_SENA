@@ -1,0 +1,134 @@
+{
+  "project": "SESHA APP",
+  "date": "2026-11-14",
+  "timezone": "America/Bogota",
+  "baselineEvidenceDate": "2026-11-13",
+  "applicationChangesPublished": false,
+  "applicationCommit": "7ce49878852e2e8c87dc60861119f51b5c46fd25",
+  "target": "https://sesha-app.vercel.app",
+  "presentationUpdate": {
+    "baseCommit": "7ce49878852e2e8c87dc60861119f51b5c46fd25",
+    "workingTreeRevision": true,
+    "revisedScreenshots": [
+      "Ingreso con botón Cambiar contraseña",
+      "Formulario de cambio de contraseña"
+    ],
+    "scope": "Revisión local del 14/11/2026, pendiente de publicar. Se conservan las capturas y evidencias del 13/11/2026 para los demás módulos y el respaldo."
+  },
+  "backup": {
+    "startedAt": "2026-11-14T23:50:11.646Z",
+    "completedAt": "2026-11-14T23:50:29.239Z",
+    "sourceDatabase": "proyecto_sena",
+    "sourceVersion": "8.0.37",
+    "toolsVersion": "100.20.1",
+    "archiveBytes": 15895,
+    "archiveSha256": "fc20ac924c95dedbd05ca54a9dfb6c44064ba0e83bade86493b8dae5a6263698",
+    "restoreTarget": "127.0.0.1 temporal aislado",
+    "sourceReadOnly": true,
+    "changedDuringDump": [],
+    "checks": [
+      {
+        "collection": "documentos",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "empleados",
+        "documents": 152,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "perfiles_empleados",
+        "documents": 152,
+        "indexes": 3,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "ratelimits",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      },
+      {
+        "collection": "solicituds",
+        "documents": 0,
+        "indexes": 2,
+        "documentsMatch": true,
+        "indexesMatch": true,
+        "optionsMatch": true
+      }
+    ],
+    "passed": true,
+    "scope": "Todas las colecciones, documentos BSON, opciones e índices de proyecto_sena. No incluye usuarios de Atlas, claves, configuración de red ni recuperación a un instante mediante oplog."
+  },
+  "visualReview": {
+    "reviewDate": "2026-11-13",
+    "browser": "Microsoft Edge",
+    "desktop": "1280 x 752 píxeles lógicos",
+    "mobile": {
+      "kind": "Emulación adaptable en Edge",
+      "widthCssPx": 400,
+      "heightCssPx": 547,
+      "physicalDeviceTested": false
+    },
+    "observed": [
+      "Portada",
+      "Registro y 15 cargos",
+      "Login de empleado y administrador",
+      "Paneles y menús por rol",
+      "Perfil con cargo actualizado",
+      "Documentos y descarga de constancia",
+      "Solicitudes por rol",
+      "Directorio y formulario de edición",
+      "Estado Activo/Inactivo disponible",
+      "Navegación y formulario en móvil emulado",
+      "Desplazamiento horizontal hasta Editar en tabla móvil",
+      "Cierre de ambas sesiones"
+    ],
+    "certificateDownloadedBytes": 58222,
+    "registrationAccountCreatedInBrowser": false,
+    "existingProfilesChangedDuringVisualReview": false,
+    "uploadViaBrowserCompleted": false,
+    "uploadLimitation": "El control de aplicaciones no reconoció los campos del selector nativo de archivos. Se canceló ese diálogo y se verificó la carga mediante API."
+  },
+  "apiCheck": {
+    "uploadStatus": 201,
+    "downloadStatus": 200,
+    "bytes": 54654,
+    "bytesMatch": true,
+    "requestStatus": 201,
+    "fixturesRemoved": true,
+    "finalDocuments": 0,
+    "finalRequests": 0,
+    "profilesVerifiedAfterReview": 152,
+    "registrationOptions": 15
+  },
+  "passwordChangeUpdate": {
+    "date": "2026-11-14",
+    "environment": "Local, MongoDB temporal aislado",
+    "browser": "Microsoft Edge InPrivate, control nativo de Windows",
+    "screenshots": [
+      "Login con botón de cambio",
+      "Formulario con campos vacíos"
+    ],
+    "credentialsEnteredForDocumentation": false,
+    "productionAccountsChangedForDocumentation": false,
+    "backendTestsPassed": 48,
+    "frontendTestsPassed": 19,
+    "passwordMinimumCharacters": 12,
+    "passwordMaximumUtf8Bytes": 72,
+    "requiresCurrentPassword": true,
+    "previousSessionsRevokedOnSuccess": true,
+    "deploymentPending": true
+  }
+}

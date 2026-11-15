@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
-const output = path.join(root, ".qa/assessment-2026-11-13");
+const output = path.resolve(root, process.env.QA_OUTPUT || ".qa/assessment-2026-11-13");
 const session = path.join(output, "session.json");
 const results = [];
 
@@ -10,7 +10,7 @@ async function run(kind, rate, duration, label) {
   const file = path.join(output, `k6-${label || kind + "-" + rate}.json`);
   const start = new Date().toISOString();
   await new Promise((resolve, reject) => {
-    const child = spawn("k6", ["run", "--quiet", path.join(root, "qa/k6/capacity.js")], { cwd: root, env: {
+    const child = spawn(process.env.K6_BINARY || "k6", ["run", "--quiet", path.join(root, "qa/k6/capacity.js")], { cwd: root, env: {
       ...process.env, K6_NO_USAGE_REPORT: "true", K6_WEB_DASHBOARD: "false", QA_SESSION_FILE: session, QA_RESULT: file, QA_KIND: kind, QA_RATE: String(rate), QA_DURATION: duration,
     }, windowsHide: true });
     let log = ""; child.stdout.on("data", data => { log += data; }); child.stderr.on("data", data => { log += data; });

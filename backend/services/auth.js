@@ -20,6 +20,8 @@ function session(user) {
   return { success: true, token, user: user.toJSON() };
 }
 async function register(data) {
+  if (process.env.NODE_ENV === "production")
+    throw new HttpError(403, "El registro público está cerrado. Solicita tu cuenta al administrador.");
   const { position, ...account } = data;
   const job = laborPositions.find((item) => item.position === position);
   if (position !== undefined && !job)
@@ -48,4 +50,21 @@ async function login(email, password) {
     throw new HttpError(401, "Correo o contraseña incorrectos");
   return session(user);
 }
-module.exports = { register, login };
+async function changePassword(email, currentPassword, newPassword) {
+  const user = await User.findOne({ email }).select("+password");
+  const matches = await bcrypt.compare(currentPassword, user?.password || dummyHash);
+  if (!user || !matches || !user.active)
+    throw new HttpError(401, "Correo o contraseña actual incorrectos");
+  if (await bcrypt.compare(newPassword, user.password))
+    throw new HttpError(400, "La nueva contraseña debe ser diferente de la actual");
+  const hash = await bcrypt.hash(newPassword, 12);
+  // Una única escritura atómica: preserva roles y datos y detecta cambios concurrentes.
+  const result = await User.updateOne(
+    { _id: user._id, active: true, password: user.password },
+    { $set: { password: hash }, $inc: { sessionVersion: 1 } },
+    { runValidators: true, upsert: false, timestamps: false },
+  );
+  if (result.modifiedCount !== 1)
+    throw new HttpError(409, "La cuenta cambió durante la operación. Vuelve a intentarlo");
+}
+module.exports = { register, login, changePassword };

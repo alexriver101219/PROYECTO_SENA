@@ -28,10 +28,13 @@ async function main() {
   const { connectDB } = require("../backend/config/db");
   await connectDB();
   const { seed } = require("../backend/scripts/seed");
+  process.env.SEED_ADMIN_PASSWORD = "test-only-fixture-0-credentials";
+  process.env.SEED_CARLOS_PASSWORD = "test-only-fixture-1-credentials";
+  process.env.SEED_LAURA_PASSWORD = "test-only-fixture-1-credentials";
   await seed();
   const User = require("../backend/models/User");
   const Empleado = require("../backend/models/Empleado");
-  const password = await bcrypt.hash("Sesha2026!", 12);
+  const password = await bcrypt.hash("test-only-fixture-1-credentials", 12);
   const extraUsers = await User.insertMany(Array.from({ length: 149 }, (_, i) => ({
     name: "Empleado QA " + String(i + 1).padStart(3, "0"),
     email: `qa.${i + 1}@sesha.com`, password, role: "employee",
@@ -46,6 +49,7 @@ async function main() {
   const identity = limits => ({ isolated: true, database: "sesha_qa_assessment", runId, limits });
   async function api(port, limits) {
     const wrapper = express();
+    wrapper.disable("x-powered-by");
     wrapper.get("/__qa/identity", (_req, res) => res.json(identity(limits)));
     wrapper.use((_req, _res, next) => { requests++; next(); });
     wrapper.use(createApp({ limits }));
@@ -57,6 +61,7 @@ async function main() {
   await api(8101, false);
   const dist = path.join(root, "Style/login_app/dist");
   const staticApp = express();
+  staticApp.disable("x-powered-by");
   const publicHeaders = JSON.parse(fs.readFileSync(path.join(root, "vercel.json"))).headers[0].headers;
   staticApp.use((_req, res, next) => { for (const header of publicHeaders) res.set(header.key, header.value); next(); });
   staticApp.use(express.static(dist));

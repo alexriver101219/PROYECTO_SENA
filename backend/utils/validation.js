@@ -33,6 +33,13 @@ function password(value) {
     );
   return value;
 }
+function newPassword(value) {
+  if (typeof value !== "string" || [...value].length < 12 ||
+      Buffer.byteLength(value, "utf8") > 72 ||
+      [...value].some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127))
+    throw new HttpError(400, "La nueva contraseña debe tener al menos 12 caracteres y máximo 72 bytes, sin caracteres de control");
+  return value;
+}
 function id(value) {
   if (!mongoose.isObjectIdOrHexString(value))
     throw new HttpError(400, "Identificador inválido");
@@ -52,4 +59,4 @@ function page(query) {
     throw new HttpError(400, "Paginación inválida");
   return { limit, skip: (current - 1) * limit, page: current };
 }
-module.exports = { fields, text, email, password, id, page };
+module.exports = { fields, text, email, password, newPassword, id, page };

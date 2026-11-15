@@ -73,4 +73,4 @@ async function main(){
  console.log(JSON.stringify({directory:output,result}));
  if(!passed)throw Error('El respaldo se conserva, pero la restauración no coincide en todas las comprobaciones.');
 }
-main().catch(error=>{console.error('Respaldo/verificación:',error.message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi,'[URI omitida]'));process.exitCode=1;}).finally(async()=>{fs.rmSync(config,{force:true});if(local)await local.close();if(memory)await memory.stop();if(source)await source.close();});
+main().catch(()=>{console.error('Respaldo/verificación no completado; detalles privados omitidos. Revisar los registros privados.');process.exitCode=1;}).finally(async()=>{fs.rmSync(config,{force:true});if(local)await local.close();if(memory)await memory.stop();if(source)await source.close();});

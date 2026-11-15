@@ -12,6 +12,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import logo from "../assets/Sesha_logo.png";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 
 function Login() {
   const auth = useContext(AuthContext);
@@ -21,6 +22,16 @@ function Login() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [notice, setNotice] = useState("");
+
+  const openPasswordChange = () => {
+    setError(null);
+    setNotice("");
+    setShowPassword(false);
+    setFormData((previous) => ({ ...previous, password: "" }));
+    setChangingPassword(true);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -69,13 +80,14 @@ function Login() {
             />
             <Shield className="w-8 h-8 text-blue-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Iniciar Sesión</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{changingPassword ? "Cambiar contraseña" : "Iniciar Sesión"}</h1>
           <p className="text-xs text-gray-600">
-            Ingresa tus credenciales para acceder a la plataforma SESHA APP.
+            {changingPassword ? "Actualiza el acceso a tu cuenta de SESHA APP." : "Ingresa tus credenciales para acceder a la plataforma SESHA APP."}
           </p>
         </div>
 
         {/* Mensaje de Error */}
+        {notice && <p role="status" className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">{notice}</p>}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-xs flex items-center gap-2 animate-fade-in">
             <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-500" />
@@ -84,7 +96,15 @@ function Login() {
         )}
 
         {/* Formulario de Login */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {changingPassword ? (
+          <ChangePasswordForm initialEmail={formData.email} onChangePassword={auth.changePassword}
+            onCancel={() => setChangingPassword(false)}
+            onSuccess={(email) => {
+              setFormData({ email, password: "" });
+              setChangingPassword(false);
+              setNotice("Contraseña actualizada. Inicia sesión con tu nueva contraseña.");
+            }} />
+        ) : <form onSubmit={handleSubmit} className="space-y-4">
           {/* Campo Correo Electronico */}
           <div className="space-y-1.5">
             <label
@@ -98,6 +118,7 @@ function Login() {
               <input
                 id="email"
                 type="email"
+                autoComplete="username"
                 required
                 placeholder="tu@correo.com"
                 value={formData.email}
@@ -122,6 +143,7 @@ function Login() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
                 required
                 placeholder="••••••••"
                 value={formData.password}
@@ -130,6 +152,7 @@ function Login() {
               />
               <button
                 type="button"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
               >
@@ -156,7 +179,12 @@ function Login() {
               "Entrar al sistema"
             )}
           </button>
-        </form>
+        </form>}
+
+        {!changingPassword && <button type="button" onClick={openPasswordChange} disabled={loading}
+          className="w-full rounded-lg border border-blue-200 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 disabled:opacity-70">
+          Cambiar contraseña
+        </button>}
 
         {/* Footer / Enlace a Registro */}
         <div className="pt-4 border-t border-gray-100 text-center">

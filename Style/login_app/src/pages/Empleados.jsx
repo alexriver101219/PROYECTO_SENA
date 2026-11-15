@@ -20,13 +20,15 @@ export default function Empleados() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [createAccount, setCreateAccount] = useState(false);
+  const [initialPassword, setInitialPassword] = useState("");
   const submit = async (event) => {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
       if (editing) await api.put("/empleados/" + editing, form);
-      else await api.post("/empleados", form);
+      else await api.post("/empleados", createAccount ? { ...form, initialPassword } : form);
       setOpen(false);
       setForm(empty);
       setEditing(null);
@@ -34,6 +36,7 @@ export default function Empleados() {
     } catch (error) {
       setError(errorMessage(error));
     } finally {
+      setInitialPassword("");
       setBusy(false);
     }
   };
@@ -70,6 +73,8 @@ export default function Empleados() {
           onClick={() => {
             setForm(empty);
             setEditing(null);
+            setCreateAccount(false);
+            setInitialPassword("");
             setError("");
             setOpen(true);
           }}
@@ -199,10 +204,23 @@ export default function Empleados() {
                 </label>
               ))}
               <p className="text-xs text-slate-500">
-                Las cuentas nuevas ya tienen un perfil: usa Editar para
-                actualizarlo. Puedes registrar personal sin cuenta dejando el
-                correo vacío.
+                Usa los datos verificados del empleado. Para vincular una cuenta existente, indica su correo.
+                Puedes registrar personal sin cuenta dejando el correo vacío.
               </p>
+              {!editing && <>
+                <label className="block text-sm">
+                  <input type="checkbox" checked={createAccount} onChange={(event) => {
+                    setCreateAccount(event.target.checked); setInitialPassword("");
+                  }} /> Crear también su cuenta de acceso
+                </label>
+                {createAccount && <label className="block text-sm">
+                  Contraseña inicial (comunícala por un canal privado)
+                  <input type="password" autoComplete="new-password" required minLength={12}
+                    className="block w-full p-2 mt-1" value={initialPassword}
+                    onChange={(event) => setInitialPassword(event.target.value)} />
+                  <span className="text-xs">Mínimo 12 caracteres y máximo 72 bytes. El empleado puede cambiarla al iniciar sesión.</span>
+                </label>}
+              </>}
               <label className="block text-sm">
                 Fecha de ingreso
                 <input
@@ -235,7 +253,7 @@ export default function Empleados() {
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => setOpen(false)}
+                  onClick={() => { setInitialPassword(""); setOpen(false); }}
                 >
                   Cancelar
                 </button>

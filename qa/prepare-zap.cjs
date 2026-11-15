@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
 const root = path.resolve(__dirname, "..");
-const output = path.join(root, ".qa/assessment-2026-11-13");
+const output = path.resolve(root, process.env.QA_OUTPUT || ".qa/assessment-2026-11-13");
 (async () => {
   const state = JSON.parse(fs.readFileSync(path.join(output, "session.json")));
   assert.equal(state.api, "http://127.0.0.1:8101");

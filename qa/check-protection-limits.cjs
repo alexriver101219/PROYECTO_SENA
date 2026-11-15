@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
 const mongoose = require("mongoose");
-const output = path.resolve(__dirname, "../.qa/assessment-2026-11-13");
+const output = path.resolve(__dirname, "..", process.env.QA_OUTPUT || ".qa/assessment-2026-11-13");
 const state = JSON.parse(fs.readFileSync(path.join(output, "session.json")));
 (async () => {
   const identity = await (await fetch(state.strictApi + "/__qa/identity")).json();
@@ -16,7 +16,7 @@ const state = JSON.parse(fs.readFileSync(path.join(output, "session.json")));
     assert.ok(apiCodes.slice(0, 120).every(code => code === 200)); assert.equal(apiCodes[120], 429);
     await counters.deleteMany({});
     const authCodes = [];
-    for (let i = 0; i < 21; i++) authCodes.push((await fetch(state.strictApi + "/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "admin@sesha.com", password: "incorrecta" }) })).status);
+    for (let i = 0; i < 21; i++) authCodes.push((await fetch(state.strictApi + "/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "admin@sesha.com", password: "test-only-incorrect-credential" }) })).status);
     assert.ok(authCodes.slice(0, 20).every(code => code === 401)); assert.equal(authCodes[20], 429);
     fs.writeFileSync(path.join(output, "protection-limits.json"), JSON.stringify({ api: { allowed: 120, windowSeconds: 60, firstBlockedRequest: 121, status: 429 }, auth: { allowed: 20, windowSeconds: 900, firstBlockedRequest: 21, status: 429 }, scope: "por IP, contadores en MongoDB temporal", passed: true }, null, 2));
     console.log("Límites confirmados: petición API 121 devuelve 429; intento de acceso 21 devuelve 429.");

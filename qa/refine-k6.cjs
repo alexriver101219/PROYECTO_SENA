@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { run, results } = require("./run-k6.cjs");
-const file = path.resolve(__dirname, "../.qa/assessment-2026-11-13/k6-results.json");
+const file = path.resolve(__dirname, "..", process.env.QA_OUTPUT || ".qa/assessment-2026-11-13", "k6-results.json");
 results.push(...JSON.parse(fs.readFileSync(file)).runs);
 (async () => {
   const candidates = results.filter(r => r.kind === "mixed" && !["warmup", "recovery"].includes(r.label));

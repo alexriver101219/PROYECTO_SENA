@@ -142,7 +142,7 @@ test("el registro prepara el perfil y revierte la cuenta si falla su creación",
   const credentials = {
     name: "Nueva Persona",
     email: "nueva@sesha.com",
-    password: "123456",
+    password: "test-only-fixture-0-credentials",
     position: "Auxiliar de tecnología",
   };
   const response = await request(app)
@@ -191,7 +191,7 @@ test("el catálogo publica los ocho cargos nuevos y el registro conserva cargo, 
   for (const [index, [position, department]] of jobs.entries()) {
     expect(options.body).toContainEqual({ position, department });
     const response = await request(app).post("/api/auth/register").send({
-      name: "Nuevo cargo " + index, email: `cargo${index}@sesha.com`, password: "Sesha2026!", position,
+      name: "Nuevo cargo " + index, email: `cargo${index}@sesha.com`, password: "test-only-fixture-1-credentials", position,
     });
     expect(response.status).toBe(201);
     expect(response.body.user.role).toBe("employee");

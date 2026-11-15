@@ -9,6 +9,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "seed": "node scripts/seed.js",
+    "passwords:inspect": "node scripts/rotate-passwords.js",
+    "passwords:rotate": "node scripts/rotate-passwords.js --apply",
     "migrate": "node scripts/migrate.js"
   },
   "dependencies": {

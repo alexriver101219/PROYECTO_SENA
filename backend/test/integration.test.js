@@ -24,7 +24,7 @@ async function fixture(role = "employee", email = "ana@sesha.com") {
     name: "Ana Prueba",
     email,
     role,
-    password: await bcrypt.hash("123456", 4),
+    password: await bcrypt.hash("test-only-fixture-0-credentials", 4),
   });
   const token = jwt.sign({}, process.env.JWT_SECRET, {
     subject: String(account._id),
@@ -44,7 +44,7 @@ test("registro persistido: cookie HttpOnly, sin JWT ni hash en respuesta y dupli
   const credentials = {
     name: "Ana Díaz",
     email: "ANA@sesha.com",
-    password: "123456",
+    password: "test-only-fixture-0-credentials",
   };
   const response = await request(app)
     .post("/api/auth/register")
@@ -66,7 +66,7 @@ test("registro rechaza privilegios, operadores y contraseñas cortas", async () 
   const valid = {
     name: "Ana Díaz",
     email: "ana@sesha.com",
-    password: "123456",
+    password: "test-only-fixture-0-credentials",
   };
   for (const body of [
     { ...valid, role: "admin" },
@@ -83,7 +83,7 @@ test("registro rechaza privilegios, operadores y contraseñas cortas", async () 
   expect(await User.countDocuments()).toBe(0);
 });
 test("la clave académica funciona únicamente para una cuenta persistida; logout exige CSRF", async () => {
-  const credentials = { email: "admin@sesha.com", password: "123456" };
+  const credentials = { email: "admin@sesha.com", password: "test-only-fixture-0-credentials" };
   expect(
     (await request(app).post("/api/auth/login").send(credentials)).status,
   ).toBe(401);
@@ -475,7 +475,7 @@ test("migración y semilla son repetibles y conservan las contraseñas existente
   const admin = await User.findOne({ email: "admin@sesha.com" }).select(
     "+password",
   );
-  expect(await bcrypt.compare("123456", admin.password)).toBe(true);
+  expect(await bcrypt.compare("test-only-fixture-0-credentials", admin.password)).toBe(true);
   expect(admin.role).toBe("admin");
   expect((await User.findById(legacy.insertedId)).name).toBe(
     "Perfil Histórico",

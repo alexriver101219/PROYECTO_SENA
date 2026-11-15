@@ -5,6 +5,7 @@ if (require.main === module)
   });
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const { passwordFromEnv } = require("./lib/password-input");
 const User = require("../models/User");
 const Empleado = require("../models/Empleado");
 const { connectDB } = require("../config/db");
@@ -15,13 +16,11 @@ const {
 } = require("../services/laborProfiles");
 async function seed() {
   validateConfig();
-  await connectDB();
-  await Promise.all([User.createIndexes(), Empleado.createIndexes()]);
   const users = [
     {
       name: "Administrador",
       email: "admin@sesha.com",
-      password: "123456",
+      password: passwordFromEnv("SEED_ADMIN_PASSWORD"),
       role: "admin",
       document: "1000000001",
       position: "Administrador",
@@ -30,7 +29,7 @@ async function seed() {
     {
       name: "Carlos Mendoza",
       email: "carlos.mendoza@sesha.com",
-      password: "Sesha2026!",
+      password: passwordFromEnv("SEED_CARLOS_PASSWORD"),
       role: "employee",
       document: "1000000002",
       position: "Guarda de seguridad",
@@ -39,13 +38,15 @@ async function seed() {
     {
       name: "Laura Gómez",
       email: "laura.gomez@sesha.com",
-      password: "Sesha2026!",
+      password: passwordFromEnv("SEED_LAURA_PASSWORD"),
       role: "employee",
       document: "1000000003",
       position: "Supervisora",
       department: "Operaciones",
     },
   ];
+  await connectDB();
+  await Promise.all([User.createIndexes(), Empleado.createIndexes()]);
   for (const entry of users) {
     // No restablece contraseñas ni eleva permisos de cuentas existentes.
     let user = await User.findOne({ email: entry.email });
@@ -77,14 +78,12 @@ async function seed() {
     );
   }
   await completeLaborProfiles({ apply: true });
-  console.log(
-    "Cuentas iniciales preparadas. Las cuentas existentes conservaron sus contraseñas.",
-  );
+  console.log("Semilla completada; no se muestran credenciales.");
 }
 if (require.main === module)
   seed()
-    .catch((error) => {
-      console.error("No se completó la semilla:", error.message);
+    .catch(() => {
+      console.error("No se completó la semilla. Revisa configuración y conectividad; detalles omitidos.");
       process.exitCode = 1;
     })
     .finally(() => mongoose.disconnect());

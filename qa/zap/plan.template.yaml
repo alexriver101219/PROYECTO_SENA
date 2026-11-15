@@ -50,7 +50,13 @@ jobs:
         method: POST
         headers:
           - 'Content-Type: application/json'
-        data: '{"email":"admin@sesha.com","password":"incorrecta"}'
+        data: '{"email":"admin@sesha.com","password":"test-only-incorrect-credential"}'
+        responseCode: 401
+      - url: http://127.0.0.1:8101/api/auth/change-password
+        method: POST
+        headers:
+          - 'Content-Type: application/json'
+        data: '{"email":"admin@sesha.com","currentPassword":"test-only-incorrect-credential","newPassword":"test-only-zap-replacement-credential","confirmPassword":"test-only-zap-replacement-credential"}'
         responseCode: 401
   - type: spider
     parameters:

@@ -34,7 +34,7 @@ export function setup() {
 export default function (data) {
   let response, valid;
   if (kind === "login") {
-    response = http.post(base + "/api/auth/login", JSON.stringify({ email: "admin@sesha.com", password: "123456" }), {
+    response = http.post(base + "/api/auth/login", JSON.stringify({ email: "admin@sesha.com", password: "test-only-fixture-0-credentials" }), {
       headers: { "Content-Type": "application/json" }, tags: { kind: "workload", endpoint: "login" }, timeout: "10s",
     });
     valid = response.status === 200 && response.json("user.role") === "admin";

@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
 const mongoose = require("mongoose");
-const output = path.resolve(__dirname, "../.qa/assessment-2026-11-13");
+const output = path.resolve(__dirname, "..", process.env.QA_OUTPUT || ".qa/assessment-2026-11-13");
 const state = JSON.parse(fs.readFileSync(path.join(output, "session.json")));
 const base = "http://127.0.0.1:8101";
 const results = [];
@@ -50,14 +50,14 @@ function upload(data, name = "prueba.pdf", type = "application/pdf") {
   });
   await test("F02 - Salud y disponibilidad de MongoDB temporal", async () => { status(await call("/api/health"), 200); assert.equal(status(await call("/api/ready"), 200).json.status, "ready"); });
   await test("F03 - Dashboard exige autenticación", async () => { status(await call("/api/dashboard"), 401); });
-  await test("F04 - Credenciales incorrectas se rechazan", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: "admin@sesha.com", password: "incorrecta" } }), 401); });
+  await test("F04 - Credenciales incorrectas se rechazan", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: "admin@sesha.com", password: "test-only-incorrect-credential" } }), 401); });
   await test("F05 - Ingreso admin con cookie HttpOnly Secure Strict y CSRF", async () => {
-    admin = await login("admin@sesha.com", "123456");
+    admin = await login("admin@sesha.com", "test-only-fixture-0-credentials");
     for (const flag of [/HttpOnly/i, /Secure/i, /SameSite=Strict/i]) assert.match(admin.response.headers.get("set-cookie"), flag);
     assert.equal(admin.response.json.user.role, "admin"); assert.match(admin.csrf, /^[a-f0-9]{64}$/);
     assert.equal(admin.response.json.token, undefined); assert.equal(admin.response.json.user.password, undefined);
   });
-  await test("F06 - Ingreso de dos empleados independientes", async () => { employee = await login("carlos.mendoza@sesha.com", "Sesha2026!"); other = await login("laura.gomez@sesha.com", "Sesha2026!"); assert.equal(employee.response.json.user.role, "employee"); });
+  await test("F06 - Ingreso de dos empleados independientes", async () => { employee = await login("carlos.mendoza@sesha.com", "test-only-fixture-1-credentials"); other = await login("laura.gomez@sesha.com", "test-only-fixture-1-credentials"); assert.equal(employee.response.json.user.role, "employee"); });
   await test("F07 - Perfil autenticado tiene fecha y datos laborales", async () => { const me = status(await call("/api/auth/me", { session: employee }), 200).json; assert.ok(me.profile.document); assert.ok(me.profile.hireDate); });
   await test("F08 - Empleado no consulta administración de personal", async () => { status(await call("/api/empleados", { session: employee }), 403); });
   await test("F09 - Listado admin paginado y sin hashes", async () => { const data = status(await call("/api/empleados?limit=10&page=1", { session: admin }), 200).json; assert.equal(data.items.length, 10); assert.equal(data.total, 152); assert.ok(!JSON.stringify(data).includes('"password"')); });
@@ -92,14 +92,78 @@ function upload(data, name = "prueba.pdf", type = "application/pdf") {
   await test("F30 - Empleado no cancela una solicitud ya aprobada", async () => { status(await call("/api/solicitudes/" + requestId, { method: "DELETE", session: employee }), 404); });
   await test("F31 - Admin retira la solicitud sintética", async () => { status(await call("/api/solicitudes/" + requestId, { method: "DELETE", session: admin }), 204); });
   await test("F32 - Propietario elimina PDF ya no referenciado", async () => { status(await call("/api/documentos/" + docId, { method: "DELETE", session: employee }), 204); status(await call(`/api/documentos/${docId}/download`, { session: employee }), 404); });
-  await test("F33 - Registro público crea cuenta y perfil persistidos", async () => { const result = status(await call("/api/auth/register", { method: "POST", body: { name: "Nueva Persona QA", email: "http.nueva@sesha.com", password: "SeshaQA2026!", position: "Guarda de seguridad" } }), 201); const account = await database.db.collection("empleados").findOne({ email: "http.nueva@sesha.com" }); assert.ok(account); assert.equal(account.role, "employee"); assert.ok(await database.db.collection("perfiles_empleados").findOne({ user: account._id })); assert.equal(result.json.user.password, undefined); });
-  await test("F34 - Registro duplicado y elevación de rol se rechazan", async () => { const body = { name: "Nueva Persona QA", email: "http.nueva@sesha.com", password: "SeshaQA2026!" }; status(await call("/api/auth/register", { method: "POST", body }), 409); status(await call("/api/auth/register", { method: "POST", body: { ...body, email: "http.privilegios@sesha.com", role: "admin" } }), 400); });
-  await test("F35 - Operador NoSQL como correo se rechaza", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: { $ne: null }, password: "123456" } }), 400); });
+  const onboarding = { name: "Nueva Persona QA", email: "http.nueva@sesha.com", initialPassword: "test-only-http-registration-credential", document: "1007654320", position: "Guarda de seguridad", department: "Operaciones", status: "Activo", hireDate: "2024-01-02" };
+  await test("F33 - Admin crea cuenta y perfil verificados en una transacción", async () => { const result = status(await call("/api/empleados", { method: "POST", session: admin, body: onboarding }), 201); const account = await database.db.collection("empleados").findOne({ email: onboarding.email }); assert.ok(account); assert.equal(account.role, "employee"); assert.ok(await database.db.collection("perfiles_empleados").findOne({ user: account._id })); assert.equal(result.json.user.password, undefined); });
+  await test("F34 - Alta duplicada y elevación de rol se rechazan", async () => { status(await call("/api/empleados", { method: "POST", session: admin, body: onboarding }), 409); status(await call("/api/empleados", { method: "POST", session: admin, body: { ...onboarding, email: "http.privilegios@sesha.com", role: "admin" } }), 400); });
+  await test("F35 - Operador NoSQL como correo se rechaza", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: { $ne: null }, password: "test-only-fixture-0-credentials" } }), 400); });
   await test("F36 - JWT manipulado no autoriza acceso", async () => { status(await call("/api/dashboard", { headers: { Authorization: "Bearer token-manipulado" } }), 401); });
   await test("F37 - Origen no permitido y JSON inválido se rechazan", async () => { status(await call("/api/ready", { headers: { Origin: "https://origen-no-permitido.invalid" } }), 403); status(await call("/api/auth/login", { method: "POST", raw: "{invalido", headers: { "Content-Type": "application/json" } }), 400); });
-  await test("F37b - JSON superior a 16 KiB se rechaza con 413", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: "a".repeat(17000), password: "123456" } }), 413); });
+  await test("F37b - JSON superior a 16 KiB se rechaza con 413", async () => { status(await call("/api/auth/login", { method: "POST", body: { email: "a".repeat(17000), password: "test-only-fixture-0-credentials" } }), 413); });
   await test("F38 - Salir exige CSRF y revoca la sesión anterior", async () => { status(await call("/api/auth/logout", { method: "POST", session: employee, csrf: false }), 403); status(await call("/api/auth/logout", { method: "POST", session: employee }), 204); status(await call("/api/auth/me", { session: employee }), 401); });
-  const freshAdmin = await login("admin@sesha.com", "123456");
+  const changedCredential = "test-only-http-updated-credential";
+  const beforeChange = await database.db.collection("empleados").findOne({ email: "carlos.mendoza@sesha.com" });
+  const profilesBeforeChange = await database.db.collection("perfiles_empleados").find().sort({ _id: 1 }).toArray();
+  const accountsBeforeChange = await database.db.collection("empleados").countDocuments();
+  let oldEmployeeSession, changedEmployeeSession;
+  const changeBody = { email: "carlos.mendoza@sesha.com", currentPassword: "test-only-fixture-1-credentials", newPassword: changedCredential, confirmPassword: changedCredential };
+  await test("F39 - El cambio web rechaza clave actual incorrecta y confirmación distinta", async () => {
+    oldEmployeeSession = await login(changeBody.email, changeBody.currentPassword);
+    status(await call("/api/auth/change-password", { method: "POST", body: { ...changeBody, currentPassword: "test-only-wrong-current" } }), 401);
+    status(await call("/api/auth/change-password", { method: "POST", body: { ...changeBody, confirmPassword: "test-only-wrong-confirmation" } }), 400);
+    assert.deepEqual(await database.db.collection("empleados").findOne({ _id: beforeChange._id }), beforeChange);
+  });
+  await test("F40 - El cambio web guarda bcrypt sin devolver claves, hashes o JWT", async () => {
+    const result = status(await call("/api/auth/change-password", { method: "POST", body: changeBody }), 200);
+    assert.equal(result.json.success, true);
+    assert.deepEqual(Object.keys(result.json).sort(), ["message", "success"]);
+    assert.match(result.headers.get("set-cookie"), /sesha_session=;/);
+    const account = await database.db.collection("empleados").findOne({ _id: beforeChange._id });
+    assert.equal(require("bcryptjs").getRounds(account.password), 12);
+    assert.ok(await require("bcryptjs").compare(changedCredential, account.password));
+    assert.deepEqual(account, { ...beforeChange, password: account.password, sessionVersion: beforeChange.sessionVersion + 1 });
+  });
+  await test("F41 - La nueva clave permite entrar y la anterior queda rechazada", async () => {
+    status(await call("/api/auth/login", { method: "POST", body: { email: changeBody.email, password: changeBody.currentPassword } }), 401);
+    changedEmployeeSession = await login(changeBody.email, changedCredential);
+  });
+  await test("F42 - El cambio invalida la sesión previa y conserva la nueva", async () => {
+    status(await call("/api/auth/me", { session: oldEmployeeSession }), 401);
+    status(await call("/api/auth/me", { session: changedEmployeeSession }), 200);
+  });
+  await test("F43 - El cambio conserva otros usuarios, los roles y los perfiles", async () => {
+    assert.equal(await database.db.collection("empleados").countDocuments(), accountsBeforeChange);
+    assert.deepEqual(await database.db.collection("perfiles_empleados").find().sort({ _id: 1 }).toArray(), profilesBeforeChange);
+    const otherSession = await login("laura.gomez@sesha.com", "test-only-fixture-1-credentials");
+    assert.equal(otherSession.response.json.user.role, "employee");
+    assert.equal(status(await call("/api/auth/me", { session: admin }), 200).json.user.role, "admin");
+  });
+  // Limpieza exclusiva del fixture en la base temporal ya validada arriba.
+  await database.db.collection("empleados").updateOne({ _id: beforeChange._id }, { $set: { password: beforeChange.password }, $inc: { sessionVersion: 1 } });
+  await test("F44 - Los archivos privados no se sirven desde el frontend compilado", async () => {
+    for (const file of ["/.env", "/.env.local", "/backend/.env", "/.git/config"]) {
+      const response = await fetch("http://127.0.0.1:4174" + file);
+      assert.ok(response.status === 404 || /text\/html/.test(response.headers.get("content-type") || ""));
+      const text = await response.text();
+      assert.ok(!/MONGO_URI=|JWT_SECRET=|VERCEL_OIDC_TOKEN=|\[remote "origin"\]/.test(text));
+    }
+  });
+  await test("F45 - Un homónimo conserva identidad, documento y cuenta independientes", async () => {
+    const payload = { ...onboarding, name: "Carlos Mendoza", email: "http.homonimo@sesha.com", document: "1007654321", initialPassword: "test-only-homonym-credential" };
+    const response = status(await call("/api/empleados", { method: "POST", session: admin, body: payload }), 201);
+    const original = await database.db.collection("perfiles_empleados").findOne({ user: beforeChange._id });
+    const created = await database.db.collection("perfiles_empleados").findOne({ user: new mongoose.Types.ObjectId(response.json.user._id) });
+    assert.equal(created.name, original.name);
+    assert.notEqual(created.document, original.document);
+    assert.notEqual(String(created.user), String(original.user));
+    await database.db.collection("perfiles_empleados").deleteOne({ _id: created._id });
+    await database.db.collection("empleados").deleteOne({ _id: created.user });
+  });
+  await test("F46 - Producción impide el registro público y comunica el alta por administrador", async () => {
+    assert.equal(status(await call("/api/auth/registration"), 200).json.enabled, false);
+    status(await call("/api/auth/register", { method: "POST", body: { name: "No Autorizado", email: "no.autorizado@sesha.com", password: "test-only-no-registration" } }), 403);
+    assert.equal(await database.db.collection("empleados").countDocuments({ email: "no.autorizado@sesha.com" }), 0);
+  });
+  const freshAdmin = await login("admin@sesha.com", "test-only-fixture-0-credentials");
   const token = decodeURIComponent(freshAdmin.cookie.slice("sesha_session=".length));
   state.adminToken = token; state.adminCsrf = freshAdmin.csrf;
   fs.writeFileSync(path.join(output, "session.json"), JSON.stringify(state));

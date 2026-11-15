@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 let memory;
 beforeAll(async () => {
   process.env.NODE_ENV = "test";
+  process.env.SEED_ADMIN_PASSWORD = "test-only-fixture-0-credentials";
+  process.env.SEED_CARLOS_PASSWORD = "test-only-fixture-1-credentials";
+  process.env.SEED_LAURA_PASSWORD = "test-only-fixture-1-credentials";
   process.env.JWT_SECRET = "sesha-test-only-secret-with-more-than-32-bytes";
   process.env.APP_ORIGIN = "http://localhost:5173";
   memory = await MongoMemoryReplSet.create({
