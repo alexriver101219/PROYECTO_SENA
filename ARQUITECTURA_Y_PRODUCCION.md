@@ -26,6 +26,26 @@ Las rutas controlan HTTP, validan listas de campos permitidos y aplican permisos
 - El cambio de clave exige la anterior, guarda bcrypt de coste 12 e incrementa `sessionVersion`. Las sesiones usan cookies HttpOnly/Secure/SameSite y CSRF; los JWT se verifican contra el estado actual de la cuenta. Las respuestas no incluyen hashes ni JWT.
 - Dos empleados homónimos utilizan correos y documentos diferentes. El sistema no reemplaza personas por coincidencia de nombre.
 
+## Reactivación autorizada del 15/11/2026
+
+Se reactivaron las 120 cuentas de la carga académica por solicitud expresa del propietario, después de un respaldo completo con restauración local verificada. Se retiró la etiqueta «Demo» de los nombres de cuenta y perfil y se reemplazaron los correos de esa carga por identificadores basados en nombre y número. No se aprovisionaron buzones. Cada cuenta recibió una contraseña aleatoria distinta con bcrypt de coste 12; sus credenciales anteriores no se reutilizaron y se incrementó `sessionVersion`.
+
+La actualización de las dos colecciones fue transaccional, con comprobación de todos sus registros antes y después. Se conservaron los 152 identificadores de cuenta y perfil, los vínculos y los datos laborales. Las otras 19 cuentas en cuarentena permanecieron desactivadas. Los datos de la carga conservan su carácter académico. El módulo `backend/scripts/lib/activate-employee-accounts.js` exige destino y autorización explícitos, verifica cada contraseña y cancela ante cambios concurrentes, colisiones o un alcance distinto de las 120 cuentas originales. No se ejecuta durante el arranque ni el despliegue.
+
+Los accesos se entregaron en un CSV local privado excluido de Git; no se publicaron contraseñas en informes, código ni Vercel. El cambio de datos se refleja en el despliegue existente sin recompilar la aplicación.
+
+Validación: 17 pruebas aprobadas, lint del módulo y sus pruebas correcto, 120 contraseñas y perfiles vinculados comprobados directamente en MongoDB, y tres inicios de sesión con consulta del perfil y cierre de sesión correctos en `https://sesha-app.vercel.app`.
+
+## Extensión al resto de cuentas del 15/11/2026
+
+Una segunda solicitud autorizó renovar las contraseñas de los 31 empleados restantes, continuar sus correos con los consecutivos 121 a 151 y variar todos los números de documento. Se conservaron íntegros los accesos de los primeros 120 empleados y el acceso del administrador. El propietario confirmó por separado que el documento del administrador también debía actualizarse. Los 152 documentos nuevos son datos académicos sintéticos únicos, de longitudes variadas, sin los prefijos anteriores 97, 99 y 100000. No son documentos de identidad verificados.
+
+Tras otro respaldo completo con restauración local verificada, una transacción renovó los 31 accesos con claves aleatorias únicas y bcrypt de coste 12, activó las 19 cuentas pendientes y actualizó los 152 perfiles. Se conservaron identificadores, nombres, cargos, áreas, fechas y asociaciones. Los registros históricos sin `sessionVersion` se trataron como versión cero, igual que la autenticación existente, y recibieron una versión nueva para revocar accesos anteriores. El módulo `backend/scripts/lib/complete-employee-dataset.js` verifica el alcance completo y revierte todas las escrituras ante errores o cambios concurrentes.
+
+El CSV privado consolidado contiene los accesos de los 151 empleados y sus nuevos documentos, excluyendo las credenciales del administrador. Los archivos con claves y el plan completo permanecen en `.qa/`, fuera de Git y del despliegue. Estos cambios de datos se reflejan en Vercel sin desplegar código.
+
+Validación de esta extensión: 22 pruebas aprobadas y lint correcto; 151 contraseñas verificadas contra MongoDB; 152 documentos nuevos y únicos (92 de ocho dígitos, 15 de nueve y 45 de diez). Se comprobaron seis accesos publicados, incluyendo cuentas antiguas y nuevas, sus perfiles con el documento actualizado, la descarga de sus constancias y el cierre de sesión. La cuenta del administrador se comparó íntegra con el respaldo previo de la operación y permaneció sin cambios.
+
 ## Remediación autorizada del 14/11/2026
 
 Se verificaron el proyecto Vercel `sesha-app` y el destino Atlas `cluster1.nopuzfk.mongodb.net/proyecto_sena`. El propietario autorizó expresamente la cuarentena de las 120 cuentas demo, la rotación local y de producción del JWT y la publicación de las correcciones probadas.

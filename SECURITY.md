@@ -1,5 +1,13 @@
 # Manejo de credenciales de SESHA
 
+## Estado vigente del 15/11/2026
+
+El propietario autorizó reactivar las 120 cuentas de la carga académica y retirar «Demo» de los nombres y correos. Se verificó un respaldo completo mediante restauración local antes de escribir. Una transacción sustituyó sus contraseñas por 120 claves aleatorias únicas con bcrypt de coste 12, incrementó las versiones de sesión y activó cuentas y perfiles. Se conservaron identificadores, vínculos, documentos, cargos, fechas y las demás cuentas. Los registros siguen siendo datos académicos; cambiar su presentación no acredita identidades o relaciones laborales reales.
+
+Los nuevos correos son identificadores de acceso `@sesha.com`, sin buzones aprovisionados. Los accesos y el plan de mantenimiento se conservan únicamente en archivos locales privados dentro de `.qa/`, excluidos de Git y del despliegue. El empleado puede cambiar su clave desde el login conociendo la actual; no hay cambio obligatorio en el primer acceso.
+
+En una segunda operación autorizada del mismo día se renovaron las claves de los otros 31 empleados y se continuaron los correos con los consecutivos 121 a 151, conservando las claves de los primeros 120. Se reactivaron las 19 cuentas pendientes después de sustituir sus contraseñas. Quedaron activos los 151 empleados y el administrador. Por autorización expresa se reemplazaron los números de documento de los 152 perfiles por datos académicos sintéticos variados y únicos; no se modificaron el correo, la clave ni los demás campos de acceso del administrador. Los identificadores internos, los vínculos y los cargos se conservaron. Se realizó otro respaldo completo con restauración local verificada antes de esta transacción. La descripción siguiente conserva el historial de la remediación del 14/11/2026.
+
 ## Remediación posterior autorizada
 
 El propietario autorizó el alcance de producción y se aplicó la cuarentena transaccional de exactamente 120 cuentas demo, con revocación de sesiones. No quedaron cuentas demo activas. Se conservaron cuentas, contraseñas, roles, perfiles y otras cuentas. El respaldo actualizado se restauró y verificó localmente antes de la operación.
