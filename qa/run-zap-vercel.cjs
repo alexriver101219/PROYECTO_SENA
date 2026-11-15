@@ -4,7 +4,8 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const base = 'https://sesha-app.vercel.app';
-const output = path.join(root, '.qa/zap-vercel-2026-11-13');
+const output = path.resolve(root, process.env.ZAP_VERCEL_OUTPUT || '.qa/zap-vercel-2026-11-13');
+if (!output.startsWith(path.join(root, '.qa') + path.sep)) throw Error('Salida fuera del directorio privado');
 const install = process.env.ZAP_INSTALL || 'C:/Program Files/ZAP/Zed Attack Proxy';
 const jar = path.join(install, 'zap-2.17.0.jar');
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -31,7 +32,8 @@ async function counters(cookie) {
   return {dashboard:values[0],employees:values[1].total,documents:values[2].total,requests:values[3].total};
 }
 async function main() {
-  if (!process.env.QA_ADMIN_PASSWORD) throw Error("Configura QA_ADMIN_PASSWORD de forma privada");
+  const privateSessions = process.env.QA_ZAP_SESSION_FILE ? require('./private-zap-session.cjs').readSessions(root) : null;
+  if (!privateSessions && !process.env.QA_ADMIN_PASSWORD) throw Error("Se requiere sesión privada o QA_ADMIN_PASSWORD");
   if(!fs.existsSync(jar))throw Error('ZAP 2.17.0 no está instalado en la ruta esperada.');
   const betaDir=path.join(root,'.qa/zap-vercel-tools/plugin');
   const betaFiles=fs.existsSync(betaDir)?fs.readdirSync(betaDir).filter(name=>name.endsWith('.zap')):[];
@@ -39,11 +41,15 @@ async function main() {
   const home=await request('/'); if(home.status!==200)throw Error('Inicio no accesible');
   const html=await home.text();
   const assets=[...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+\.(?:js|css))"/g)].map(m=>m[1]);
-  const login=await request('/api/auth/login',{method:'POST',data:{email:'admin@sesha.com',password:process.env.QA_ADMIN_PASSWORD}});
-  if(login.status!==200)throw Error('No se obtuvo la sesión académica: HTTP '+login.status);
-  const cookie=login.headers.get('set-cookie')?.split(';')[0];
+  let cookie;
+  if (privateSessions) cookie = privateSessions.find(entry => entry.role === 'admin').cookie;
+  else {
+    const login=await request('/api/auth/login',{method:'POST',data:{email:'admin@sesha.com',password:process.env.QA_ADMIN_PASSWORD}});
+    if(login.status!==200)throw Error('No se obtuvo la sesión: HTTP '+login.status);
+    cookie=login.headers.get('set-cookie')?.split(';')[0];
+    await login.arrayBuffer();
+  }
   if(!cookie?.startsWith('sesha_session='))throw Error('No se recibió la cookie esperada.');
-  await login.arrayBuffer();
   const before=await counters(cookie);
   const routes=['/','/login','/register','/api/health','/api/ready','/api/auth/positions','/api/auth/me','/api/dashboard','/api/empleados?limit=5&page=1','/api/documentos?limit=5&page=1','/api/solicitudes?limit=5&page=1','/api/documentos/certificado',...new Set(assets)];
   const requests=routes.map(route=>'      - url: '+base+route+'\n        method: GET\n        responseCode: 200').join('\n');
@@ -77,4 +83,4 @@ async function main() {
   console.log(JSON.stringify({code,stoppedForHealth,countersUnchanged:run.countersUnchanged,readyStatus:ready.status,anonymousDashboardStatus:anonymous.status}));
   if(code!==0||stoppedForHealth)process.exitCode=1;
 }
-main().catch(error=>{fs.rmSync(privatePlan,{force:true});console.error(error.message);process.exitCode=1;});
+main().catch(()=>{fs.rmSync(privatePlan,{force:true});console.error('ZAP Vercel no completado; detalles privados omitidos.');process.exitCode=1;});

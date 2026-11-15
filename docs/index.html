@@ -1,51 +1,40 @@
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Manual de usuario ilustrado y resultados de pruebas funcionales, k6, ZAP y restauración de respaldo de SESHA APP, Proyecto SENA.">
-  <title>SESHA APP | Manual e informes</title>
-  <style>
-    :root{color-scheme:light;--navy:#142c45;--teal:#087f80;--ink:#26374a;--muted:#526477;--line:#d5e2eb}
-    *{box-sizing:border-box}body{margin:0;background:#f3f7fa;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
-    header{background:var(--navy);color:white;padding:48px 24px 64px}main,.wrap{max-width:1080px;margin:auto}header small{letter-spacing:.15em;text-transform:uppercase;color:#8be1d9}h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.16;margin:16px 0}header p{max-width:720px;color:#d5e2eb}main{padding:0 24px 48px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:-28px}.metric,.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px}.metric strong{display:block;font-size:1.9rem;color:var(--teal)}.metric span{font-size:.9rem;color:var(--muted)}h2{color:var(--navy);font-size:1.6rem;margin:36px 0 12px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{display:flex;flex-direction:column}.tag{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);font-weight:700}.card h3{font-size:1.3rem;line-height:1.3;margin:12px 0}.card p{color:var(--muted);font-size:.95rem;flex:1}.button{display:inline-block;background:var(--teal);color:white;padding:10px 16px;border-radius:7px;text-align:center;text-decoration:none;font-weight:650}.button:hover{background:#056666}a{color:#076b73}a:focus-visible{outline:3px solid #d88900;outline-offset:4px}.context{background:#e7f1f4;border-left:4px solid var(--teal);padding:16px 22px;margin:28px 0}table{width:100%;border-collapse:collapse;background:white}caption{text-align:left;font-weight:700;margin-bottom:10px}th,td{text-align:left;padding:14px;border-bottom:1px solid var(--line)}th{background:var(--navy);color:white}footer{border-top:1px solid var(--line);padding-top:22px;margin-top:32px;font-size:.9rem;color:var(--muted)}.table-scroll{overflow:auto} @media(max-width:720px){.metrics,.cards{grid-template-columns:1fr}.metrics{margin-top:-20px}.metric{padding:16px 22px}.card{padding:22px}header{padding-top:32px}}
-  </style>
-</head>
-<body>
-<header><div class="wrap"><small>Proyecto SENA · Evidencias de calidad</small><h1>SESHA APP<br>Manual e informes</h1><p>Manual actualizado el 14 de noviembre de 2026 e informes de pruebas del 13 de noviembre. Incluye las pruebas funcionales, carga local, ZAP sobre Vercel y la verificación de restauración del respaldo privado.</p></div></header>
-<main>
-  <section class="metrics" aria-label="Resultados principales">
-    <div class="metric"><strong>77 / 77</strong><span>Verificaciones funcionales aprobadas</span></div>
-    <div class="metric"><strong>50 solicitudes/s</strong><span>Confirmadas durante 60 s en el equipo local</span></div>
-    <div class="metric"><strong>0 altas · 1 media</strong><span>Clases de alertas del ensayo ZAP local</span></div>
-  </section>
-  <h2>Manual de usuario y verificación de entrega</h2>
-  <article class="card"><span class="tag">Empleado y administrador · 11 páginas · Revisión 14/11/2026</span><h3>Guía ilustrada de SESHA APP</h3><p>Registro, cambio de contraseña, perfil, constancias, documentos, solicitudes y administración de personal. Incluye capturas nuevas del acceso y del formulario vacío, requisitos de la clave y cierre de sesiones. El nuevo cambio de contraseña corresponde a la versión local pendiente de publicación; las capturas restantes, la revisión móvil y el respaldo conservan la evidencia del 13/11/2026.</p><p><a class="button" href="manual/2026-11-14/manual-usuario-sesha.pdf">Abrir manual de usuario PDF</a> · <a href="manual/2026-11-14/verificacion-entrega.json">Verificación de entrega en JSON</a></p></article>
-  <p><strong>Respaldo restaurado y verificado:</strong> cinco colecciones, 304 documentos y 11 índices coincidentes. Incluye 152 cuentas y 152 perfiles. El archivo completo permanece privado y no se publica en este sitio.</p>
-  <p>La constancia se descargó desde Edge. La carga y descarga de un PDF se verificaron por API con igualdad de bytes; el selector nativo de archivos no pudo completarse con la herramienta de control. Se retiraron el documento y la solicitud temporales, y se conservaron los 152 perfiles. La revisión móvil fue emulada, sin prueba en un teléfono físico.</p>
-  <h2>Consultar los informes de pruebas</h2>
-  <section class="cards" aria-label="Informes PDF">
-    <article class="card"><span class="tag">Funcionalidad · 6 páginas</span><h3>Flujos y permisos</h3><p>22 pruebas de backend, 15 de frontend y 40 verificaciones HTTP: autenticación, perfiles, documentos, solicitudes y persistencia.</p><a class="button" href="pruebas/2026-11-13/informe-pruebas-funcionales.pdf">Abrir PDF funcional</a></article>
-    <article class="card"><span class="tag">k6 · 4 páginas</span><h3>Rendimiento y límites</h3><p>Carga mixta, generación de certificados y acceso. Incluye las etapas que fallaron y las condiciones del equipo de pruebas.</p><a class="button" href="pruebas/2026-11-13/informe-rendimiento-k6.pdf">Abrir PDF de k6</a></article>
-    <article class="card"><span class="tag">OWASP ZAP · 4 páginas</span><h3>Seguridad y revisión</h3><p>Escaneo activo autenticado, clasificación de alertas y contraste de cabeceras públicas. Incluye medidas de mejora y límites de cobertura.</p><a class="button" href="pruebas/2026-11-13/informe-seguridad-zap.pdf">Abrir PDF de ZAP</a></article>
-  </section>
-  <div class="context"><strong>Cómo interpretar la capacidad:</strong> el generador, la API y MongoDB compartieron un portátil. Estas cifras no miden la capacidad de Vercel o Atlas, ni equivalen a usuarios simultáneos. La carga se ejecutó localmente. El análisis activo adicional en Vercel se limitó a parámetros GET de paginación, sin operaciones de escritura.</div>
-  <h2>ZAP sobre el enlace de Vercel</h2>
-  <p><strong>0 alertas altas, 2 medias, 0 bajas y 4 clases informativas.</strong> Revisión pasiva de 14 rutas y recursos publicados, con sesión en la API. Las reglas activas de XSS reflejado y NoSQL MongoDB completaron 22 peticiones sobre <code>limit</code> y <code>page</code> del listado de empleados, sin generar alertas activas.</p>
-  <p>Las alertas medias corresponden a estilos inline en la CSP y a CORS con origen comodín en HTML, JavaScript y CSS públicos. La API rechazó un origen ajeno con sesión válida; las lecturas de dos cuentas devolvieron su propio perfil y las respuestas privadas conservaron <code>Cache-Control: no-store</code>. No se confirmó una fuga de datos. La aplicación continuó disponible y sus conteos se conservaron.</p>
-  <p><a class="button" href="pruebas/2026-11-13/informe-seguridad-zap-vercel.pdf">Abrir PDF de ZAP en Vercel</a> · <a href="pruebas/2026-11-13/zap-vercel-resultados.json">Ver resultados de Vercel en JSON</a></p>
-  <p>Este análisis acotado no cubre formularios de escritura, cargas, DOM/AJAX ni todas las rutas. Su alcance difiere del ensayo local; ambos informes conservan sus resultados por separado.</p>
-  <h2>Capacidad observada</h2>
-  <div class="table-scroll"><table><caption>Resumen de los ensayos locales</caption><thead><tr><th>Escenario</th><th>Resultado</th></tr></thead><tbody>
-    <tr><td>50 solicitudes/s durante 60 s</td><td>3.000 respuestas; p95 33,4 ms; cero errores y descartes.</td></tr>
-    <tr><td>125 solicitudes/s durante 25 s</td><td>Aprobado como pico corto; no sostuvo los criterios durante 60 s.</td></tr>
-    <tr><td>100 solicitudes/s durante 60 s</td><td>No aprobado: 16 iteraciones descartadas.</td></tr>
-    <tr><td>Inicio de sesión</td><td>3 solicitudes/s durante 20 s aprobado; a 4/s el p95 superó 1.000 ms.</td></tr>
-  </tbody></table></div>
-  <h2>Seguridad del ensayo local</h2>
-  <p>La alerta media corresponde a <code>style-src 'unsafe-inline'</code> en la CSP, una mejora de endurecimiento pendiente. La alerta baja de <code>X-Powered-By</code> se limitó al servidor auxiliar local y no apareció en las cuatro rutas públicas comprobadas. Las cuatro clases informativas no demuestran por sí mismas una vulnerabilidad explotable. La auditoría de dependencias informó cero vulnerabilidades.</p>
-  <p>Esta evaluación no sustituye una prueba de penetración exhaustiva ni una validación visual completa en navegador. El detalle de cobertura y las restricciones se documentan en cada PDF.</p>
-  <footer><p><a href="pruebas/2026-11-13/resultados.json">Resultados estructurados JSON</a> · <a href="https://github.com/alexriver101219/PROYECTO_SENA">Código y procedimientos</a> · <a href="https://sesha-app.vercel.app">Abrir SESHA APP</a></p><p>Los informes y datos publicados son evidencias de una ejecución concreta. No incluyen credenciales, sesiones ni registros internos del escáner.</p></footer>
-</main>
-</body>
-</html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Informes actualizados de pruebas funcionales, k6, ZAP local y ZAP autenticado en Vercel de SESHA APP.">
+<title>SESHA APP | Manual e informes actualizados</title>
+<style>
+:root{color-scheme:light;--navy:#142c45;--teal:#087f80;--ink:#26374a;--muted:#526477;--line:#d5e2eb}*{box-sizing:border-box}body{margin:0;background:#f3f7fa;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}header{background:var(--navy);color:white;padding:48px 24px 64px}main,.wrap{max-width:1080px;margin:auto}header small{letter-spacing:.15em;text-transform:uppercase;color:#8be1d9}h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.16;margin:16px 0}header p{max-width:760px;color:#d5e2eb}main{padding:0 24px 48px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:-28px}.metric,.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px}.metric strong{display:block;font-size:1.7rem;color:var(--teal)}.metric span{font-size:.9rem;color:var(--muted)}h2{color:var(--navy);font-size:1.6rem;margin:36px 0 12px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.card{display:flex;flex-direction:column}.tag{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);font-weight:700}.card h3{font-size:1.3rem;line-height:1.3;margin:12px 0}.card p{color:var(--muted);font-size:.95rem;flex:1}.button{display:inline-block;background:var(--teal);color:white;padding:10px 16px;border-radius:7px;text-align:center;text-decoration:none;font-weight:650}.button:hover{background:#056666}a{color:#076b73}a:focus-visible{outline:3px solid #d88900;outline-offset:4px}.context{background:#e7f1f4;border-left:4px solid var(--teal);padding:16px 22px;margin:28px 0}.limit{background:#fff4e8;border-left-color:#a75809}table{width:100%;border-collapse:collapse;background:white}caption{text-align:left;font-weight:700;margin-bottom:10px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{background:var(--navy);color:white}footer{border-top:1px solid var(--line);padding-top:22px;margin-top:32px;font-size:.9rem;color:var(--muted)}.table-scroll{overflow:auto}@media(max-width:720px){.metrics,.cards{grid-template-columns:1fr}.metrics{margin-top:-20px}.metric{padding:16px 22px}.card{padding:22px}header{padding-top:32px}}
+</style></head><body>
+<header><div class="wrap"><small>Proyecto SENA · Evidencias de calidad</small><h1>SESHA APP<br>Manual e informes</h1><p>Edición de pruebas del 14/11/2026. Resultados funcionales, carga local con k6, ZAP local y ZAP autenticado en Vercel. Las etapas fuera de umbral se conservan y cada informe declara su alcance.</p></div></header>
+<main><section class="metrics" aria-label="Resultados principales">
+<div class="metric"><strong>133 / 133</strong><span>Comprobaciones funcionales locales aprobadas</span></div>
+<div class="metric"><strong>100 solicitudes/s</strong><span>Confirmadas durante 60 s en el equipo local</span></div>
+<div class="metric"><strong>0 altas · 0 medias · 0 bajas</strong><span>Clases del nuevo ensayo ZAP local</span></div></section>
+<h2>Informes de pruebas actualizados</h2><section class="cards" aria-label="Informes PDF actuales">
+<article class="card"><span class="tag">Funcionalidad · 11 páginas</span><h3>Flujos, permisos y persistencia</h3><p>64 pruebas de backend, 21 de frontend y 48 verificaciones HTTP. Incluye el cambio de contraseña, el alta administrativa y las cuarentenas transaccionales. Las 12 comprobaciones de publicación se presentan por separado.</p><a class="button" href="pruebas/2026-11-14/informe-pruebas-funcionales.pdf">Abrir PDF</a></article>
+<article class="card"><span class="tag">k6 local · 4 páginas</span><h3>Rendimiento y límites</h3><p>16 etapas de carga y refinamiento. 4 etapas quedaron fuera de umbral; el PDF incluye latencias, errores, descartes y condiciones del equipo.</p><a class="button" href="pruebas/2026-11-14/informe-rendimiento-k6.pdf">Abrir PDF</a></article>
+<article class="card"><span class="tag">OWASP ZAP local · 3 páginas</span><h3>Seguridad del entorno aislado</h3><p>0 altas · 0 medias · 0 bajas y 4 clases informativas. Escaneo autenticado con cuentas ficticias, MongoDB temporal y análisis de las cabeceras publicadas.</p><a class="button" href="pruebas/2026-11-14/informe-seguridad-zap.pdf">Abrir PDF</a></article>
+<article class="card"><span class="tag">OWASP ZAP en Vercel · 4 páginas</span><h3>Seguridad del sitio publicado</h3><p>0 altas · 1 medias · 0 bajas y 4 clases informativas. Revisión autenticada de rutas conocidas y 22 peticiones activas acotadas a paginación GET.</p><a class="button" href="pruebas/2026-11-14/informe-seguridad-zap-vercel.pdf">Abrir PDF</a></article>
+</section>
+<div class="context"><strong>Cómo leer la capacidad:</strong> k6, la API y MongoDB compartieron el portátil. Estas cifras describen ese entorno local; la capacidad de Vercel/Atlas y el número de usuarios simultáneos requieren una evaluación propia. En Vercel se mantuvieron los límites de seguridad y no se generó carga.</div>
+<h2>Capacidad observada en la nueva campaña</h2><div class="table-scroll"><table><caption>Confirmación, picos y límites</caption><thead><tr><th>Escenario</th><th>Observación</th></tr></thead><tbody>
+<tr><td>100/s durante 60 s</td><td>6.000 solicitudes; p95 166,4 ms; 0 descartes; 0 % de errores HTTP.</td></tr>
+<tr><td>Pico de 125/s durante 25 s</td><td>Aprobado en esa ventana; la confirmación de 60 s se informa por separado.</td></tr>
+<tr><td>Login: 3/s durante 20 s</td><td>Aprobado; p95 562,4 ms.</td></tr>
+<tr><td>mixed-200 · 25s</td><td>Fuera de umbral: p95 949,2 ms; 734 descartes; 0 % de errores HTTP.</td></tr>
+<tr><td>login-4 · 20s</td><td>Fuera de umbral: p95 9.756,5 ms; 0 descartes; 3,75 % de errores HTTP.</td></tr>
+<tr><td>refine-150 · 25s</td><td>Fuera de umbral: p95 398,4 ms; 29 descartes; 0 % de errores HTTP.</td></tr>
+<tr><td>confirmation-125 · 60s</td><td>Fuera de umbral: p95 1.042,3 ms; 275 descartes; 0 % de errores HTTP.</td></tr>
+</tbody></table></div>
+<h2>ZAP autenticado en Vercel</h2><p><strong>0 altas · 1 medias · 0 bajas.</strong> Las reglas 40012 (XSS reflejado) y 40033 (NoSQL MongoDB) analizaron <code>limit</code> y <code>page</code> de <code>GET /api/empleados</code>. Un hilo, pausa de 1.500 ms y máximo activo de tres minutos. No se enviaron formularios de escritura ni archivos.</p>
+<p>Disponibilidad final: HTTP 200. Dashboard anónimo: HTTP 401. Conteos de negocio: sin cambios. El contraste de administrador y empleado, CORS y caché se documenta con estados y cabeceras, sin publicar cuerpos privados.</p>
+<p><a href="pruebas/2026-11-14/zap-vercel-resultados.json">Resultados de Vercel en JSON</a> · <a href="pruebas/2026-11-14/resultados.json">Resultados locales en JSON</a></p>
+<div class="context limit"><strong>Límites de cobertura:</strong> los recuentos locales y los de Vercel corresponden a alcances diferentes. Una alerta informativa no acredita explotación; cero alertas de una clase no demuestra ausencia total de vulnerabilidades. No se completó una nueva revisión visual de todos los recorridos de la aplicación.</div>
+<h2>Manual de usuario y respaldo</h2><article class="card"><span class="tag">Empleado y administrador · 11 páginas</span><h3>Alta administrativa y cambio de contraseña</h3><p>La versión corregida está publicada. El manual explica cómo solicitar acceso, crear cuentas con datos verificados y cambiar la clave con revocación de sesiones. Identifica las capturas históricas y documenta el respaldo restaurado localmente; el archivo del respaldo permanece privado.</p><p><a class="button" href="manual/2026-11-14/manual-usuario-sesha.pdf">Abrir manual PDF</a> · <a href="manual/2026-11-14/verificacion-entrega.json">Evidencia del manual</a></p></article>
+<h2>Edición histórica del 13/11/2026</h2><p>Se conservan para trazabilidad; sus métricas no sustituyen a la campaña actual.</p><ul>
+<li><a href="pruebas/2026-11-13/informe-pruebas-funcionales.pdf">Funcionales: informe histórico</a></li>
+<li><a href="pruebas/2026-11-13/informe-rendimiento-k6.pdf">k6: informe histórico</a></li>
+<li><a href="pruebas/2026-11-13/informe-seguridad-zap.pdf">ZAP local: informe histórico</a></li>
+<li><a href="pruebas/2026-11-13/informe-seguridad-zap-vercel.pdf">ZAP Vercel: informe histórico</a></li>
+</ul><footer><p><a href="https://github.com/alexriver101219/PROYECTO_SENA">Código y procedimientos</a> · <a href="https://sesha-app.vercel.app">Abrir SESHA APP</a></p><p>Los informes corresponden a ejecuciones concretas y versiones identificadas. Las contraseñas, sesiones y registros internos permanecen fuera de esta publicación.</p></footer>
+</main></body></html>

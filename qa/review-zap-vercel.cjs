@@ -1,16 +1,22 @@
 // Revisión de CORS y caché: solo lecturas; cuerpos y sesiones permanecen en memoria.
 const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');
-const base='https://sesha-app.vercel.app';const output=path.resolve(__dirname,'../.qa/zap-vercel-2026-11-13/review.json');
+const root=path.resolve(__dirname,'..');const base='https://sesha-app.vercel.app';
+const outputDir=path.resolve(root,process.env.ZAP_VERCEL_OUTPUT||'.qa/zap-vercel-2026-11-13');
+if(!outputDir.startsWith(path.join(root,'.qa')+path.sep))throw Error('Salida no privada');
+const output=path.join(outputDir,'review.json');
 const fields=['access-control-allow-origin','access-control-allow-credentials','cache-control','age','x-vercel-cache','vary'];
 const summarize=(name,res)=>({name,status:res.status,headers:Object.fromEntries(fields.map(k=>[k,res.headers.get(k)]))});
 const pause=()=>new Promise(resolve=>setTimeout(resolve,1600));
 async function request(route,options={}){await pause();return fetch(base+route,{...options,redirect:'error',signal:AbortSignal.timeout(30000)});}
 (async()=>{
- if (!process.env.QA_ADMIN_PASSWORD || !process.env.QA_CARLOS_PASSWORD) throw Error("Configura las claves QA de forma privada");
+ const sessions=process.env.QA_ZAP_SESSION_FILE?require('./private-zap-session.cjs').readSessions(root):null;
+ if (!sessions && (!process.env.QA_ADMIN_PASSWORD || !process.env.QA_CARLOS_PASSWORD)) throw Error("Se requieren sesiones privadas");
  const checks=[];const profiles=[];
  for(const account of [{email:'admin@sesha.com',password: process.env.QA_ADMIN_PASSWORD,role:'admin'},{email:'carlos.mendoza@sesha.com',password: process.env.QA_CARLOS_PASSWORD,role:'employee'}]){
-  const login=await request('/api/auth/login',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({email:account.email,password:account.password})});
-  assert.equal(login.status,200);const cookie=login.headers.get('set-cookie').split(';')[0];await login.arrayBuffer();
+  let cookie;
+  if(sessions)cookie=sessions.find(entry=>entry.email===account.email&&entry.role===account.role).cookie;
+  else {const login=await request('/api/auth/login',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({email:account.email,password:account.password})});
+   assert.equal(login.status,200);cookie=login.headers.get('set-cookie').split(';')[0];await login.arrayBuffer();}
   const me=await request('/api/auth/me',{headers:{Cookie:cookie,Origin:base}});assert.equal(me.status,200);
   const data=await me.json();assert.equal(data.user.email,account.email);assert.equal(data.user.role,account.role);
   profiles.push(data.user._id);checks.push({...summarize('perfil '+account.role,me),expectedAccount:true});
@@ -23,4 +29,4 @@ async function request(route,options={}){await pause();return fetch(base+route,{
  const page=await request('/',{headers:{Origin:'https://example.invalid'}});assert.equal(page.status,200);await page.arrayBuffer();checks.push(summarize('HTML público con origen ajeno',page));
  const result={checkedAt:new Date().toISOString(),target:base,checks,distinctAccounts:true,leakObserved:false,note:'No se observó respuesta de otra cuenta en estas lecturas; no constituye auditoría exhaustiva de caché o CORS.'};
  fs.writeFileSync(output,JSON.stringify(result,null,2));console.log(JSON.stringify(result));
-})().catch(e=>{console.error(e.message);process.exitCode=1;});
+})().catch(()=>{console.error('Contraste Vercel no completado; detalles privados omitidos.');process.exitCode=1;});

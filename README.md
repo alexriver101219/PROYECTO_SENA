@@ -115,15 +115,15 @@ La migración `backend/scripts/redistribute-security-guards.js` requiere primero
 
 ### Acceso y operaciones
 
-- El registro crea cuentas employee con un perfil laboral ficticio y fecha de ingreso persistida; enviar role, owner u otros campos no permitidos se rechaza.
+- El registro público está cerrado en producción y por defecto en desarrollo. El administrador crea cuentas employee y perfiles con datos verificados; enviar role, owner u otros campos no permitidos se rechaza.
 - Administrador: gestiona perfiles y revisa solicitudes; puede consultar documentos para la demostración.
 - Empleado: consulta su perfil y gestiona sus propios PDF y solicitudes; puede cancelar solo solicitudes pendientes.
-- Las cuentas nuevas reciben automáticamente un perfil de demostración. Para corregir sus datos laborales, editar el perfil existente desde Empleados; también se puede registrar personal sin cuenta con el correo opcional vacío.
+- Las altas administrativas crean cuenta y perfil juntos en una transacción, con contraseña inicial oculta y bcrypt. Para corregir datos laborales se edita el perfil existente; también puede registrarse personal sin cuenta dejando el correo opcional vacío. Las cargas ficticias requieren ejecución explícita en un entorno de pruebas.
 - Los adjuntos usados en solicitudes no se borran mientras estén referenciados.
 - La sesión JWT dura dos horas, se guarda en cookie HttpOnly/Secure/SameSite=Strict en producción y usa protección CSRF para operaciones autenticadas. Logout revoca las sesiones anteriores de esa cuenta.
 - El servidor verifica firma, audiencia, emisor, estado de cuenta y permisos en cada petición. Los roles no se aceptan del almacenamiento del navegador.
 - Sin MongoDB no se informa éxito: /api/ready y operaciones de datos responden 503.
-- El alta pública con dominio @sesha.com es una convención de la demostración; no verifica titularidad de un buzón real. No se presenta como directorio corporativo con identidad verificada.
+- El dominio @sesha.com no verifica la titularidad de un buzón; el administrador debe comprobar la identidad antes del alta. El registro de demostración solo se habilita expresamente sobre datos de desarrollo desechables.
 - La constancia laboral PDF usa el nombre del usuario autenticado y su documento, cargo, área y fecha de ingreso guardados. La fecha de expedición se calcula al descargar en la zona America/Bogota. Documentos y Mi perfil comparten el mismo generador; el pie identifica los datos ficticios de demostración.
 - La fecha de ingreso puede editarse desde Empleados. Se rechazan fechas imposibles o futuras. Para completar perfiles históricos y fechas faltantes, ejecutar primero `node backend/scripts/complete-labor-profiles.js` y luego agregar `--apply` para guardar. Las contraseñas y los datos laborales válidos se conservan.
 - Los listados se paginan y los contadores de intentos se comparten en MongoDB entre instancias de Vercel.
@@ -143,15 +143,17 @@ Consultar CAMBIOS_Y_VALIDACION.md para los resultados de esta corrección. AUDIT
 
 ## Informes de pruebas y GitHub Pages
 
-Los tres PDF revisados se conservan en `docs/pruebas/2026-11-13/`, junto al resumen sanitizado `resultados.json`. Es adecuado mantenerlos en el proyecto: se pueden abrir desde VS Code y versionar como evidencias. Los registros privados, sesiones y tokens permanecen fuera de Git en `.qa/`.
+La edición actual del 14/11/2026 contiene los cuatro PDF en `docs/pruebas/2026-11-14/` y copias idénticas en `output/pdf/`: [funcionales](docs/pruebas/2026-11-14/informe-pruebas-funcionales.pdf), [k6](docs/pruebas/2026-11-14/informe-rendimiento-k6.pdf), [ZAP local](docs/pruebas/2026-11-14/informe-seguridad-zap.pdf) y [ZAP autenticado en Vercel](docs/pruebas/2026-11-14/informe-seguridad-zap-vercel.pdf). Los dos JSON públicos y el índice de documentos permiten revisar datos, fechas, versión y número de páginas. Los registros privados y sesiones permanecen fuera de Git en `.qa/`; el archivo temporal de sesiones reales se retiró al finalizar el contraste.
+
+La nueva campaña conserva 64 pruebas de backend y 21 de frontend de la misma versión y repite 48 verificaciones HTTP: 133 comprobaciones locales aprobadas, con 12 de publicación presentadas aparte. k6 confirmó 100 solicitudes/s durante 60 s (6.000 solicitudes, p95 166,4 ms); las etapas de 150 y 200/s y la confirmación de 125/s incumplieron umbrales. Login aprobó 3/s y superó límites a 4/s. ZAP local terminó con cuatro clases informativas y ninguna alta, media o baja. ZAP autenticado en Vercel conservó una alerta media de CORS en recursos públicos y cuatro informativas; las 22 peticiones activas no generaron alertas, los conteos de negocio se conservaron y la disponibilidad final fue HTTP 200. Estos resultados se limitan al alcance documentado.
 
 Portal de informes: https://alexriver101219.github.io/PROYECTO_SENA/. Su fuente es la carpeta `/docs` de la rama `main`; no requiere modificar el despliegue de SESHA en Vercel.
 
-Resultado del 13/11/2026: 77 verificaciones funcionales aprobadas. k6 confirmó 50 solicitudes/s durante 60 s en el equipo local; 125/s pasó solo 25 s y no mantuvo la confirmación de 60 s. ZAP registró 0 clases altas, 1 media, 1 baja y 4 informativas, con revisión de contexto. La alerta baja se limitó al servidor estático de laboratorio. No se probó capacidad de Vercel/Atlas ni un número máximo de usuarios reales.
+La edición histórica del 13/11/2026 se conserva íntegra: 77 verificaciones funcionales, carga confirmada de 50/s y los hallazgos de ZAP correspondientes a aquella versión. No se mezclan con las métricas actuales. Ninguna de las dos campañas de k6 mide capacidad de Vercel/Atlas ni un número máximo de usuarios reales.
 
-Procedimiento reproducible y alcance: [qa/README.md](qa/README.md). Generador de informes: `qa/generate_reports.py`. Los PDF y herramientas QA se excluyen del paquete de despliegue de Vercel.
+Procedimiento reproducible y alcance: [qa/README.md](qa/README.md). La edición actual usa `qa/export-current-results.cjs`, `qa/generate_current_reports.py` y `qa/build-report-index.cjs`. Los generadores anteriores se conservan para la evidencia histórica. Los PDF y herramientas QA se excluyen del paquete de despliegue de Vercel.
 
-Se añadió un cuarto informe, `informe-seguridad-zap-vercel.pdf`, del análisis autorizado sobre `https://sesha-app.vercel.app`: 14 rutas/recursos revisados pasivamente y 22 peticiones activas de XSS/NoSQL en los parámetros GET de paginación de empleados. ZAP terminó con código 0: 0 clases altas, 2 medias, 0 bajas y 4 informativas. Las medias corresponden a CSP inline y CORS en recursos públicos. La API bloqueó un origen ajeno y las dos cuentas de contraste recibieron sus propios perfiles con `no-store`; no se confirmó una fuga. Los conteos permanecieron iguales y la disponibilidad final fue HTTP 200. Es un alcance acotado, distinto al ensayo local, sin carga ni operaciones de escritura durante el escaneo.
+El informe histórico de ZAP en Vercel, del 13/11/2026, conserva sus dos alertas medias originales (CSP y CORS). La edición actual repite la revisión autenticada tras las correcciones, con sesiones iniciadas privadamente por el propietario y sin guardar contraseñas. Ambas versiones conservan la política acotada sobre paginación GET, sin carga ni escrituras de negocio durante el escaneo.
 
 ## Manual y respaldo de la entrega
 

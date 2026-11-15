@@ -1,8 +1,22 @@
 # Pruebas reproducibles de SESHA
 
+## Publicación actualizada de los cuatro informes
+
+La campaña del 14/11/2026 conserva `docs/pruebas/2026-11-13/` y publica una edición independiente en `docs/pruebas/2026-11-14/`. La generación usa listas explícitas de campos y no copia informes crudos, cookies o cuerpos privados.
+
+1. Definir `QA_OUTPUT=.qa/reports-2026-11-14`. Conservar allí los JSON aprobados de Vitest de la misma versión del código. Iniciar `node qa/isolated-server.cjs`; su carga ficticia usa modo test y las API de medición vuelven a modo producción. No se carga el entorno de Atlas.
+2. Ejecutar HTTP y límites, después `run-k6.cjs` y `refine-k6.cjs`, secuencialmente. No ejecutar ZAP o generar PDF mientras k6 mide. Los escalones fuera de umbral se conservan como fallidos.
+3. Ejecutar `prepare-zap.cjs` y `run-zap.cjs` en el entorno aislado. Con el mismo `QA_OUTPUT`, actualizar `check-production-headers.cjs` y `audit-dependencies.cjs` (este último usa `SECRET_AUDIT_OUTPUT` para la carpeta de salida).
+4. Para ZAP autenticado en Vercel, ejecutar `node qa/private-zap-login.cjs` y abrir `http://127.0.0.1:5177`. El propietario introduce las claves actuales en campos enmascarados. El servidor solo escucha en loopback, valida Host, origen y nonce, limita intentos y envía las credenciales únicamente al login HTTPS fijo de SESHA. Las claves permanecen en memoria; las dos sesiones se guardan temporalmente en una carpeta protegida y excluida de Git. Tras confirmar, el formulario deja de aceptar claves y permite cerrar la pestaña.
+5. Definir `ZAP_VERCEL_OUTPUT=.qa/zap-vercel-2026-11-14` y `QA_ZAP_SESSION_FILE=.qa/zap-vercel-2026-11-14/sessions-private.json`. Conservar un `deployment.json` privado con ID, commit, URL, estado y fecha de verificación del destino. Ejecutar `run-zap-vercel.cjs` y `review-zap-vercel.cjs`. Se reutilizan las sesiones sin volver a introducir o guardar contraseñas; después se elimina el archivo de sesiones. No se desactivan protecciones ni se realizan escrituras de negocio o carga en producción.
+6. `node qa/export-current-results.cjs` genera los dos JSON públicos revisados. `python qa/generate_current_reports.py` genera los cuatro PDF en `output/pdf/` y copias idénticas en la nueva carpeta pública. `node qa/build-report-index.cjs` actualiza Pages a partir de esos resultados y sus números de páginas reales.
+7. Renderizar y revisar todas las páginas con Poppler, ejecutar `python qa/verify-publication.py` y el escaneo de secretos, integrar mediante CI y verificar la publicación remota y cada descarga. `REPORT_DATE` permite identificar otra edición; las carpetas de entrada, autorización del destino y procedencia de los datos deben ajustarse conjuntamente.
+
+Las comprobaciones de publicación realizadas tras el despliegue se presentan separadas de las pruebas locales. Las evidencias de Vitest conservadas declaran su hora original; HTTP, k6 y ZAP se repiten y no se mezclan resultados de versiones distintas sin explicarlo.
+
 ## Auditoría local del 14/11/2026
 
-Resultado revisado: [validación funcional y de seguridad](../VALIDACION_SEGURIDAD_2026-11-14.md). Hay hallazgos vigentes de JWT y cuentas demo; no interpretar tests aprobados como cierre de seguridad.
+Resultado inicial: [validación funcional y de seguridad](../VALIDACION_SEGURIDAD_2026-11-14.md). Ese diagnóstico precede a la remediación de JWT y cuentas demo descrita a continuación; las pruebas aprobadas no sustituyen la revisión de los hallazgos de seguridad.
 
 Actualización posterior: [remediación y arquitectura de producción](../ARQUITECTURA_Y_PRODUCCION.md). El propietario autorizó la cuarentena de las demos y la rotación del JWT. La campaña posterior usa `QA_OUTPUT=.qa/remediation-2026-11-14`; el nuevo flujo sustituye el registro público de producción por alta administrativa. `backend/scripts/quarantine-demo-accounts.js` es una herramienta separada, con vista previa predeterminada y destino fijo; `--apply --approved-disable-demo` solo se usa después de autorización específica. No se ejecuta en CI, build o arranque.
 
