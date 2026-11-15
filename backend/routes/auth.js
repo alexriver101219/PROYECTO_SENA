@@ -7,7 +7,7 @@ const { authenticate } = require("../middlewares/authMiddleware");
 const { asyncHandler, HttpError } = require("../utils/http");
 const v = require("../utils/validation");
 const laborPositions = require("../config/laborPositions");
-const registrationEnabled = () => process.env.NODE_ENV !== "production";
+const { canSelfRegister: registrationEnabled } = require("../config/env");
 router.get("/registration", (_req, res) => res.json({ enabled: registrationEnabled() }));
 router.get("/positions", (_req, res) => res.json(laborPositions));
 router.post(

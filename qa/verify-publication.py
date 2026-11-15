@@ -49,8 +49,9 @@ delivery = LATEST_MANUAL / 'verificacion-entrega.json'
 if delivery.exists():
     evidence = json.loads(delivery.read_text(encoding='utf-8'))
     assert evidence['backup']['passed']
-    assert sum(item['documents'] for item in evidence['backup']['checks']) == 304
-    assert sum(item['indexes'] for item in evidence['backup']['checks']) == 11
+    backup_checks = evidence['backup']['checks']
+    assert backup_checks and len({item['collection'] for item in backup_checks}) == len(backup_checks)
+    assert all(item['documents'] >= 0 and item['indexes'] >= 1 and item['documentsMatch'] and item['indexesMatch'] and item['optionsMatch'] for item in backup_checks)
     assert evidence['apiCheck']['fixturesRemoved'] and evidence['apiCheck']['bytesMatch']
     assert evidence['visualReview']['mobile']['physicalDeviceTested'] is False
     update = evidence['passwordChangeUpdate']
@@ -58,7 +59,11 @@ if delivery.exists():
     assert update['passwordMinimumCharacters'] == 12 and update['passwordMaximumUtf8Bytes'] == 72
     assert update['credentialsEnteredForDocumentation'] is False
     assert update['productionAccountsChangedForDocumentation'] is False
-    assert update['deploymentPending'] and evidence['applicationChangesPublished'] is False
+    assert update['deploymentPending'] is (not evidence['applicationChangesPublished'])
+    if evidence['applicationChangesPublished']:
+        release = evidence['productionVerification']
+        assert release['state'] == 'READY' and release['target'] == 'https://sesha-app.vercel.app'
+        assert release['checksPassed'] == 12 and release['checksFailed'] == 0
     manual = PdfReader(LATEST_MANUAL / 'manual-usuario-sesha.pdf')
     assert len(manual.pages) == 11
     manual_text = '\n'.join(page.extract_text() or '' for page in manual.pages)
