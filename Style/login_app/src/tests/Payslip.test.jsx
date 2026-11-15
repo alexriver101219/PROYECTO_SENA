@@ -5,6 +5,7 @@ import PayslipSection from "../components/PayslipSection";
 import { AuthContext } from "../context/AuthContext";
 import api, { downloadPayslip } from "../services/api";
 import { todayInBogota } from "../utils/formatters";
+import { latestClosedFortnight, fortnightEnd } from "../utils/payrollPeriods";
 
 test("Documentos discrimina devengado y descuentos conservando el total y descarga el mes seleccionado", async () => {
   downloadPayslip.mockResolvedValue();
@@ -12,15 +13,17 @@ test("Documentos discrimina devengado y descuentos conservando el total y descar
   await screen.findByText(/2\.600\.000/);
   for (const header of ["Devengado", "Deducciones", "Total a pagar"])
     expect(screen.getByRole("columnheader", { name: header })).toBeInTheDocument();
-  expect(screen.getByRole("rowheader", { name: "Salud (4 %)" })).toBeInTheDocument();
-  expect(screen.getByRole("rowheader", { name: "Pensión (4 %)" })).toBeInTheDocument();
-  expect(screen.getAllByText(/2\.826\.086/)).toHaveLength(2);
-  expect(screen.getAllByText(/113\.043/)).toHaveLength(2);
-  expect(screen.getByText(/226\.086/)).toBeInTheDocument();
+  expect(screen.getByRole("rowheader", { name: "Salud (2 %)" })).toBeInTheDocument();
+  expect(screen.getByRole("rowheader", { name: "Pensión (2 %)" })).toBeInTheDocument();
+  expect(screen.getAllByText(/1\.354\.166/)).toHaveLength(2);
+  expect(screen.getAllByText(/27\.083/)).toHaveLength(2);
+  expect(screen.getByText(/^\$\s*54\.166$/u)).toBeInTheDocument();
+  expect(screen.getByText(/1\.300\.000/)).toBeInTheDocument();
+  expect(screen.getByText(/Bancolombia/)).toBeInTheDocument();
   expect(screen.queryByText(/2\.392\.000/)).not.toBeInTheDocument();
-  const period = todayInBogota().slice(0, 7);
+  const { period, half } = latestClosedFortnight();
   await userEvent.setup().click(screen.getByRole("button", { name: "Descargar desprendible de nómina" }));
-  expect(downloadPayslip).toHaveBeenCalledWith(period);
+  expect(downloadPayslip).toHaveBeenCalledWith(period, half);
   expect(await screen.findByText("Descarga del desprendible iniciada.")).toBeInTheDocument();
 });
 
@@ -30,14 +33,29 @@ test("cambiar período deshabilita la descarga hasta recibir la nueva liquidaci�
   render(<PayslipSection />);
   fireEvent.change(screen.getByLabelText("Período de nómina"), { target: { value: "2026-10" } });
   expect(screen.getByRole("button", { name: "Descargar desprendible de nómina" })).toBeDisabled();
-  const details = { period: "2026-10", gross: 3478260, health: 139130, pension: 139130, deductions: 278260,
-    healthPercent: 4, pensionPercent: 4, net: 3200000, deductionStatus: "Salud y pensión ya descontadas",
+  const details = { period: "2026-10", half: "2", periodStart: "2026-10-16", periodEnd: "2026-10-31", monthlyNet: 3200000,
+    gross: 1666666, health: 33333, pension: 33333, deductions: 66666,
+    healthPercent: 2, pensionPercent: 2, net: 1600000, deductionStatus: "Salud y pensión descontadas en esta quincena",
+    payment: { method: "Transferencia bancaria", bank: "Bancolombia" },
     schedule: { code: "2x2x2", label: "Turnos" }, scopeNote: "Neto mensual" };
   resolveNew({ data: details });
   await screen.findByText(/3\.200\.000/);
-  resolveOld({ data: { ...details, period: "2026-11", net: 2600000 } });
+  resolveOld({ data: { ...details, period: "2026-11", half: "1", monthlyNet: 2600000, net: 1300000 } });
   await waitFor(() => expect(screen.getByRole("button", { name: "Descargar desprendible de nómina" })).toBeEnabled());
   expect(screen.queryByText(/2\.600\.000/)).not.toBeInTheDocument();
+});
+
+test("elige la última quincena cerrada y deshabilita la segunda cuando aún no finaliza", async () => {
+  render(<PayslipSection />);
+  await screen.findByText(/1\.300\.000/);
+  const today = todayInBogota(), latest = latestClosedFortnight(today);
+  expect(screen.getByLabelText("Período de nómina")).toHaveValue(latest.period);
+  expect(screen.getByLabelText("Quincena")).toHaveValue(latest.half);
+  const option = screen.getByRole("option", { name: /Segunda quincena/ });
+  expect(option.disabled).toBe(fortnightEnd(latest.period, "2") > today);
+  expect(latestClosedFortnight("2026-11-14")).toEqual({ period: "2026-10", half: "2" });
+  expect(latestClosedFortnight("2026-11-15")).toEqual({ period: "2026-11", half: "1" });
+  expect(latestClosedFortnight("2026-11-30")).toEqual({ period: "2026-11", half: "2" });
 });
 
 test("un error de descarga no anuncia éxito ni duplica solicitudes mientras genera", async () => {

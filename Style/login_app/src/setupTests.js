@@ -18,8 +18,13 @@ beforeEach(async () => {
   api.get.mockImplementation((path) => {
     if (path.startsWith("/documentos/nomina?")) {
       const period = new URLSearchParams(path.split("?")[1]).get("period");
-      return Promise.resolve({ data: { period, gross: 2826086, health: 113043, pension: 113043, deductions: 226086,
-        healthPercent: 4, pensionPercent: 4, net: 2600000, deductionStatus: "Salud y pensión ya descontadas",
+      const half = new URLSearchParams(path.split("?")[1]).get("half") || "1";
+      const [year, month] = period.split("-").map(Number);
+      const end = new Date(Date.UTC(year, month, 0)).getUTCDate();
+      return Promise.resolve({ data: { period, half, periodStart: `${period}-${half === "1" ? "01" : "16"}`, periodEnd: `${period}-${half === "1" ? "15" : end}`,
+        monthlyNet: 2600000, gross: 1354166, health: 27083, pension: 27083, deductions: 54166,
+        healthPercent: 2, pensionPercent: 2, net: 1300000, deductionStatus: "Salud y pensión descontadas en esta quincena",
+        payment: { method: "Transferencia bancaria", bank: "Bancolombia" },
         schedule: { code: "2x2x2", label: "2 días, 2 noches y 2 descansos" },
         scopeNote: "Devengado calculado para conservar el neto mensual acordado." } });
     }
