@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const Solicitud = require("../models/Solicitud");
 const Documento = require("../models/Documento");
+const Empleado = require("../models/Empleado");
+const { requestTypes, employeeRequestTypes } = require("../config/requestTypes");
+const { employeeRequestContext, employeeRequestData } = require("../services/employeeRequests");
+const { dateInBogota, validDateOnly } = require("../utils/dates");
 const {
   authenticate,
   adminOnly,
@@ -9,6 +13,13 @@ const {
 const { asyncHandler, HttpError } = require("../utils/http");
 const v = require("../utils/validation");
 router.use(authenticate);
+router.get("/formulario", asyncHandler(async (req, res) => {
+  v.fields(req.query, ["path"]);
+  if (req.query.path !== undefined && req.query.path !== "solicitudes/formulario")
+    throw new HttpError(400, "Ruta de formulario inválida");
+  const profile = await Empleado.findOne({ user: req.user._id });
+  res.json(employeeRequestContext(req.user, profile));
+}));
 router.get(
   "/",
   asyncHandler(async (req, res) => {
@@ -19,7 +30,8 @@ router.get(
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("documento", "nombre"),
+        .populate("documento", "nombre")
+        .populate("owner", "name email"),
       Solicitud.countDocuments(filter),
     ]);
     res.json({ items, total, page, limit });
@@ -28,14 +40,23 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    v.fields(req.body, ["tipo", "descripcion", "documento"]);
-    if (!["Permiso", "Vacaciones", "Certificado"].includes(req.body.tipo))
+    v.fields(req.body, ["tipo", "descripcion", "documento", "fechaPermiso"]);
+    if (!requestTypes.includes(req.body.tipo))
       throw new HttpError(400, "Tipo de solicitud inválido");
     const data = {
       owner: req.user._id,
       tipo: req.body.tipo,
       descripcion: v.text(req.body.descripcion, "Motivo", 3, 2000),
+      fechaSolicitud: dateInBogota(),
     };
+    if (employeeRequestTypes.includes(req.body.tipo)) {
+      const profile = await Empleado.findOne({ user: req.user._id });
+      Object.assign(data, employeeRequestData(req.user, profile, req.body));
+    } else if (req.body.fechaPermiso !== undefined) {
+      if (!validDateOnly(req.body.fechaPermiso) || req.body.fechaPermiso < data.fechaSolicitud)
+        throw new HttpError(400, "Fecha de permiso inválida");
+      data.fechaPermiso = req.body.fechaPermiso;
+    }
     if (req.body.documento) {
       const document = await Documento.findOne({
         _id: v.id(req.body.documento),

@@ -14,6 +14,8 @@ test("una solicitud fallida conserva el motivo y nunca simula éxito", async () 
   );
   await screen.findByText("No hay solicitudes registradas.");
   const user = userEvent.setup();
+  await screen.findByDisplayValue("Ana Torres");
+  await user.selectOptions(screen.getByLabelText("Tipo de solicitud"), "Ajuste de nómina");
   await user.type(screen.getByLabelText("Motivo"), "Permiso para cita médica");
   await user.click(screen.getByRole("button", { name: /enviar solicitud/i }));
   await waitFor(() =>
@@ -23,6 +25,6 @@ test("una solicitud fallida conserva el motivo y nunca simula éxito", async () 
     "Permiso para cita médica",
   );
   expect(
-    screen.queryByText("Solicitud radicada y guardada."),
+    screen.queryByText(/Solicitud radicada y guardada/),
   ).not.toBeInTheDocument();
 });

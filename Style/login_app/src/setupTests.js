@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeEach, vi } from "vitest";
+import { todayInBogota } from "./utils/formatters";
 vi.mock("./services/api", () => ({
   default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
   setCsrfToken: vi.fn(),
@@ -16,6 +17,10 @@ beforeEach(async () => {
   vi.resetAllMocks();
   localStorage.clear();
   api.get.mockImplementation((path) => {
+    if (path === "/solicitudes/formulario") return Promise.resolve({ data: {
+      employee: { name: "Ana Torres", document: "52418936", email: "ana@sesha.com", position: "Guarda de seguridad", department: "Operaciones" },
+      requestDate: todayInBogota(), types: ["Día de la familia", "Permiso remunerado", "Permiso no remunerado", "Ajuste de nómina"],
+    } });
     if (path.startsWith("/documentos/nomina?")) {
       const period = new URLSearchParams(path.split("?")[1]).get("period");
       const half = new URLSearchParams(path.split("?")[1]).get("half") || "1";

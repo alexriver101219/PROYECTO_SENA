@@ -8,6 +8,7 @@ import api, {
 import { useCollection } from "../hooks/useCollection";
 import Pagination from "../components/Pagination";
 import PayslipSection from "../components/PayslipSection";
+import EmployeeRequestForm from "../components/EmployeeRequestForm";
 export default function Documentos() {
   const collection = useCollection("/documentos");
   const [file, setFile] = useState(null);
@@ -68,6 +69,7 @@ export default function Documentos() {
         </button>
       </section>
       <PayslipSection />
+      <EmployeeRequestForm onCreated={collection.refresh} />
       <form
         onSubmit={submit}
         className="bg-white border rounded-xl p-5 space-y-3"
