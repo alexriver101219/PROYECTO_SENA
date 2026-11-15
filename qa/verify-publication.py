@@ -8,6 +8,7 @@ import hashlib
 import zipfile
 from pypdf import PdfReader
 from PIL import Image
+from deliverable_paths import LOCAL_REPORT_NAMES, LOCAL_PRESENTATION_NAMES, local_report_name
 
 ROOT = Path(__file__).resolve().parent.parent
 LATEST_MANUAL = ROOT / 'docs/manual/2026-11-15'
@@ -15,6 +16,10 @@ HISTORICAL_MANUAL = ROOT / 'docs/manual/2026-11-14'
 LATEST_REPORTS = ROOT / 'docs/pruebas' / os.environ.get('REPORT_DATE', '2026-11-15')
 PRESENTATION = ROOT / 'docs/presentacion/2026-11-15'
 presentation_files = {}
+for name in LOCAL_REPORT_NAMES:
+    assert not (ROOT / 'output/pdf' / name).exists(), 'Copia local redundante: ' + name
+for name in LOCAL_PRESENTATION_NAMES:
+    assert not (ROOT / 'output/presentacion' / name).exists(), 'Copia local redundante: ' + name
 if (PRESENTATION / 'archivos.json').exists():
     presentation = json.loads((PRESENTATION / 'archivos.json').read_text(encoding='utf-8'))
     assert presentation['mainSlides'] == 18 and presentation['supportSlides'] == 4
@@ -23,19 +28,27 @@ if (PRESENTATION / 'archivos.json').exists():
         file = PRESENTATION / entry['file']
         assert file.stat().st_size == entry['bytes']
         assert hashlib.sha256(file.read_bytes()).hexdigest() == entry['sha256']
+        if entry['file'] in LOCAL_PRESENTATION_NAMES:
+            assert file.read_bytes() == (ROOT / 'output/presentacion' / LOCAL_PRESENTATION_NAMES[entry['file']]).read_bytes()
         presentation_files[file] = entry
 class Links(HTMLParser):
+    def __init__(self, directory=None):
+        super().__init__()
+        self.directory = directory or ROOT / 'docs'
     def handle_starttag(self, tag, attrs):
         for key, value in attrs:
             if key == 'href' and not value.startswith(('https:', '#')):
-                assert (ROOT / 'docs' / value).is_file(), 'Enlace local inexistente: ' + value
+                assert (self.directory / value).is_file(), 'Enlace local inexistente: ' + value
 Links().feed((ROOT / 'docs/index.html').read_text(encoding='utf-8'))
+if presentation_files:
+    Links(PRESENTATION).feed((PRESENTATION / 'guia-ensayo.html').read_text(encoding='utf-8'))
+    Links(ROOT / 'output/presentacion').feed((ROOT / 'output/presentacion/guia-ensayo.html').read_text(encoding='utf-8'))
 technical_directory = ROOT / 'docs/informes/2026-11-15'
 if (technical_directory / 'documento.json').exists():
     technical = json.loads((technical_directory / 'documento.json').read_text(encoding='utf-8'))
     assert technical['file'] == 'informe-tecnico-consolidado-sesha.pdf'
     technical_pdf = technical_directory / technical['file']
-    assert technical_pdf.read_bytes() == (ROOT / 'output/pdf' / technical['file']).read_bytes()
+    assert technical_pdf.read_bytes() == (ROOT / 'output/pdf' / local_report_name(technical['file'])).read_bytes()
     assert technical_pdf.stat().st_size == technical['bytes']
     assert hashlib.sha256(technical_pdf.read_bytes()).hexdigest() == technical['sha256']
     has_cors = bool(technical.get('corsRevalidation'))
@@ -54,6 +67,8 @@ pattern = re.compile(r'mongodb\+srv://[^\s]+:[^\s]+@|eyJ[A-Za-z0-9_-]+\.[A-Za-z0
 for directory in ['docs', 'qa']:
     for file in (ROOT / directory).rglob('*'):
         if not file.is_file():
+            continue
+        if '__pycache__' in file.parts or file.suffix in {'.pyc', '.pyo'}:
             continue
         if file in presentation_files and file.name == 'SESHA-paquete-exposicion.zip':
             with zipfile.ZipFile(file) as archive:
@@ -86,7 +101,7 @@ for directory in ['docs', 'qa']:
             # La edición histórica del manual se conserva; solo la última comparte
             # el nombre estable del PDF de salida.
             if (file.name == 'manual-usuario-sesha.pdf' and file.parent == LATEST_MANUAL) or (file.parent == LATEST_REPORTS):
-                assert file.read_bytes() == (ROOT / 'output/pdf' / file.name).read_bytes()
+                assert file.read_bytes() == (ROOT / 'output/pdf' / local_report_name(file.name)).read_bytes()
         else:
             text = file.read_text(encoding='utf-8')
         assert not pattern.search(text), 'Revisar posible secreto: ' + str(file.relative_to(ROOT))

@@ -2,13 +2,14 @@
 from pathlib import Path
 import subprocess
 from PIL import Image, ImageDraw, ImageOps
+from deliverable_paths import local_report_name
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / '.qa/documentation-2026-11-15/render'
 OUT.mkdir(parents=True, exist_ok=True)
 BINARY = ROOT / '.qa/tools/poppler/poppler-26.09.0/Library/bin/pdftoppm.exe'
 for name in ['manual-usuario-sesha', 'informe-tecnico-consolidado-sesha']:
-    subprocess.run([str(BINARY), '-r', '96', '-png', str(ROOT / 'output/pdf' / (name + '.pdf')), str(OUT / name)], check=True, capture_output=True)
+    subprocess.run([str(BINARY), '-r', '96', '-png', str(ROOT / 'output/pdf' / local_report_name(name + '.pdf')), str(OUT / name)], check=True, capture_output=True)
     pages = sorted(OUT.glob(name + '-[0-9]*.png'))
     columns = 2 if name.startswith('manual') else 3
     cell = (560, 420) if columns == 2 else (360, 530)

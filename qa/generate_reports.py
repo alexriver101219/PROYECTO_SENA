@@ -17,7 +17,7 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / 'docs/pruebas/2026-11-13'
-OUT = ROOT / 'output/pdf'
+OUT = ROOT / 'output/pdf/historico/2026-11-13'
 OUT.mkdir(parents=True, exist_ok=True)
 D = json.loads((PUBLIC / 'resultados.json').read_text(encoding='utf-8'))
 pdfmetrics.registerFont(TTFont('Segoe', 'C:/Windows/Fonts/segoeui.ttf'))

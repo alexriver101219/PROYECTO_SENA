@@ -20,6 +20,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab import rl_config
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
+from deliverable_paths import local_report_name
 
 ROOT = Path(__file__).resolve().parent.parent
 rl_config.useA85 = False
@@ -401,7 +402,7 @@ for index, page in enumerate(historical.pages):
 writer.add_metadata({'/Title': 'SESHA APP - Informe técnico consolidado actualizado al 15/11/2026', '/Author': 'Alexander Rivera Sánchez',
     '/Subject': 'Parte vigente y anexo histórico conservado; SENA 2026, ficha 3186701'})
 tech_name = 'informe-tecnico-consolidado-sesha.pdf'
-tech_target = OUT / ('informe-tecnico-consolidado-sesha-actualizado.pdf' if TECHNICAL_ONLY else tech_name)
+tech_target = OUT / local_report_name(tech_name)
 writer.compress_identical_objects()
 with tech_target.open('wb') as stream:
     writer.write(stream)

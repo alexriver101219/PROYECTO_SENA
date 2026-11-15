@@ -18,6 +18,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from pypdf import PdfReader
+from deliverable_paths import local_report_name
 
 ROOT = Path(__file__).resolve().parent.parent
 rl_config.useA85 = False
@@ -91,7 +92,7 @@ manifest = [entry for entry in json.loads((PUBLIC / 'documentos.json').read_text
 def build(name, story):
     if ONLY_VERCEL and name != 'informe-seguridad-zap-vercel.pdf':
         return
-    target = OUT / ('informe-seguridad-zap-vercel-actualizado.pdf' if ONLY_VERCEL else name)
+    target = OUT / local_report_name(name)
     SimpleDocTemplate(str(target), pagesize=A4, leftMargin=18*mm, rightMargin=18*mm, topMargin=24*mm, bottomMargin=23*mm,
         title=name.replace('-', ' ').removesuffix('.pdf'), author='SESHA APP - Proyecto SENA').build(story, onFirstPage=chrome, onLaterPages=chrome)
     reader = PdfReader(target)
@@ -99,8 +100,6 @@ def build(name, story):
     assert all(len(page.extract_text() or '') > 100 for page in reader.pages), 'Página vacía'
     assert not re.search(r'mongodb\+srv://|sesha_session=|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+', text)
     shutil.copy2(target, PUBLIC / name)
-    if ONLY_VERCEL:
-        shutil.copy2(target, OUT / name)
     entry = {'file': name, 'pages': len(reader.pages), 'bytes': target.stat().st_size}
     manifest.append(entry); print(json.dumps(entry))
 

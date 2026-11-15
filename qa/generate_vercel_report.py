@@ -59,7 +59,8 @@ s += [PageBreak(),h('Trazabilidad de la evaluación'),table([['Identificador','V
       h('Conservación de evidencias'),p('El resumen sanitizado se conserva en <b>zap-vercel-resultados.json</b>. Los archivos nativos de ZAP, sus sesiones y los cuerpos de respuesta se mantienen en la carpeta privada ignorada por Git. El plan temporal que contenía la cookie se eliminó al terminar.'),
       h('Prioridad de seguimiento'),p('Revisar las alertas confirmadas de endurecimiento y ampliar la cobertura de flujos antes de presentar este informe como una evaluación integral. Comparar futuras ejecuciones con este alcance y la misma política; los recuentos de un escaneo local más amplio y este análisis acotado no son directamente equivalentes.'),
       h('Referencias del método'),p('<link href="https://www.zaproxy.org/docs/desktop/addons/automation-framework/job-ascan/" color="#087f80">ZAP: escaneo activo y política de reglas</link><br/><link href="https://www.zaproxy.org/docs/alerts/40012/" color="#087f80">Regla 40012: XSS reflejado</link><br/><link href="https://www.zaproxy.org/docs/alerts/40033/" color="#087f80">Regla 40033: NoSQL MongoDB</link>')]
-target=ROOT/'output/pdf/informe-seguridad-zap-vercel.pdf'
+target=ROOT/'output/pdf/historico/2026-11-13/informe-seguridad-zap-vercel.pdf'
+target.parent.mkdir(parents=True, exist_ok=True)
 SimpleDocTemplate(str(target),pagesize=A4,leftMargin=18*mm,rightMargin=18*mm,topMargin=24*mm,bottomMargin=23*mm,title='SESHA - Seguridad ZAP en Vercel',author='SESHA APP - Proyecto SENA').build(s,onFirstPage=chrome,onLaterPages=chrome)
 reader=PdfReader(target);text='\n'.join(page.extract_text() or '' for page in reader.pages)
 assert all(len(page.extract_text() or '')>100 for page in reader.pages)

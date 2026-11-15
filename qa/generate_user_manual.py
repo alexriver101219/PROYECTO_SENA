@@ -214,7 +214,8 @@ s += [table([['Colección','Documentos','Índices','Comparación restaurada']]+[
       p('La revisión de seguridad del 14/11/2026 desactivó 120 cuentas demo y, con otra autorización específica, 19 empleados adicionales con claves expuestas. Revocó sus sesiones y conservó cuentas, roles, perfiles y documentos. No se debe reactivar una cuenta afectada sin sustituir primero su clave mediante un procedimiento autorizado. El cambio del secreto de sesiones exige volver a iniciar sesión. El resumen público excluye secretos y el contenido del respaldo.','SmallS'),
       p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/" color="#087f80">Portal de informes y manual</link> · <link href="https://www.mongodb.com/docs/database-tools/mongodump/" color="#087f80">mongodump</link> · <link href="https://www.mongodb.com/docs/database-tools/mongorestore/" color="#087f80">mongorestore</link>','SmallS')]
 
-target=ROOT/'output/pdf/manual-usuario-sesha.pdf'
+target=ROOT/'output/pdf/historico/2026-11-14/manual-usuario-sesha.pdf'
+target.parent.mkdir(parents=True, exist_ok=True)
 SimpleDocTemplate(str(target),pagesize=PAGE,leftMargin=14*mm,rightMargin=14*mm,topMargin=22*mm,bottomMargin=18*mm,title='SESHA APP - Manual breve de usuario',author='SESHA APP').build(s,onFirstPage=chrome,onLaterPages=chrome)
 reader=PdfReader(target)
 text='\n'.join(page.extract_text() or '' for page in reader.pages)
