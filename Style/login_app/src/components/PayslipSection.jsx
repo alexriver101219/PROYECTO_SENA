@@ -29,7 +29,7 @@ export default function PayslipSection() {
     setLoading(true);
     api.get(`/documentos/nomina?period=${encodeURIComponent(period)}`).then(({ data }) => {
       if (!active) return;
-      if (data.period !== period || !Number.isSafeInteger(data.net)) {
+      if (data.period !== period || ![data.gross, data.health, data.pension, data.deductions, data.net].every(Number.isSafeInteger)) {
         setError("No se pudo consultar la liquidación. Intenta de nuevo.");
         return;
       }
@@ -54,7 +54,7 @@ export default function PayslipSection() {
     <section aria-labelledby="payroll-title" className="bg-white border rounded-xl p-5 space-y-4">
       <div>
         <h2 id="payroll-title" className="font-bold text-lg">Desprendible de nómina</h2>
-        <p>Consulta tu valor neto mensual y descarga el PDF con tus datos y el logo de SESHA.</p>
+        <p>Consulta el devengado, los descuentos de salud y pensión y tu total a pagar. Descarga el PDF con tus datos y el logo de SESHA.</p>
       </div>
       <label className="block font-semibold" htmlFor="payroll-period">
         Período de nómina
@@ -66,16 +66,44 @@ export default function PayslipSection() {
       {!period && <p>Selecciona el mes que deseas consultar.</p>}
       {details && (
         <>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="rounded-lg bg-slate-50 p-3">
-              <dt className="text-sm text-slate-600">Valor neto mensual</dt>
-              <dd className="text-2xl font-semibold text-slate-900">{money(details.net)}</dd>
-            </div>
-            <div className="rounded-lg bg-slate-50 p-3">
-              <dt className="text-sm text-slate-600">Descuentos</dt>
-              <dd className="font-semibold text-slate-900">{details.deductionStatus}</dd>
-            </div>
-          </dl>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[620px] border-collapse text-sm">
+              <caption className="text-left text-slate-600 pb-2">Detalle mensual en pesos colombianos (COP)</caption>
+              <thead className="bg-slate-800 text-white">
+                <tr>
+                  <th scope="col" className="p-3 text-left">Concepto</th>
+                  <th scope="col" className="p-3 text-right">Devengado</th>
+                  <th scope="col" className="p-3 text-right">Deducciones</th>
+                  <th scope="col" className="p-3 text-right">Total a pagar</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                <tr className="bg-slate-50">
+                  <th scope="row" className="p-3 text-left font-medium">Salario mensual bruto</th>
+                  <td className="p-3 text-right tabular-nums">{money(details.gross)}</td>
+                  <td className="p-3 text-right">—</td><td className="p-3 text-right">—</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="p-3 text-left font-medium">Salud ({details.healthPercent} %)</th>
+                  <td className="p-3 text-right">—</td>
+                  <td className="p-3 text-right tabular-nums">{money(details.health)}</td><td className="p-3 text-right">—</td>
+                </tr>
+                <tr className="bg-slate-50">
+                  <th scope="row" className="p-3 text-left font-medium">Pensión ({details.pensionPercent} %)</th>
+                  <td className="p-3 text-right">—</td>
+                  <td className="p-3 text-right tabular-nums">{money(details.pension)}</td><td className="p-3 text-right">—</td>
+                </tr>
+              </tbody>
+              <tfoot className="bg-teal-700 text-white font-bold">
+                <tr>
+                  <th scope="row" className="p-3 text-left">Totales</th>
+                  <td className="p-3 text-right tabular-nums">{money(details.gross)}</td>
+                  <td className="p-3 text-right tabular-nums">{money(details.deductions)}</td>
+                  <td className="p-3 text-right tabular-nums">{money(details.net)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
           <p><strong>Programación {details.schedule.code}:</strong> {details.schedule.label}.</p>
           <p className="text-sm text-slate-600">{details.scopeNote}</p>
         </>

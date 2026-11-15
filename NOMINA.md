@@ -2,7 +2,11 @@
 
 En Documentos, el empleado selecciona un mes y descarga un PDF con su identidad autenticada, documento, correo, cargo, área, fecha de ingreso, programación y logo de SESHA. El servidor obtiene el perfil vinculado desde MongoDB; el cliente solo envía el período. Un administrador no tiene una asignación salarial de empleado.
 
-Los valores indicados por el propietario son **netos mensuales**, con salud y pensión ya descontadas. El sistema conserva exactamente estos importes: no resta otro 8 %, no reconstruye un salario bruto ni inventa montos de aportes.
+Los valores indicados por el propietario son **netos mensuales**. El comprobante discrimina el devengado antes de descuentos, salud (4 %), pensión (4 %) y total a pagar, manteniendo exactamente el neto acordado. Como el propietario proporcionó netos, el devengado se calcula a partir de estos valores; no se presenta como un básico contractual leído de MongoDB.
+
+Los aportes del empleado se calculan sobre el mismo devengado y se redondean individualmente al peso. Se elige una base entera que satisfaga exactamente `devengado - salud - pensión = neto`, sin ajustes ficticios ni dobles descuentos. Para Laura: devengado **3.478.260**, salud **139.130**, pensión **139.130**, deducciones **278.260** y total a pagar **3.200.000 COP**. Las mismas columnas aparecen en Documentos y en el PDF.
+
+Referencias de los porcentajes del trabajador dependiente: [MinSalud](https://www.minsalud.gov.co/sites/rid/Lists/BibliotecaDigital/RIDE/VP/DOA/RL/cartillas-de-aseguramiento-al-sistema-general-de-seguridad-social-en-salud.pdf), [orientación de la UGPP en la VUE](https://www.vue.gov.co/tramites-y-consultas/orientacion-empleadores-liquidacion-aportes-al-sps). Esta liquidación básica no reemplaza una nómina contractual completa ni una planilla PILA.
 
 | Cargo o grupo | Neto mensual COP | Programación |
 | --- | ---: | --- |

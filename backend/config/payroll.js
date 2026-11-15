@@ -1,5 +1,6 @@
 // Valores NETOS mensuales en COP indicados por el propietario de SESHA.
-// Salud y pensión ya están descontadas; no se deducen otra vez.
+// El devengado se calcula a partir del neto para discriminar los descuentos
+// sin disminuir el importe final acordado.
 // La programación describe el cargo; no sustituye registros de asistencia.
 const rotating = { code: "2x2x2", label: "2 días diurnos de 12 h, 2 noches de 12 h y 2 días completos de descanso" };
 const weekdays = { code: "L-V", label: "Lunes a viernes" };
@@ -22,4 +23,4 @@ const netByPosition = new Map(amounts.flatMap(([net, schedule, positions]) =>
   positions.map((position) => [normalizePosition(position), { net, schedule }])));
 const payrollForPosition = (position) => netByPosition.get(normalizePosition(position));
 
-module.exports = { payrollForPosition };
+module.exports = { payrollForPosition, healthPercent: 4, pensionPercent: 4 };

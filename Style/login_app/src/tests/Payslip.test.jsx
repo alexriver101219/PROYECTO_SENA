@@ -6,11 +6,17 @@ import { AuthContext } from "../context/AuthContext";
 import api, { downloadPayslip } from "../services/api";
 import { todayInBogota } from "../utils/formatters";
 
-test("Documentos muestra el neto sin otro descuento y descarga el mes seleccionado", async () => {
+test("Documentos discrimina devengado y descuentos conservando el total y descarga el mes seleccionado", async () => {
   downloadPayslip.mockResolvedValue();
   render(<Documentos />);
   await screen.findByText(/2\.600\.000/);
-  expect(screen.getByText("Salud y pensión ya descontadas")).toBeInTheDocument();
+  for (const header of ["Devengado", "Deducciones", "Total a pagar"])
+    expect(screen.getByRole("columnheader", { name: header })).toBeInTheDocument();
+  expect(screen.getByRole("rowheader", { name: "Salud (4 %)" })).toBeInTheDocument();
+  expect(screen.getByRole("rowheader", { name: "Pensión (4 %)" })).toBeInTheDocument();
+  expect(screen.getAllByText(/2\.826\.086/)).toHaveLength(2);
+  expect(screen.getAllByText(/113\.043/)).toHaveLength(2);
+  expect(screen.getByText(/226\.086/)).toBeInTheDocument();
   expect(screen.queryByText(/2\.392\.000/)).not.toBeInTheDocument();
   const period = todayInBogota().slice(0, 7);
   await userEvent.setup().click(screen.getByRole("button", { name: "Descargar desprendible de nómina" }));
@@ -24,7 +30,9 @@ test("cambiar período deshabilita la descarga hasta recibir la nueva liquidaci�
   render(<PayslipSection />);
   fireEvent.change(screen.getByLabelText("Período de nómina"), { target: { value: "2026-10" } });
   expect(screen.getByRole("button", { name: "Descargar desprendible de nómina" })).toBeDisabled();
-  const details = { period: "2026-10", net: 3200000, deductionStatus: "Salud y pensión ya descontadas", schedule: { code: "2x2x2", label: "Turnos" }, scopeNote: "Neto mensual" };
+  const details = { period: "2026-10", gross: 3478260, health: 139130, pension: 139130, deductions: 278260,
+    healthPercent: 4, pensionPercent: 4, net: 3200000, deductionStatus: "Salud y pensión ya descontadas",
+    schedule: { code: "2x2x2", label: "Turnos" }, scopeNote: "Neto mensual" };
   resolveNew({ data: details });
   await screen.findByText(/3\.200\.000/);
   resolveOld({ data: { ...details, period: "2026-11", net: 2600000 } });

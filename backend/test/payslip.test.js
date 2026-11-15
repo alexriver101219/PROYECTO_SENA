@@ -5,7 +5,7 @@ const { createApp } = require("../app");
 const User = require("../models/User");
 const Empleado = require("../models/Empleado");
 const Documento = require("../models/Documento");
-const { payslipDetails } = require("../services/payslip");
+const { payslipDetails, payrollBreakdown } = require("../services/payslip");
 const { dateInBogota } = require("../utils/dates");
 const positions = require("../config/laborPositions");
 const app = createApp({ limits: false });
@@ -21,12 +21,34 @@ test.each([
   ["Asistente administrativo", 2000000, "L-V"], ["Técnico de medios tecnológicos", 2200000, "L-V"],
   ["Tecnólogo de medios tecnológicos", 2500000, "L-V"], ["Supervisor de medios tecnológicos", 3200000, "2x2x2"],
   ["Auxiliar de tecnología", 2200000, "L-V"], ["Auxiliar de operaciones", 2000000, "L-V"],
-])("%s conserva el neto indicado de %i sin volver a descontar salud o pensión", (position, net, schedule) => {
+])("%s conserva el neto de %i al discriminar el devengado y las deducciones", (position, net, schedule) => {
   const result = payslipDetails(person, { ...profile, position }, "2026-11", fixedDate);
   expect(result.net).toBe(net);
   expect(result.schedule.code).toBe(schedule);
   expect(result.deductionStatus).toBe("Salud y pensión ya descontadas");
-  for (const key of ["salary", "health", "pension", "deductions"]) expect(result).not.toHaveProperty(key);
+  expect(result.health).toBe(Math.round(result.gross * 0.04));
+  expect(result.pension).toBe(Math.round(result.gross * 0.04));
+  expect(result.deductions).toBe(result.health + result.pension);
+  expect(result.gross - result.deductions).toBe(net);
+});
+
+test("Laura recibe exactamente 3.200.000 y los descuentos salen del devengado antes de deducciones", () => {
+  expect(payrollBreakdown(3200000)).toEqual({ gross: 3478260, health: 139130, pension: 139130,
+    deductions: 278260, net: 3200000, healthPercent: 4, pensionPercent: 4 });
+  // Estos importes requieren conciliar el redondeo individual de los aportes.
+  expect(payrollBreakdown(2600000)).toMatchObject({ gross: 2826086, deductions: 226086, net: 2600000 });
+  expect(payrollBreakdown(2000000)).toMatchObject({ gross: 2173914, deductions: 173914, net: 2000000 });
+  for (const value of [0, -1, 3200000.5, "3200000", Number.MAX_SAFE_INTEGER]) expect(() => payrollBreakdown(value)).toThrow();
+});
+
+test("el redondeo al peso mantiene devengado menos descuentos igual a neto en límites consecutivos", () => {
+  for (let net = 3199950; net <= 3200050; net++) {
+    const result = payrollBreakdown(net);
+    expect(Number.isSafeInteger(result.gross)).toBe(true);
+    expect(result.gross - result.health - result.pension).toBe(net);
+    expect(result.health).toBe(Math.round(result.gross * 0.04));
+    expect(result.pension).toBe(Math.round(result.gross * 0.04));
+  }
 });
 
 test("cubre todo el catálogo y reconoce tildes sin asignar valores a cargos desconocidos", () => {
@@ -81,7 +103,8 @@ test("PDF personal contiene logo, período, programación y neto exacto; no dupl
   expect(response.headers["content-disposition"]).toContain(`desprendible-nomina-${period}-93357137.pdf`);
   expect(response.body.subarray(0, 5).toString()).toBe("%PDF-");
   const text = pdfText(response.body);
-  for (const value of ["Laura Gómez", "93357137", "Supervisor", "3.200.000", "2x2x2", "Salud y pensión ya descontadas", "No acredita pago"])
+  for (const value of ["Laura Gómez", "93357137", "Supervisor", "3.478.260", "139.130", "278.260", "3.200.000",
+    "DEVENGADO", "DEDUCCIONES", "TOTAL A PAGAR", "Salud (4 %)", "Pensión (4 %)", "2x2x2", "No acredita pago"])
     expect(text).toContain(value);
   expect(text).not.toContain("2.944.000");
   expect(response.body.toString("latin1")).toContain("/Subtype /Image");

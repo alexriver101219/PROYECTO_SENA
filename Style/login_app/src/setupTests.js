@@ -18,9 +18,10 @@ beforeEach(async () => {
   api.get.mockImplementation((path) => {
     if (path.startsWith("/documentos/nomina?")) {
       const period = new URLSearchParams(path.split("?")[1]).get("period");
-      return Promise.resolve({ data: { period, net: 2600000, deductionStatus: "Salud y pensión ya descontadas",
+      return Promise.resolve({ data: { period, gross: 2826086, health: 113043, pension: 113043, deductions: 226086,
+        healthPercent: 4, pensionPercent: 4, net: 2600000, deductionStatus: "Salud y pensión ya descontadas",
         schedule: { code: "2x2x2", label: "2 días, 2 noches y 2 descansos" },
-        scopeNote: "Valor neto mensual informado por SESHA." } });
+        scopeNote: "Devengado calculado para conservar el neto mensual acordado." } });
     }
     if (path === "/auth/me")
       return Promise.reject({ response: { status: 401 } });
