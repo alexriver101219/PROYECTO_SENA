@@ -4,11 +4,13 @@
 
 El propietario autorizó el alcance de producción y se aplicó la cuarentena transaccional de exactamente 120 cuentas demo, con revocación de sesiones. No quedaron cuentas demo activas. Se conservaron cuentas, contraseñas, roles, perfiles y otras cuentas. El respaldo actualizado se restauró y verificó localmente antes de la operación.
 
-El JWT local expuesto fue sustituido y Vercel aceptó un secreto de producción independiente como variable sensible. El valor nuevo requiere desplegarse para entrar en uso. La nueva comparación de secretos configurados contra código, compilado, PDF e historial no encontró coincidencias. No se registraron valores privados. Las claves históricas de admin, Carlos y Laura siguen sin coincidir con sus hashes actuales.
+La auditoría ampliada detectó 19 empleados adicionales afectados y el propietario autorizó esa segunda cuarentena específica. Se aplicó tras otro respaldo verificado, con pruebas de reversión y revalidación de las claves antes de escribir. En total quedaron desactivadas 139 cuentas; se conservaron las 152 cuentas y perfiles. Las 13 cuentas activas no aceptaron ninguno de los cuatro candidatos históricos comparados. No reactivar una cuenta en cuarentena sin sustituir antes su clave mediante autorización específica.
+
+El JWT local expuesto fue sustituido y Vercel aceptó un secreto de producción independiente como variable sensible. La nueva versión ya está publicada y el JWT firmado con el secreto histórico recibe HTTP 401 en producción y local. La nueva comparación de secretos configurados contra código, compilado, PDF e historial no encontró coincidencias. No se registraron valores privados. Las claves históricas de admin, Carlos y Laura siguen sin coincidir con sus hashes actuales.
 
 Se cerró el registro público en producción y se añadió el alta administrativa transaccional con datos laborales verificados y contraseña inicial oculta. Se endurecieron CSP y configuración de conexión; ZAP local repetido solo dejó alertas informativas. Consultar [arquitectura y operación](ARQUITECTURA_Y_PRODUCCION.md). Los hallazgos del apartado siguiente describen el diagnóstico anterior a estas correcciones.
 
-## Estado vigente de la auditoría del 14/11/2026
+## Diagnóstico previo del 14/11/2026, sustituido por la remediación anterior
 
 **La seguridad no está cerrada.** La auditoría ampliada confirmó dos accesos pendientes de remediación:
 

@@ -24,12 +24,53 @@ async function main() {
   const demoEmails = Array.from({ length: 120 }, (_, i) => `demo.exposicion.${String(i + 1).padStart(3, "0")}@sesha.com`);
   const report = { mode: "read-only", target, historicalReference: reference, rotatedAccounts: [], demoAccountsFound: 0, activeDemoAccounts: 0,
     activeDemoAccountsMatchingExposedPassword: 0, inactiveDemoAccountsMatchingExposedPassword: 0,
+    allActiveAccountsChecked: 0, allActiveAccountsMatchingPublishedPassword: 0,
     passwordValuesOrHashesRecorded: false, loginRequestsSent: false, writesPerformed: false };
   try {
     await client.connect();
     const collection = client.db(target.database).collection("empleados");
-    const users = await collection.find({ email: { $in: [...demoEmails, ...historical.map((entry) => entry.email)] } },
-      { projection: { _id: 0, email: 1, password: 1, active: 1 } }).toArray();
+    const users = await collection.find({},
+      { projection: { _id: 1, email: 1, password: 1, active: 1, role: 1 } }).toArray();
+    const candidates = new Set([...historical.map((entry) => entry.value), demoMatch[1]]);
+    // Incluso una fixture histórica se considera comprometida si se reutilizó en una cuenta real.
+    const seenFiles = new Set();
+    for (const finding of historyReport.filter((entry) => entry.rule === "sesha-hardcoded-password")) {
+      if (!/^[a-f0-9]{40}$/i.test(finding.commit)) throw new Error("Referencia inesperada");
+      for (const suffix of ["", "^"]) {
+        const spec = `${finding.commit}${suffix}:${finding.file}`;
+        if (seenFiles.has(spec)) continue;
+        seenFiles.add(spec);
+        let content;
+        try { content = execFileSync("git", ["show", spec], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); }
+        catch { continue; }
+        for (const match of content.matchAll(/\b(?:password|passwd|pwd)\b["']?\s*[:=]\s*["']([^"'\r\n]{6,72})["']/gi)) {
+          if (!match[1].startsWith("test-only-") && match[1] !== "reference-credential-never-used-for-login") candidates.add(match[1]);
+        }
+      }
+    }
+    const publishedValues = [...candidates];
+    report.historicalPasswordCandidatesChecked = publishedValues.length;
+    const additionalCandidates = [];
+    for (const user of users.filter((entry) => entry.active !== false)) {
+      report.allActiveAccountsChecked++;
+      for (const value of publishedValues) {
+        if (typeof user.password === "string" && await bcrypt.compare(value, user.password)) {
+          report.allActiveAccountsMatchingPublishedPassword++;
+          if (!demoEmails.includes(user.email) && !historical.some((entry) => entry.email === user.email))
+            additionalCandidates.push({ id: String(user._id), email: user.email, role: user.role });
+          break;
+        }
+      }
+    }
+    publishedValues.fill("");
+    const manifestPath = path.join(root, ".qa/remediation-2026-11-14/additional-exposed-accounts.json");
+    fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+    const privateManifest = JSON.stringify({ target, checkedAt: new Date().toISOString(), accounts: additionalCandidates,
+      passwordValuesOrHashesRecorded: false }, null, 2);
+    fs.writeFileSync(manifestPath.replace(/\.json$/, "-latest.json"), privateManifest);
+    if (!fs.existsSync(manifestPath)) fs.writeFileSync(manifestPath, privateManifest);
+    report.additionalAffectedAccounts = additionalCandidates.length;
+    report.additionalAffectedRoles = additionalCandidates.reduce((counts, user) => ({ ...counts, [user.role]: (counts[user.role] || 0) + 1 }), {});
     for (const entry of historical) {
       const matches = users.filter((user) => user.email === entry.email);
       report.rotatedAccounts.push({ email: entry.email, uniqueAccount: matches.length === 1,
@@ -46,7 +87,7 @@ async function main() {
     const output = path.join(root, ".qa/audit-2026-11-14/credential-revocation.json");
     fs.writeFileSync(output, JSON.stringify(report, null, 2));
     console.log(JSON.stringify(report));
-    if (report.activeDemoAccountsMatchingExposedPassword || report.rotatedAccounts.some((entry) => entry.historicalPasswordStillMatches || !entry.uniqueAccount)) process.exitCode = 1;
+    if (report.allActiveAccountsMatchingPublishedPassword || report.activeDemoAccountsMatchingExposedPassword || report.rotatedAccounts.some((entry) => entry.historicalPasswordStillMatches || !entry.uniqueAccount)) process.exitCode = 1;
   } finally {
     historical.forEach((entry) => { entry.value = ""; });
     await client.close();

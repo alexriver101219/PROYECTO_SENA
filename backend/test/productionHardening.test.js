@@ -26,6 +26,18 @@ test("producción cierra el registro público en ruta y servicio sin crear perfi
     expect(await Empleado.countDocuments()).toBe(0);
   } finally { process.env.NODE_ENV = original; }
 });
+test("desarrollo también cierra el registro salvo habilitación explícita para datos desechables", async () => {
+  const originalMode = process.env.NODE_ENV;
+  const originalFlag = process.env.ALLOW_SELF_REGISTRATION;
+  process.env.NODE_ENV = "development";
+  delete process.env.ALLOW_SELF_REGISTRATION;
+  try {
+    expect((await request(app).get("/api/auth/registration")).body).toEqual({ enabled: false });
+    expect((await request(app).post("/api/auth/register").send({ name: data.name, email: data.email, password: initialPassword })).status).toBe(403);
+    expect(await User.countDocuments()).toBe(0);
+    expect(await Empleado.countDocuments()).toBe(0);
+  } finally { process.env.NODE_ENV = originalMode; process.env.ALLOW_SELF_REGISTRATION = originalFlag; }
+});
 test("solo admin crea cuenta y perfil real juntos; bcrypt 12 sin claves ni sesiones en respuesta", async () => {
   expect((await request(app).post("/api/empleados").send(data)).status).toBe(401);
   const employee = await authorization("employee");

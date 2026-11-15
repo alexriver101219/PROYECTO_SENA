@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const { createDemoProfile } = require("./laborProfiles");
 const { HttpError } = require("../utils/http");
 const laborPositions = require("../config/laborPositions");
+const { canSelfRegister } = require("../config/env");
 function session(user) {
   const token = jwt.sign(
     { version: user.sessionVersion || 0 },
@@ -20,7 +21,7 @@ function session(user) {
   return { success: true, token, user: user.toJSON() };
 }
 async function register(data) {
-  if (process.env.NODE_ENV === "production")
+  if (!canSelfRegister())
     throw new HttpError(403, "El registro público está cerrado. Solicita tu cuenta al administrador.");
   const { position, ...account } = data;
   const job = laborPositions.find((item) => item.position === position);

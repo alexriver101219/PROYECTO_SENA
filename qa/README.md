@@ -6,6 +6,10 @@ Resultado revisado: [validación funcional y de seguridad](../VALIDACION_SEGURID
 
 Actualización posterior: [remediación y arquitectura de producción](../ARQUITECTURA_Y_PRODUCCION.md). El propietario autorizó la cuarentena de las demos y la rotación del JWT. La campaña posterior usa `QA_OUTPUT=.qa/remediation-2026-11-14`; el nuevo flujo sustituye el registro público de producción por alta administrativa. `backend/scripts/quarantine-demo-accounts.js` es una herramienta separada, con vista previa predeterminada y destino fijo; `--apply --approved-disable-demo` solo se usa después de autorización específica. No se ejecuta en CI, build o arranque.
 
+La revisión ampliada también encontró 19 empleados afectados, desactivados tras una autorización adicional. `backend/scripts/quarantine-additional-accounts.js` valida el manifiesto privado de exactamente 19 identificadores, excluye admin/Carlos/Laura y revalida las credenciales en una transacción. `--apply --approved-disable-additional` exige ese alcance autorizado; sin aplicar solo inspecciona. El manifiesto no debe subirse al repositorio. `qa/audit-exposed-credentials.cjs --atlas-read-only` compara ahora todas las cuentas activas con los candidatos históricos detectados y solo conserva conteos, booleanos y un listado privado para revisión. No ejecuta login ni escribe en Atlas.
+
+`node qa/verify-production-release.cjs` verifica exclusivamente `https://sesha-app.vercel.app`: lecturas públicas, peticiones inválidas sin escrituras de negocio y una lectura de Atlas para comprobar el rechazo del JWT retirado. No usa claves del propietario. Requiere autorización para el destino; las peticiones consumen los contadores normales de seguridad. El informe privado omite cuerpos, cookies y tokens.
+
 La campaña nueva conserva la evidencia anterior y usa `QA_OUTPUT`. Con Node 24 en PATH y desde la raíz, en PowerShell:
 
 ```powershell

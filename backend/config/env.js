@@ -1,3 +1,4 @@
+const canSelfRegister = () => process.env.NODE_ENV !== "production" && process.env.ALLOW_SELF_REGISTRATION === "true";
 function validateConfig() {
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI es obligatorio");
   if (!process.env.JWT_SECRET || Buffer.byteLength(process.env.JWT_SECRET) < 32)
@@ -25,4 +26,4 @@ function validateConfig() {
     }
   }
 }
-module.exports = { validateConfig };
+module.exports = { validateConfig, canSelfRegister };

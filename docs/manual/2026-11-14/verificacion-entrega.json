@@ -3,26 +3,26 @@
   "date": "2026-11-14",
   "timezone": "America/Bogota",
   "baselineEvidenceDate": "2026-11-13",
-  "applicationChangesPublished": false,
-  "applicationCommit": "7ce49878852e2e8c87dc60861119f51b5c46fd25",
+  "applicationChangesPublished": true,
+  "applicationCommit": "0c3fe014d1585df76f3c8997b2c21f1ad3219a33",
   "target": "https://sesha-app.vercel.app",
   "presentationUpdate": {
-    "baseCommit": "7ce49878852e2e8c87dc60861119f51b5c46fd25",
-    "workingTreeRevision": true,
+    "baseCommit": "0c3fe014d1585df76f3c8997b2c21f1ad3219a33",
+    "workingTreeRevision": false,
     "revisedScreenshots": [
       "Ingreso con botón Cambiar contraseña",
       "Formulario de cambio de contraseña"
     ],
-    "scope": "Revisión local del 14/11/2026, pendiente de publicar. Se conservan las capturas y evidencias del 13/11/2026 para los demás módulos y el respaldo."
+    "scope": "Producción verificada el 14/11/2026. Capturas de acceso del 14/11/2026 y referencias de otros módulos del 13/11/2026. Alta administrativa descrita en texto; respaldo verificado el 14/11/2026."
   },
   "backup": {
-    "startedAt": "2026-11-14T23:50:11.646Z",
-    "completedAt": "2026-11-14T23:50:29.239Z",
+    "startedAt": "2026-11-15T02:09:54.229Z",
+    "completedAt": "2026-11-15T02:10:11.153Z",
     "sourceDatabase": "proyecto_sena",
     "sourceVersion": "8.0.37",
     "toolsVersion": "100.20.1",
-    "archiveBytes": 15895,
-    "archiveSha256": "fc20ac924c95dedbd05ca54a9dfb6c44064ba0e83bade86493b8dae5a6263698",
+    "archiveBytes": 15974,
+    "archiveSha256": "a7e6bde37c4e9094ee1cb3133bff98c8e391c1a97147c25579d6d6faf8b44fca",
     "restoreTarget": "127.0.0.1 temporal aislado",
     "sourceReadOnly": true,
     "changedDuringDump": [],
@@ -53,7 +53,7 @@
       },
       {
         "collection": "ratelimits",
-        "documents": 0,
+        "documents": 1,
         "indexes": 2,
         "documentsMatch": true,
         "indexesMatch": true,
@@ -123,12 +123,24 @@
     ],
     "credentialsEnteredForDocumentation": false,
     "productionAccountsChangedForDocumentation": false,
-    "backendTestsPassed": 48,
-    "frontendTestsPassed": 19,
+    "backendTestsPassed": 64,
+    "frontendTestsPassed": 21,
     "passwordMinimumCharacters": 12,
     "passwordMaximumUtf8Bytes": 72,
     "requiresCurrentPassword": true,
     "previousSessionsRevokedOnSuccess": true,
-    "deploymentPending": true
+    "deploymentPending": false
+  },
+  "productionVerification": {
+    "project": "sesha-app",
+    "target": "https://sesha-app.vercel.app",
+    "state": "READY",
+    "commit": "0c3fe014d1585df76f3c8997b2c21f1ad3219a33",
+    "deployment": "dpl_CyPvzr66VK6yjsFu7ZKX8cYcenec",
+    "checksPassed": 12,
+    "checksFailed": 0,
+    "ownerPasswordsUsed": false,
+    "businessWritesPerformed": false,
+    "timestamp": "2026-11-15T02:03:19.079Z"
   }
 }

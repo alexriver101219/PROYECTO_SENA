@@ -27,11 +27,16 @@ fixture = json.loads((SHOTS / 'revision-fixtures.json').read_text(encoding='utf-
 assert backup['passed'] and fixture['cleaned'] and fixture['bytesMatch']
 assert fixture['final'] == {'documents': 0, 'requests': 0}
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+release_check = ROOT / '.qa/remediation-2026-11-14/production-verification.json'
+publication = json.loads(release_check.read_text(encoding='utf-8')) if release_check.exists() else {}
+release_metadata = ROOT / '.qa/remediation-2026-11-14/production-release.json'
+release = json.loads(release_metadata.read_text(encoding='utf-8')) if release_metadata.exists() else {}
+published = release.get('state') == 'READY' and publication.get('target') == 'https://sesha-app.vercel.app' and publication.get('passed') == 12 and publication.get('failed') == 0
 proof = {
     'project': 'SESHA APP', 'date': '2026-11-14', 'timezone': 'America/Bogota',
-    'baselineEvidenceDate': '2026-11-13', 'applicationChangesPublished': False,
+    'baselineEvidenceDate': '2026-11-13', 'applicationChangesPublished': published,
     'applicationCommit': commit, 'target': 'https://sesha-app.vercel.app',
-    'presentationUpdate': {'baseCommit': commit, 'workingTreeRevision': True, 'revisedScreenshots': ['Ingreso con botón Cambiar contraseña', 'Formulario de cambio de contraseña'], 'scope': 'Revisión local del 14/11/2026, pendiente de publicar. Se conservan las capturas y evidencias del 13/11/2026 para los demás módulos y el respaldo.'},
+    'presentationUpdate': {'baseCommit': commit, 'workingTreeRevision': not published, 'revisedScreenshots': ['Ingreso con botón Cambiar contraseña', 'Formulario de cambio de contraseña'], 'scope': ('Producción verificada el 14/11/2026. ' if published else 'Revisión local pendiente de publicar. ') + 'Capturas de acceso del 14/11/2026 y referencias de otros módulos del 13/11/2026; alta administrativa descrita en texto. Respaldo verificado el 14/11/2026.'},
     'backup': {key: backup[key] for key in ['startedAt', 'completedAt', 'sourceDatabase', 'sourceVersion', 'toolsVersion', 'archiveBytes', 'archiveSha256', 'restoreTarget', 'sourceReadOnly', 'changedDuringDump', 'checks', 'passed', 'scope']},
     'visualReview': {
         'reviewDate': '2026-11-13',
@@ -53,9 +58,18 @@ proof = {
         'backendTestsPassed': 48, 'frontendTestsPassed': 19,
         'passwordMinimumCharacters': 12, 'passwordMaximumUtf8Bytes': 72,
         'requiresCurrentPassword': True, 'previousSessionsRevokedOnSuccess': True,
-        'deploymentPending': True,
+        'deploymentPending': not published,
     },
 }
+if published:
+    proof['productionVerification'] = release
+    proof['applicationCommit'] = release['commit']
+for space, field in [('backend', 'backendTestsPassed'), ('frontend', 'frontendTestsPassed')]:
+    test_report = ROOT / f'.qa/remediation-2026-11-14/{space}-vitest.json'
+    if test_report.exists():
+        result = json.loads(test_report.read_text(encoding='utf-8'))
+        assert result['numFailedTests'] == 0
+        proof['passwordChangeUpdate'][field] = result['numPassedTests']
 (PUBLIC / 'verificacion-entrega.json').write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding='utf-8')
 
 # Recortes exactos para excluir pestañas, marcadores, perfil del navegador y DevTools.
@@ -191,13 +205,13 @@ s += [columns([image('mobileForm',250),p('El menú se distribuye en varias filas
       p('Se revisaron el formulario de solicitudes y el directorio en ese tamaño. No se probó un teléfono físico, todos los tamaños de pantalla ni todos los navegadores.','SmallS')]
 
 checks=backup['checks']
-s += [PageBreak()]+heading('9. Respaldo y verificación de referencia','Evidencia del 14/11/2026: respaldo actualizado de proyecto_sena restaurado exclusivamente en MongoDB temporal local, antes de la remediación autorizada.')
+s += [PageBreak()]+heading('9. Respaldo y verificación de referencia','Evidencia del 14/11/2026: respaldo actualizado de proyecto_sena restaurado exclusivamente en MongoDB temporal local, antes de la cuarentena adicional autorizada.')
 s += [table([['Colección','Documentos','Índices','Comparación restaurada']]+[[item['collection'],item['documents'],item['indexes'],'Coincide'] for item in checks], [WIDTH*.34,WIDTH*.16,WIDTH*.16,WIDTH*.34]),Spacer(1,10),
       p(f"<b>Resultado:</b> {sum(item['documents'] for item in checks)} documentos y {sum(item['indexes'] for item in checks)} índices comprobados. El origen se consultó sin escrituras y no cambió durante la exportación. El archivo comprimido ocupa {backup['archiveBytes']:,} bytes."),
       p('El respaldo se conserva en <b>.qa/backups/&lt;fecha&gt;/proyecto_sena.archive.gz</b>, excluido de Git y Vercel. La ruta concreta está en <b>.qa/latest-backup.json</b>. Con las herramientas oficiales instaladas, <b>node qa/backup-and-verify.cjs</b> crea otro respaldo y verifica su restauración exclusivamente local.'),
       p('Este respaldo cubre los datos y los índices de la aplicación. No incluye usuarios de Atlas, claves, configuración de red ni recuperación a un instante mediante oplog. Conserva una segunda copia privada fuera de la carpeta del proyecto; nunca publiques el archivo en Pages.','SmallS'),
       p('Verificación final','SubS'),
-      p('La revisión de seguridad del 14/11/2026 desactivó únicamente 120 cuentas demo y revocó sus sesiones, con autorización del propietario. Conservó cuentas, roles, perfiles y documentos. El cambio del secreto de sesiones exige volver a iniciar sesión. Los ensayos funcionales se ejecutaron sobre datos sintéticos locales. El resumen público excluye contraseñas, cadenas de conexión y el contenido del respaldo.','SmallS'),
+      p('La revisión de seguridad del 14/11/2026 desactivó 120 cuentas demo y, con otra autorización específica, 19 empleados adicionales con claves expuestas. Revocó sus sesiones y conservó cuentas, roles, perfiles y documentos. No se debe reactivar una cuenta afectada sin sustituir primero su clave mediante un procedimiento autorizado. El cambio del secreto de sesiones exige volver a iniciar sesión. El resumen público excluye secretos y el contenido del respaldo.','SmallS'),
       p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/" color="#087f80">Portal de informes y manual</link> · <link href="https://www.mongodb.com/docs/database-tools/mongodump/" color="#087f80">mongodump</link> · <link href="https://www.mongodb.com/docs/database-tools/mongorestore/" color="#087f80">mongorestore</link>','SmallS')]
 
 target=ROOT/'output/pdf/manual-usuario-sesha.pdf'
