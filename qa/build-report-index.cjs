@@ -60,5 +60,5 @@ ${fs.existsSync(path.join(root, "docs/constancias/constancia-laboral-laura-gomez
 ${["2026-11-13", "2026-11-14"].flatMap(day => [["informe-pruebas-funcionales.pdf", "Funcionales"], ["informe-rendimiento-k6.pdf", "k6"], ["informe-seguridad-zap.pdf", "ZAP local"], ["informe-seguridad-zap-vercel.pdf", "ZAP Vercel"]].map(([file, title]) => `<li><a href="pruebas/${day}/${file}">${title}: ${day.split("-").reverse().join("/")}</a></li>`)).join("\n")}
 </ul><footer><p><a href="https://github.com/alexriver101219/PROYECTO_SENA">Código y procedimientos</a> · <a href="https://sesha-app.vercel.app">Abrir SESHA APP</a></p><p>Los informes corresponden a ejecuciones concretas y versiones identificadas. Las contraseñas, sesiones y registros internos permanecen fuera de esta publicación.</p></footer>
 </main></body></html>`;
-fs.writeFileSync(path.join(root, "docs/index.html"), html);
+fs.writeFileSync(path.join(root, "docs/index.html"), html + "\n");
 console.log(JSON.stringify({ date, functional: data.functional.passed, sustained: confirmed?.targetRps, documents: documents.files.length }));
