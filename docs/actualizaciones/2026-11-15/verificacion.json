@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-15",
+  "timezone": "America/Bogota",
+  "applicationCommit": "4fdbd9686367fbada6aee3c62761e0ded956e5bc",
+  "target": "https://sesha-app.vercel.app",
+  "deployment": "dpl_743nJboQY8eBPQiY8xzX9xPYRAnx",
+  "applicationChangesPublished": true,
+  "requests": {
+    "verifiedAt": "2026-11-15T15:04:19.807Z",
+    "requestTypes": 4,
+    "ownProfile": true,
+    "forgedIdentityRejected": true,
+    "missingDateRejected": true,
+    "datedLeaveSavedAndReloaded": true,
+    "payrollAdjustmentSavedWithNullDate": true,
+    "optionalSupportSavedAndDownloaded": true,
+    "referencedSupportDeletionBlocked": true,
+    "temporaryRecordsRemoved": true
+  },
+  "payroll": {
+    "verifiedAt": "2026-11-15T14:38:20.015Z",
+    "commit": "e6e3aa38e5db6b4b03ca7daf007047f6400b4627",
+    "liveEmployeeChecks": 4,
+    "employeePositionCoverage": 151,
+    "pdfVisualCheck": true,
+    "githubCI": "success"
+  },
+  "accountMaintenance": {
+    "verifiedAt": "2026-11-15T13:01:01.994Z",
+    "totalAccounts": 152,
+    "activeAccounts": 152,
+    "employeeAccesses": 151,
+    "passwordsVerified": 151,
+    "uniqueDocuments": 152,
+    "adminAccessUnchanged": true
+  },
+  "localTests": {
+    "backend": 105,
+    "frontend": 33,
+    "total": 138,
+    "failed": 0,
+    "commands": [
+      "cd backend: vitest run",
+      "cd Style/login_app: vitest run"
+    ],
+    "scope": "Ejecuciones locales del 15/11/2026; suites aisladas, incluidas herramientas de mantenimiento locales. No se suman a las campañas HTTP/Jest anteriores."
+  },
+  "currentBrowserVisualCheck": {
+    "completed": false,
+    "reason": "La herramienta de control no admite la política de URL del navegador Windows disponible."
+  },
+  "illustrations": {
+    "historicalScreenshots": "Login y cambio de contraseña: 14/11/2026. Formulario vacío.",
+    "currentForms": "Tablas y diagramas explicativos del manual; no se presentan como capturas actuales."
+  },
+  "historicalEvidence": {
+    "reportDate": "2026-11-14",
+    "newK6Run": false,
+    "newZAPRun": false,
+    "newBackupRun": false
+  },
+  "publicContent": "Sin contraseñas, tokens, correos de empleados, documentos personales ni respaldos."
+}

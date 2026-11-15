@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-15",
+  "title": "Manual de usuario de SESHA APP",
+  "file": "manual-usuario-sesha.pdf",
+  "pages": 12,
+  "bytes": 338602,
+  "sha256": "a6dc76de08b62bc9d35b3cd15d9e0b871c9eccfd3d68f24c47ce856e448f1147",
+  "applicationChangesPublished": true,
+  "applicationCommit": "4fdbd9686367fbada6aee3c62761e0ded956e5bc",
+  "evidence": "../../actualizaciones/2026-11-15/verificacion.json",
+  "currentSections": [
+    "Acceso y contraseña",
+    "Constancia y PDF",
+    "Desprendible quincenal",
+    "Permisos y ajuste de nómina",
+    "Revisión administrativa",
+    "Ayuda y seguridad"
+  ],
+  "historicalScreenshotsDate": "2026-11-14",
+  "newBrowserVisualReview": false
+}

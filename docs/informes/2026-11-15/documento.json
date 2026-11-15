@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-15",
+  "title": "Informe técnico consolidado de SESHA APP",
+  "file": "informe-tecnico-consolidado-sesha.pdf",
+  "pages": 45,
+  "currentPages": 9,
+  "historicalPages": 36,
+  "bytes": 1388499,
+  "sha256": "7357dead3236d89065368eefcba0e15c1d162f6f2790fc6c29d84fb6da5c65e9",
+  "period": "27/07/2026 a 15/11/2026, más una captura histórica sin fecha",
+  "tables": 15,
+  "historicalTables": 10,
+  "historicalCaptures": 8,
+  "nonfunctionalReportCaptures": 6,
+  "author": "Alexander Rivera Sánchez",
+  "instructor": "Alexander Mosquera Aguirre",
+  "ficha": "3186701",
+  "applicationCommit": "4fdbd9686367fbada6aee3c62761e0ded956e5bc",
+  "format": "Referencias APA 7, alineación izquierda y elementos institucionales.",
+  "note": "Parte vigente de 9 páginas seguida por la entrega histórica íntegra de 36 páginas rotulada. Sin nuevos ensayos k6/ZAP.",
+  "evidence": "../../actualizaciones/2026-11-15/verificacion.json"
+}

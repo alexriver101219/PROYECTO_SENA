@@ -8,16 +8,22 @@ const directory = path.join(root, "docs/pruebas", date);
 const manifest = JSON.parse(fs.readFileSync(path.join(directory, "documentos.json"), "utf8"));
 const expected = ["informe-pruebas-funcionales.pdf", "informe-rendimiento-k6.pdf", "informe-seguridad-zap.pdf", "informe-seguridad-zap-vercel.pdf"];
 assert.deepEqual(manifest.files.map((item) => item.file).sort(), expected.sort());
-const technicalDirectory = path.join(root, "docs/informes", date);
+const documentationDate = "2026-11-15";
+const technicalDirectory = path.join(root, "docs/informes", documentationDate);
 const technicalManifest = path.join(technicalDirectory, "documento.json");
 const additional = [];
 if (fs.existsSync(technicalManifest)) {
   const technical = JSON.parse(fs.readFileSync(technicalManifest, "utf8"));
   assert.equal(technical.file, "informe-tecnico-consolidado-sesha.pdf");
   for (const file of [technical.file, "documento.json"]) additional.push({
-    file: `informes/${date}/${file}`, route: `informes/${date}/${file}`, local: path.join(technicalDirectory, file),
+    file: `informes/${documentationDate}/${file}`, route: `informes/${documentationDate}/${file}`, local: path.join(technicalDirectory, file),
   });
 }
+for (const file of ["manual-usuario-sesha.pdf", "verificacion-entrega.json"]) additional.push({
+  file: `manual/${documentationDate}/${file}`, route: `manual/${documentationDate}/${file}`, local: path.join(root, "docs/manual", documentationDate, file),
+});
+additional.push({ file: `actualizaciones/${documentationDate}/verificacion.json`, route: `actualizaciones/${documentationDate}/verificacion.json`,
+  local: path.join(root, "docs/actualizaciones", documentationDate, "verificacion.json") });
 const digest = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 const records = [];
 async function request(route, stamp) {
@@ -49,7 +55,7 @@ async function main() {
     assert.equal(digest(remote.bytes), digest(localFile), `La copia remota difiere: ${file}`);
     records.push({ file, status: remote.status, bytes: remote.bytes.length, identical: true });
   }));
-  const output = path.join(root, ".qa", `reports-${date}`, additional.length ? "pages-verification-with-technical-report.json" : "pages-verification.json");
+  const output = path.join(root, ".qa", "documentation-2026-11-15", "pages-verification.json");
   const result = { target: base, checkedAt: new Date().toISOString(), date, verified: true,
     records: records.sort((a, b) => a.file.localeCompare(b.file)), credentialsUsed: false };
   fs.writeFileSync(output, JSON.stringify(result, null, 2));

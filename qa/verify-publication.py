@@ -4,11 +4,13 @@ from html.parser import HTMLParser
 import re
 import json
 import os
+import hashlib
 from pypdf import PdfReader
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
-LATEST_MANUAL = ROOT / 'docs/manual/2026-11-14'
+LATEST_MANUAL = ROOT / 'docs/manual/2026-11-15'
+HISTORICAL_MANUAL = ROOT / 'docs/manual/2026-11-14'
 LATEST_REPORTS = ROOT / 'docs/pruebas' / os.environ.get('REPORT_DATE', '2026-11-14')
 class Links(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -16,16 +18,22 @@ class Links(HTMLParser):
             if key == 'href' and not value.startswith(('https:', '#')):
                 assert (ROOT / 'docs' / value).is_file(), 'Enlace local inexistente: ' + value
 Links().feed((ROOT / 'docs/index.html').read_text(encoding='utf-8'))
-technical_directory = ROOT / 'docs/informes/2026-11-14'
+technical_directory = ROOT / 'docs/informes/2026-11-15'
 if (technical_directory / 'documento.json').exists():
     technical = json.loads((technical_directory / 'documento.json').read_text(encoding='utf-8'))
     assert technical['file'] == 'informe-tecnico-consolidado-sesha.pdf'
     technical_pdf = technical_directory / technical['file']
     assert technical_pdf.read_bytes() == (ROOT / 'output/pdf' / technical['file']).read_bytes()
     assert technical_pdf.stat().st_size == technical['bytes']
-    assert len(PdfReader(technical_pdf).pages) == technical['pages'] == 36
+    assert hashlib.sha256(technical_pdf.read_bytes()).hexdigest() == technical['sha256']
+    assert len(PdfReader(technical_pdf).pages) == technical['pages'] == 45
+    assert technical['currentPages'] == 9 and technical['historicalPages'] == 36
     assert technical['historicalCaptures'] == 8 and technical['nonfunctionalReportCaptures'] == 6
-    assert technical['tables'] == 10
+    assert technical['tables'] == 15 and technical['historicalTables'] == 10
+    historical = PdfReader(ROOT / 'docs/informes/2026-11-14' / technical['file'])
+    revised = PdfReader(technical_pdf)
+    for index, original in enumerate(historical.pages):
+        assert ' '.join((original.extract_text() or '').split()) in ' '.join((revised.pages[index + 9].extract_text() or '').split())
 pattern = re.compile(r'mongodb\+srv://[^\s]+:[^\s]+@|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+|gh[pousr]_[A-Za-z0-9]{20}')
 for directory in ['docs', 'qa']:
     for file in (ROOT / directory).rglob('*'):
@@ -85,7 +93,7 @@ if (LATEST_REPORTS / 'resultados.json').exists():
     for document in index['files']:
         pdf = PdfReader(LATEST_REPORTS / document['file'])
         assert len(pdf.pages) == document['pages']
-delivery = LATEST_MANUAL / 'verificacion-entrega.json'
+delivery = HISTORICAL_MANUAL / 'verificacion-entrega.json'
 if delivery.exists():
     evidence = json.loads(delivery.read_text(encoding='utf-8'))
     assert evidence['backup']['passed']
@@ -104,9 +112,21 @@ if delivery.exists():
         release = evidence['productionVerification']
         assert release['state'] == 'READY' and release['target'] == 'https://sesha-app.vercel.app'
         assert release['checksPassed'] == 12 and release['checksFailed'] == 0
-    manual = PdfReader(LATEST_MANUAL / 'manual-usuario-sesha.pdf')
+    manual = PdfReader(HISTORICAL_MANUAL / 'manual-usuario-sesha.pdf')
     assert len(manual.pages) == 11
     manual_text = '\n'.join(page.extract_text() or '' for page in manual.pages)
     assert '1.1. Cambiar la contraseña de acceso' in manual_text
     assert 'Guardar nueva contraseña' in manual_text
+current_manual = json.loads((LATEST_MANUAL / 'verificacion-entrega.json').read_text(encoding='utf-8'))
+assert current_manual['pages'] == 12 and current_manual['applicationChangesPublished']
+assert current_manual['newBrowserVisualReview'] is False
+assert hashlib.sha256((LATEST_MANUAL / current_manual['file']).read_bytes()).hexdigest() == current_manual['sha256']
+manual_text = '\n'.join(page.extract_text() or '' for page in PdfReader(LATEST_MANUAL / current_manual['file']).pages)
+for phrase in ['Día de la familia', 'Permiso remunerado', 'Permiso no remunerado', 'Ajuste de nómina', 'N/A', 'Examinar', '1.600.000', 'Bancolombia']:
+    assert phrase in manual_text, phrase
+evidence = json.loads((ROOT / 'docs/actualizaciones/2026-11-15/verificacion.json').read_text(encoding='utf-8'))
+assert evidence['requests']['temporaryRecordsRemoved']
+assert evidence['localTests']['total'] == evidence['localTests']['backend'] + evidence['localTests']['frontend'] == 138
+assert evidence['currentBrowserVisualCheck']['completed'] is False
+assert not evidence['historicalEvidence']['newK6Run'] and not evidence['historicalEvidence']['newZAPRun']
 print('Archivos locales verificados: enlaces, copias PDF, evidencia y patrones de secretos. Sin publicación remota.')
