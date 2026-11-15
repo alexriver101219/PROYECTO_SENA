@@ -4,7 +4,7 @@ Fecha: 12 de noviembre de 2026. Código preparado para una exposición académic
 
 ## Resultado
 
-Se corrigieron los hallazgos del diagnóstico inicial en el código y la configuración. Por instrucción del autor, se mantiene la contraseña académica del administrador: admin@sesha.com / 123456. Su ingreso ahora requiere una cuenta persistida, creada mediante una semilla explícita; ya no existe un bypass del login.
+- Las credenciales académicas publicadas se consideran expuestas. Usar configuración privada y el procedimiento de rotación de SECURITY.md; no publicar claves.
 
 No se publicó en Vercel, no se ejecutó la migración ni la semilla contra Atlas y no se reescribió el historial de Git. El archivo de entorno rastreado se retiró del árbol de trabajo; sus versiones históricas siguen en Git. Configurar un JWT_SECRET nuevo al publicar si el anterior se utilizó en algún entorno.
 

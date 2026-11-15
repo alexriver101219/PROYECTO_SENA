@@ -69,8 +69,8 @@ async function migrate() {
 }
 if (require.main === module)
   migrate()
-    .catch((error) => {
-      console.error("Migración incompleta:", error.message);
+    .catch(() => {
+      console.error("Migración incompleta; detalles privados omitidos. Revisa configuración y conectividad.");
       process.exitCode = 1;
     })
     .finally(() => mongoose.disconnect());

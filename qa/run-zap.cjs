@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
-const output = path.join(root, ".qa/assessment-2026-11-13");
+const output = path.resolve(root, process.env.QA_OUTPUT || ".qa/assessment-2026-11-13");
 const install = process.env.ZAP_INSTALL || "C:/Program Files/ZAP/Zed Attack Proxy";
 const jar = path.join(install, "zap-2.17.0.jar");
 if (!fs.existsSync(jar)) throw new Error("Indica ZAP_INSTALL con ZAP 2.17.0 instalado");

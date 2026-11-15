@@ -23,7 +23,7 @@ test("el ingreso abre el panel completo con su navegación", async () => {
     screen.getByLabelText(/correo electrónico/i),
     "admin@sesha.com",
   );
-  await user.type(screen.getByLabelText(/^contraseña/i), "123456");
+  await user.type(screen.getByLabelText(/^contraseña/i), "test-only-fixture-0-credentials");
   await user.click(screen.getByRole("button", { name: /entrar al sistema/i }));
   expect(await screen.findByText("Panel principal")).toBeInTheDocument();
   expect(

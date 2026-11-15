@@ -26,5 +26,5 @@ async function main() {
     console.log(JSON.stringify({ applied: false, total: plan.totalProfiles, changes: plan.changes.length, before: plan.beforeCounts, after: plan.afterCounts }));
   }
 }
-if (require.main === module) main().catch(error => { console.error("Redistribución no aplicada:", error.message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, "[URI omitida]")); process.exitCode = 1; }).finally(() => mongoose.disconnect());
+if (require.main === module) main().catch(() => { console.error("Redistribución no aplicada; detalles privados omitidos."); process.exitCode = 1; }).finally(() => mongoose.disconnect());
 module.exports = { main };

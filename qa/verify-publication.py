@@ -7,6 +7,7 @@ from pypdf import PdfReader
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
+LATEST_MANUAL = ROOT / 'docs/manual/2026-11-14'
 class Links(HTMLParser):
     def handle_starttag(self, tag, attrs):
         for key, value in attrs:
@@ -27,7 +28,10 @@ for directory in ['docs', 'qa']:
             reader = PdfReader(file)
             text = '\n'.join(p.extract_text() or '' for p in reader.pages)
             assert all(len(p.extract_text() or '') > 100 for p in reader.pages)
-            assert file.read_bytes() == (ROOT / 'output/pdf' / file.name).read_bytes()
+            # La edición histórica del manual se conserva; solo la última comparte
+            # el nombre estable del PDF de salida.
+            if file.name != 'manual-usuario-sesha.pdf' or file.parent == LATEST_MANUAL:
+                assert file.read_bytes() == (ROOT / 'output/pdf' / file.name).read_bytes()
         else:
             text = file.read_text(encoding='utf-8')
         assert not pattern.search(text), 'Revisar posible secreto: ' + str(file.relative_to(ROOT))
@@ -41,7 +45,7 @@ if live.exists():
     assert vercel['riskCounts'] == {'high':0, 'medium':2, 'low':0, 'informational':4}
     assert sum(rule['requests'] for rule in vercel['execution']['activeEvidence']) == 22
     assert vercel['checks']['countersUnchanged'] and vercel['checks']['readyStatus'] == 200
-delivery = ROOT / 'docs/manual/2026-11-13/verificacion-entrega.json'
+delivery = LATEST_MANUAL / 'verificacion-entrega.json'
 if delivery.exists():
     evidence = json.loads(delivery.read_text(encoding='utf-8'))
     assert evidence['backup']['passed']
@@ -49,4 +53,15 @@ if delivery.exists():
     assert sum(item['indexes'] for item in evidence['backup']['checks']) == 11
     assert evidence['apiCheck']['fixturesRemoved'] and evidence['apiCheck']['bytesMatch']
     assert evidence['visualReview']['mobile']['physicalDeviceTested'] is False
-print('Publicación verificada: enlaces locales, copias PDF, resultados y patrones de secretos.')
+    update = evidence['passwordChangeUpdate']
+    assert update['requiresCurrentPassword'] and update['previousSessionsRevokedOnSuccess']
+    assert update['passwordMinimumCharacters'] == 12 and update['passwordMaximumUtf8Bytes'] == 72
+    assert update['credentialsEnteredForDocumentation'] is False
+    assert update['productionAccountsChangedForDocumentation'] is False
+    assert update['deploymentPending'] and evidence['applicationChangesPublished'] is False
+    manual = PdfReader(LATEST_MANUAL / 'manual-usuario-sesha.pdf')
+    assert len(manual.pages) == 11
+    manual_text = '\n'.join(page.extract_text() or '' for page in manual.pages)
+    assert '1.1. Cambiar la contraseña de acceso' in manual_text
+    assert 'Guardar nueva contraseña' in manual_text
+print('Archivos locales verificados: enlaces, copias PDF, evidencia y patrones de secretos. Sin publicación remota.')

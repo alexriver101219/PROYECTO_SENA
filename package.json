@@ -13,6 +13,8 @@
     "test": "npm run test -w backend && npm run test -w login_app",
     "lint": "npm run lint -w backend && npm run lint -w login_app",
     "seed": "npm run seed -w backend",
+    "passwords:inspect": "npm run passwords:inspect -w backend",
+    "passwords:rotate": "npm run passwords:rotate -w backend --",
     "migrate": "npm run migrate -w backend"
   },
   "engines": {

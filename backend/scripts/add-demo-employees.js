@@ -1,5 +1,5 @@
 // Carga académica explícita. Sin --apply solo comprueba el plan y las colisiones.
-require("dotenv").config({
+if (require.main === module) require("dotenv").config({
   path: require("path").join(__dirname, "../.env"),
   quiet: true,
 });
@@ -10,7 +10,7 @@ const Empleado = require("../models/Empleado");
 const { demoHireDate } = require("../services/laborProfiles");
 
 const COUNT = 120;
-const PASSWORD = "Sesha2026!";
+const { passwordFromEnv } = require("./lib/password-input");
 const firstNames = [
   "Ana",
   "Carlos",
@@ -46,6 +46,9 @@ const jobs = [
 ];
 
 async function main() {
+  const password = process.argv.includes("--apply")
+    ? passwordFromEnv("DEMO_EMPLOYEES_PASSWORD")
+    : undefined;
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI no configurado");
   await mongoose.connect(process.env.MONGO_URI, {
     autoIndex: false,
@@ -103,7 +106,7 @@ async function main() {
       email: entry.email,
       role: "employee",
       active: true,
-      password: await bcrypt.hash(PASSWORD, 12),
+      password: await bcrypt.hash(password, 12),
     });
     await user.validate();
     const data = user.toObject();
@@ -166,7 +169,7 @@ async function main() {
   );
 }
 
-main()
+if (require.main === module) main()
   .catch((error) => {
     console.error(
       "Carga no completada:",
@@ -179,3 +182,5 @@ main()
     process.exitCode = 1;
   })
   .finally(() => mongoose.disconnect());
+
+module.exports = { main };

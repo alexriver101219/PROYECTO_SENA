@@ -20,7 +20,7 @@ api.interceptors.response.use(
   (error) => {
     if (
       error.response?.status === 401 &&
-      !["/auth/login", "/auth/register"].includes(error.config?.url)
+      !["/auth/login", "/auth/register", "/auth/change-password"].includes(error.config?.url)
     ) {
       setCsrfToken("");
       window.dispatchEvent(new Event("sesha:session-expired"));

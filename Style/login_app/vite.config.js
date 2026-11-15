@@ -71,6 +71,7 @@ export default defineConfig({
     include: ["src/tests/**/*.test.{js,jsx}"],
     globals: true,
     environment: "jsdom",
+    maxWorkers: 2,
     setupFiles: ["./src/setupTests.js"],
     css: false,
   },

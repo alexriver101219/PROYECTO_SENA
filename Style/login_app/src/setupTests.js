@@ -24,6 +24,7 @@ beforeEach(async () => {
           { position: "Auxiliar de tecnología", department: "Tecnología" },
         ],
       });
+    if (path === "/auth/registration") return Promise.resolve({ data: { enabled: true } });
     return Promise.resolve({
       data: {
         items: [],

@@ -32,6 +32,7 @@ function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [positions, setPositions] = useState([]);
   const [positionsError, setPositionsError] = useState(false);
+  const [registration, setRegistration] = useState("loading");
 
   const loadPositions = () => {
     setPositionsError(false);
@@ -41,7 +42,13 @@ function Register() {
     );
   };
   useEffect(() => {
-    loadPositions();
+    let active = true;
+    api.get("/auth/registration").then(({ data }) => {
+      if (!active) return;
+      setRegistration(data.enabled === true ? "open" : "closed");
+      if (data.enabled === true) loadPositions();
+    }, () => { if (active) setRegistration("error"); });
+    return () => { active = false; };
   }, []);
 
   const navigate = useNavigate();
@@ -56,10 +63,10 @@ function Register() {
 
     // Validaciones locales
     if (
-      formData.password.length < 6 ||
+      [...formData.password].length < 12 ||
       new TextEncoder().encode(formData.password).length > 72
     ) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
+      setError("La contraseña debe tener al menos 12 caracteres y máximo 72 bytes.");
       return;
     }
 
@@ -86,9 +93,22 @@ function Register() {
           "Error al crear la cuenta. Intenta de nuevo.",
       );
     } finally {
+      setFormData((previous) => ({ ...previous, password: "", confirmPassword: "" }));
       setLoading(false);
     }
   };
+
+  if (registration !== "open") return (
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <section className="bg-white rounded-xl shadow p-8 max-w-md space-y-4">
+        <h1 className="text-2xl font-bold">Acceso corporativo</h1>
+        <p role="status">{registration === "loading" ? "Consultando disponibilidad…" : registration === "error"
+          ? "No se pudo consultar el registro. Intenta de nuevo más tarde."
+          : "El administrador debe crear tu cuenta y verificar tus datos laborales. Solicita tu acceso por el canal interno de la empresa."}</p>
+        <Link className="text-blue-700 underline" to="/login">Volver a iniciar sesión</Link>
+      </section>
+    </main>
+  );
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4 py-8">
@@ -228,13 +248,16 @@ function Register() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 required
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 12 caracteres"
+                minLength={12}
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full pl-9 pr-10 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               />
               <button
                 type="button"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
               >
@@ -259,6 +282,7 @@ function Register() {
               <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 id="confirmPassword"
+                autoComplete="new-password"
                 type={showConfirmPassword ? "text" : "password"}
                 required
                 placeholder="Repite tu contraseña"
@@ -268,6 +292,7 @@ function Register() {
               />
               <button
                 type="button"
+                aria-label={showConfirmPassword ? "Ocultar confirmación" : "Mostrar confirmación"}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
               >

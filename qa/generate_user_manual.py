@@ -1,4 +1,4 @@
-"""Manual ilustrado desde capturas reales de Edge y evidencias sanitizadas."""
+"""Manual ilustrado: conserva la evidencia anterior y añade el cambio de clave."""
 import json
 import re
 import shutil
@@ -18,7 +18,8 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parent.parent
 SHOTS = ROOT / '.qa/handbook-2026-11-13'
-PUBLIC = ROOT / 'docs/manual/2026-11-13'
+CURRENT_SHOTS = ROOT / '.qa/handbook-2026-11-14'
+PUBLIC = ROOT / 'docs/manual/2026-11-14'
 ASSETS = PUBLIC / 'capturas'
 ASSETS.mkdir(parents=True, exist_ok=True)
 backup = json.loads((ROOT / '.qa/latest-backup.json').read_text(encoding='utf-8'))['result']
@@ -27,11 +28,13 @@ assert backup['passed'] and fixture['cleaned'] and fixture['bytesMatch']
 assert fixture['final'] == {'documents': 0, 'requests': 0}
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 proof = {
-    'project': 'SESHA APP', 'date': '2026-11-13', 'timezone': 'America/Bogota',
+    'project': 'SESHA APP', 'date': '2026-11-14', 'timezone': 'America/Bogota',
+    'baselineEvidenceDate': '2026-11-13', 'applicationChangesPublished': False,
     'applicationCommit': commit, 'target': 'https://sesha-app.vercel.app',
-    'presentationUpdate': {'applicationCommit': commit, 'revisedScreenshots': ['Ingreso', 'Panel del administrador', 'Historial de solicitudes'], 'scope': 'Actualización de textos y capturas de la presentación. Se conservan las comprobaciones anteriores de los demás módulos y del respaldo.'},
+    'presentationUpdate': {'baseCommit': commit, 'workingTreeRevision': True, 'revisedScreenshots': ['Ingreso con botón Cambiar contraseña', 'Formulario de cambio de contraseña'], 'scope': 'Revisión local del 14/11/2026, pendiente de publicar. Se conservan las capturas y evidencias del 13/11/2026 para los demás módulos y el respaldo.'},
     'backup': {key: backup[key] for key in ['startedAt', 'completedAt', 'sourceDatabase', 'sourceVersion', 'toolsVersion', 'archiveBytes', 'archiveSha256', 'restoreTarget', 'sourceReadOnly', 'changedDuringDump', 'checks', 'passed', 'scope']},
     'visualReview': {
+        'reviewDate': '2026-11-13',
         'browser': 'Microsoft Edge', 'desktop': '1280 x 752 píxeles lógicos',
         'mobile': {'kind': 'Emulación adaptable en Edge', 'widthCssPx': 400, 'heightCssPx': 547, 'physicalDeviceTested': False},
         'observed': ['Portada', 'Registro y 15 cargos', 'Login de empleado y administrador', 'Paneles y menús por rol', 'Perfil con cargo actualizado', 'Documentos y descarga de constancia', 'Solicitudes por rol', 'Directorio y formulario de edición', 'Estado Activo/Inactivo disponible', 'Navegación y formulario en móvil emulado', 'Desplazamiento horizontal hasta Editar en tabla móvil', 'Cierre de ambas sesiones'],
@@ -42,14 +45,27 @@ proof = {
         'uploadLimitation': 'El control de aplicaciones no reconoció los campos del selector nativo de archivos. Se canceló ese diálogo y se verificó la carga mediante API.',
     },
     'apiCheck': {'uploadStatus': fixture['uploadStatus'], 'downloadStatus': fixture['downloadStatus'], 'bytes': fixture['bytes'], 'bytesMatch': fixture['bytesMatch'], 'requestStatus': fixture['requestStatus'], 'fixturesRemoved': fixture['cleaned'], 'finalDocuments': fixture['final']['documents'], 'finalRequests': fixture['final']['requests'], 'profilesVerifiedAfterReview': 152, 'registrationOptions': 15},
+    'passwordChangeUpdate': {
+        'date': '2026-11-14', 'environment': 'Local, MongoDB temporal aislado',
+        'browser': 'Microsoft Edge InPrivate, control nativo de Windows',
+        'screenshots': ['Login con botón de cambio', 'Formulario con campos vacíos'],
+        'credentialsEnteredForDocumentation': False, 'productionAccountsChangedForDocumentation': False,
+        'backendTestsPassed': 48, 'frontendTestsPassed': 19,
+        'passwordMinimumCharacters': 12, 'passwordMaximumUtf8Bytes': 72,
+        'requiresCurrentPassword': True, 'previousSessionsRevokedOnSuccess': True,
+        'deploymentPending': True,
+    },
 }
 (PUBLIC / 'verificacion-entrega.json').write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding='utf-8')
 
 # Recortes exactos para excluir pestañas, marcadores, perfil del navegador y DevTools.
-def crop(source, name, box):
-    image = PILImage.open(SHOTS / (source + '.png')).convert('RGB')
+def crop(source, name, box, source_dir=SHOTS, expected_height=752):
+    source_path = source_dir / (source + '.png')
+    if not source_path.exists():
+        source_path = source_dir / (source + '.jpg')
+    image = PILImage.open(source_path).convert('RGB')
     scale = image.width / 1280
-    assert abs(image.height / scale - 752) < 3, 'Revisar dimensiones de captura: ' + source
+    assert abs(image.height / scale - expected_height) < 3, 'Revisar dimensiones de captura: ' + source
     target = ASSETS / (name + '.png')
     image.crop(tuple(round(value * scale) for value in box)).save(target, optimize=True)
     return target
@@ -59,7 +75,8 @@ fig = {
     'adminNav': crop('10-panel-admin-v2', 'menu-administrador', (5,116,1273,350)),
     'register': crop('02-registro', 'registro', (411,280,861,747)),
     'registerButton': crop('03-registro-final', 'boton-registro', (450,574,824,623)),
-    'login': crop('04-login-v2', 'ingreso', (416,175,863,688)),
+    'login': crop('01-ingreso', 'ingreso', (440,222,839,635), CURRENT_SHOTS),
+    'passwordChange': crop('02-cambio-clave', 'cambio-contrasena', (432,147,839,735), CURRENT_SHOTS, expected_height=800),
     'profile': crop('09-perfil', 'perfil-empleado', (211,200,1062,576)),
     'documents': crop('07-documento-guardado', 'documentos', (82,175,1195,726)),
     'requests': crop('08-solicitudes-empleado', 'solicitud-empleado', (82,200,1195,695)),
@@ -105,21 +122,37 @@ def chrome(c,doc):
     c.saveState();c.setFillColor(NAVY);c.rect(0,PAGE[1]-14*mm,PAGE[0],14*mm,fill=1,stroke=0)
     c.setFillColor(colors.white);c.setFont('SegoeBold',9);c.drawString(14*mm,PAGE[1]-9*mm,'SESHA APP  /  MANUAL DE USUARIO')
     c.setStrokeColor(TEAL);c.line(14*mm,13*mm,PAGE[0]-14*mm,13*mm)
-    c.setFillColor(INK);c.setFont('Segoe',8);c.drawString(14*mm,8*mm,'SESHA APP · Capturas reales de Edge · Actualizado 13/11/2026')
+    c.setFillColor(INK);c.setFont('Segoe',8);c.drawString(14*mm,8*mm,'SESHA APP · Capturas reales de Edge · Revisión local 14/11/2026')
     c.drawRightString(PAGE[0]-14*mm,8*mm,str(doc.page));c.restoreState()
 
-s=[p('Manual breve de usuario','TitleS'),p('Registro, documentos, solicitudes y administración de perfiles laborales.'),Spacer(1,7),
-   p('<b>Acceso:</b> <link href="https://sesha-app.vercel.app" color="#087f80">https://sesha-app.vercel.app</link> · <b>Versión de aplicación:</b> '+commit[:12]+' · <b>Fecha:</b> 13 de noviembre de 2026.'),
+s=[p('Manual breve de usuario','TitleS'),p('Registro, cambio de contraseña, documentos, solicitudes y perfiles laborales.'),Spacer(1,7),
+   p('<b>Acceso publicado:</b> <link href="https://sesha-app.vercel.app" color="#087f80">https://sesha-app.vercel.app</link> · <b>Revisión:</b> 14 de noviembre de 2026.'),
    p('Solicita al responsable tus credenciales de acceso. El cargo laboral seleccionado al registrarse no concede permisos de administrador.'),Spacer(1,10),
    table([['Rol','Qué puede hacer'],['Empleado','Consultar su perfil, descargar su constancia, guardar y descargar sus PDF, crear solicitudes y consultar su estado.'],['Administrador','Consultar todos los documentos y solicitudes; gestionar perfiles laborales; aprobar o rechazar solicitudes.']], [WIDTH*.18,WIDTH*.82]),
    p('Menú de empleado','SubS'),image('employeeNav',WIDTH),p('Panel y menú del administrador','SubS'),image('adminNav',WIDTH),Spacer(1,8),
-   p('Este manual describe las funciones disponibles. Los ejemplos de documento y solicitud se crearon para la revisión y se retiraron después. La base conserva 152 perfiles y el registro ofrece 15 cargos. Las capturas excluyen controles y datos personales del navegador.','SmallS')]
+   p('Versión preparada para producción: el registro público está cerrado; las cuentas se crean desde el panel del administrador. Capturas de acceso del 14/11/2026; las demás imágenes son de referencia del 13/11/2026. El respaldo se volvió a verificar el 14/11/2026. Las capturas históricas no incluyen los nuevos campos del alta administrativa.','SmallS')]
 
-s += [PageBreak()]+heading('1. Crear una cuenta e ingresar','El registro prepara una cuenta de empleado y su perfil laboral. No necesitas seleccionar un rol de acceso.')
+s += [PageBreak()]+heading('1. Obtener una cuenta e ingresar','En producción, el administrador verifica tus datos laborales y crea tu cuenta. El registro público está cerrado.')
 s += [columns(
-    [p('Registro','SubS'),image('register',280),Spacer(1,5),image('registerButton',235),p('1. Escribe nombre y correo. 2. Selecciona un cargo. 3. Introduce y confirma la contraseña. 4. Desplázate al final y pulsa <b>Registrarse</b>.','SmallS')],
-    [p('Inicio de sesión','SubS'),image('login',280),p('Introduce correo y contraseña y pulsa <b>Entrar al sistema</b>. Tras ingresar se muestra el panel correspondiente a tus permisos. Para salir usa <b>Cerrar sesión</b>.','SmallS')]),
-    p('El correo es único. Las contraseñas deben tener al menos 6 caracteres y un máximo de 72 bytes. La selección de un cargo administrativo tampoco convierte la cuenta en administradora. Durante esta revisión visual no se creó otra cuenta en la base publicada.','SmallS')]
+    [p('Alta por el administrador','SubS'),p('<b>1.</b> Solicita tu acceso por el canal interno de la empresa.'),p('<b>2.</b> El administrador abre <b>Empleados → Nuevo empleado</b> e introduce nombre, documento, cargo, departamento y fecha real de ingreso.'),p('<b>3.</b> Para crear acceso, indica tu correo y marca <b>Crear también su cuenta de acceso</b>.'),p('<b>4.</b> Introduce una contraseña inicial de al menos 12 caracteres y máximo 72 bytes; el campo aparece enmascarado. Pulsa <b>Guardar</b>.'),p('<b>5.</b> Recibe tus credenciales por un canal privado. Cambia la contraseña inicial desde el login antes de usar la cuenta.'),p('Si visitas Registrarse en producción, la pantalla indica que solicites la cuenta al administrador. No se generan documentos o fechas laborales ficticias.','SmallS')],
+    [p('Inicio de sesión','SubS'),image('login',250),p('Introduce correo y contraseña y pulsa <b>Entrar al sistema</b>. El botón <b>Cambiar contraseña</b> abre el procedimiento de la página siguiente. Para salir de una sesión usa <b>Cerrar sesión</b>.','SmallS')]),
+    p('El correo y el documento son únicos. Dos personas pueden tener el mismo nombre: deben usar documentos y correos diferentes. El alta administrativa crea una cuenta de empleado y su perfil juntos; un cargo administrativo no concede permisos de administrador.','SmallS')]
+
+s += [PageBreak()]+heading('1.1. Cambiar la contraseña de acceso')
+s += [columns(
+    [p('Desde Iniciar sesión, pulsa <b>Cambiar contraseña</b>, debajo de Entrar al sistema.','SmallS'),
+     p('Actualiza tu acceso en cinco pasos','SubS'),
+     p('<b>1.</b> Escribe el correo de tu cuenta.'),
+     p('<b>2.</b> Introduce tu <b>Contraseña actual</b>. Es necesaria para confirmar que puedes modificar esa cuenta.'),
+     p('<b>3.</b> Escribe una <b>Nueva contraseña</b>, diferente de la actual: al menos <b>12 caracteres</b> y máximo <b>72 bytes UTF-8</b>. No uses saltos de línea ni caracteres de control.'),
+     p('<b>4.</b> Repite exactamente la clave en <b>Confirmar nueva contraseña</b>.'),
+     p('<b>5.</b> Pulsa <b>Guardar nueva contraseña</b> y espera la confirmación de éxito.'),
+     p('Después de guardar','SubS'),
+     p('Se cierran las sesiones anteriores de esa cuenta. La pantalla vuelve al login: entra con tu nueva contraseña.'),
+     p('Si necesitas corregir la entrada','SubS'),
+     p('Las claves aparecen enmascaradas. Si hay un error, corrígelo antes de volver a guardar. La confirmación debe coincidir; tildes y emojis pueden ocupar más de un byte. Si cancelas con <b>Volver a iniciar sesión</b>, no se guarda un cambio.'),
+     p('Si olvidaste la clave actual, solicita ayuda al responsable. Esta opción no recupera contraseñas por correo ni permite cambiar las de otras personas. No compartas claves en chats o capturas.','SmallS')],
+    [image('passwordChange',270),Spacer(1,5),p('Captura local del formulario vacío, 14/11/2026. No se introdujeron credenciales ni se modificaron cuentas para elaborar el manual.','SmallS')])]
 
 s += [PageBreak()]+heading('2. Consultar el perfil y obtener la constancia','Desde el menú, abre Mi perfil. Revisa documento, cargo, departamento, estado y fecha de ingreso.')
 s += [image('profile',710),Spacer(1,10),
@@ -138,8 +171,8 @@ s += [image('requests',735),Spacer(1,8),
 
 s += [PageBreak()]+heading('5. Administrar el directorio de empleados','Disponible únicamente para el rol administrador. El listado está paginado; la búsqueda filtra la página actual.')
 s += [image('directory',735),Spacer(1,8),
-      p('<b>Crear un perfil:</b> Nuevo empleado → completar datos laborales → Guardar. Para asociarlo a una cuenta, esa cuenta debe estar registrada previamente; el correo es opcional para personal sin cuenta.'),
-      p('<b>Actualizar:</b> usa Editar en la fila del perfil existente. Una cuenta recién registrada ya tiene un perfil: edítalo en lugar de crear otro con el mismo correo o documento.','SmallS')]
+      p('<b>Crear un perfil:</b> Nuevo empleado → completar datos verificados → Guardar. Para crear también el acceso, indica el correo, marca <b>Crear también su cuenta de acceso</b> e introduce una contraseña inicial oculta. Si la cuenta ya existe, deja esa opción desmarcada. El correo es opcional para personal sin acceso.'),
+      p('<b>Actualizar:</b> usa Editar en la fila existente. No crees otro perfil para la misma cuenta o documento. Las imágenes son de referencia anterior; la opción de crear cuenta se añadió en la revisión de producción.','SmallS')]
 
 s += [PageBreak()]+heading('6. Editar datos e inactivar un perfil','Las dos capturas muestran el mismo formulario antes y después de desplazarse dentro de él.')
 s += [columns([p('Campos principales','SubS'),image('edit',300)],[p('Fecha, estado y guardado','SubS'),image('status',300)]),Spacer(1,8),
@@ -149,7 +182,7 @@ s += [columns([p('Campos principales','SubS'),image('edit',300)],[p('Fecha, esta
 s += [PageBreak()]+heading('7. Revisar solicitudes como administrador','El administrador consulta el conjunto de solicitudes y puede descargar sus soportes.')
 s += [image('review',735),Spacer(1,10),
       p('En <b>Estado</b>, selecciona <b>Aprobado</b>, <b>Rechazado</b> o <b>Pendiente</b>. La selección se guarda automáticamente. El administrador también puede eliminar solicitudes.'),Spacer(1,8),
-      table([['Operación','Empleado','Administrador'],['Documentos','Propios','Consulta y gestión de todos'],['Solicitudes','Propias; elimina las pendientes','Consulta todas; decide estado y elimina'],['Perfiles laborales','Consulta su perfil','Crea, consulta, edita e inactiva'],['Roles y contraseñas de cuentas','No se administran desde estos módulos','No hay un panel de gestión de roles o contraseñas']], [WIDTH*.24,WIDTH*.36,WIDTH*.40]),
+      table([['Operación','Empleado','Administrador'],['Documentos','Propios','Consulta y gestión de todos'],['Solicitudes','Propias; elimina las pendientes','Consulta todas; decide estado y elimina'],['Perfiles laborales','Consulta su perfil','Crea, consulta, edita e inactiva'],['Contraseña de su cuenta','Cambio desde el login, con clave actual','Mismo procedimiento para su propia cuenta'],['Roles de acceso','No se administran desde estos módulos','No hay un panel de gestión de roles']], [WIDTH*.24,WIDTH*.36,WIDTH*.40]),
       p('La solicitud ilustrada es un ejemplo de prueba, creado por API y eliminado tras capturar la pantalla. No corresponde a un trámite real.','SmallS')]
 
 s += [PageBreak()]+heading('8. Usar la aplicación en una pantalla pequeña','Revisión en la emulación adaptable de Edge: 400 × 547 píxeles CSS, sin simular limitaciones de red.')
@@ -158,13 +191,13 @@ s += [columns([image('mobileForm',250),p('El menú se distribuye en varias filas
       p('Se revisaron el formulario de solicitudes y el directorio en ese tamaño. No se probó un teléfono físico, todos los tamaños de pantalla ni todos los navegadores.','SmallS')]
 
 checks=backup['checks']
-s += [PageBreak()]+heading('9. Respaldo, verificación y cierre de la entrega','Respaldo privado de todas las colecciones de proyecto_sena; restauración comprobada en MongoDB temporal local.')
+s += [PageBreak()]+heading('9. Respaldo y verificación de referencia','Evidencia del 14/11/2026: respaldo actualizado de proyecto_sena restaurado exclusivamente en MongoDB temporal local, antes de la remediación autorizada.')
 s += [table([['Colección','Documentos','Índices','Comparación restaurada']]+[[item['collection'],item['documents'],item['indexes'],'Coincide'] for item in checks], [WIDTH*.34,WIDTH*.16,WIDTH*.16,WIDTH*.34]),Spacer(1,10),
       p(f"<b>Resultado:</b> {sum(item['documents'] for item in checks)} documentos y {sum(item['indexes'] for item in checks)} índices comprobados. El origen se consultó sin escrituras y no cambió durante la exportación. El archivo comprimido ocupa {backup['archiveBytes']:,} bytes."),
       p('El respaldo se conserva en <b>.qa/backups/&lt;fecha&gt;/proyecto_sena.archive.gz</b>, excluido de Git y Vercel. La ruta concreta está en <b>.qa/latest-backup.json</b>. Con las herramientas oficiales instaladas, <b>node qa/backup-and-verify.cjs</b> crea otro respaldo y verifica su restauración exclusivamente local.'),
       p('Este respaldo cubre los datos y los índices de la aplicación. No incluye usuarios de Atlas, claves, configuración de red ni recuperación a un instante mediante oplog. Conserva una segunda copia privada fuera de la carpeta del proyecto; nunca publiques el archivo en Pages.','SmallS'),
       p('Verificación final','SubS'),
-      p('Las cuentas y los 152 perfiles se conservaron. El PDF y la solicitud de prueba se eliminaron; quedaron cero documentos y cero solicitudes, como antes de la revisión. La aplicación permaneció disponible. El resumen público contiene conteos y comprobaciones, sin contraseñas, URI ni el contenido del respaldo.','SmallS'),
+      p('La revisión de seguridad del 14/11/2026 desactivó únicamente 120 cuentas demo y revocó sus sesiones, con autorización del propietario. Conservó cuentas, roles, perfiles y documentos. El cambio del secreto de sesiones exige volver a iniciar sesión. Los ensayos funcionales se ejecutaron sobre datos sintéticos locales. El resumen público excluye contraseñas, cadenas de conexión y el contenido del respaldo.','SmallS'),
       p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/" color="#087f80">Portal de informes y manual</link> · <link href="https://www.mongodb.com/docs/database-tools/mongodump/" color="#087f80">mongodump</link> · <link href="https://www.mongodb.com/docs/database-tools/mongorestore/" color="#087f80">mongorestore</link>','SmallS')]
 
 target=ROOT/'output/pdf/manual-usuario-sesha.pdf'
@@ -172,7 +205,8 @@ SimpleDocTemplate(str(target),pagesize=PAGE,leftMargin=14*mm,rightMargin=14*mm,t
 reader=PdfReader(target)
 text='\n'.join(page.extract_text() or '' for page in reader.pages)
 assert all(len(page.extract_text() or '')>100 for page in reader.pages)
-assert len(reader.pages) == 10
+assert len(reader.pages) == 11
+assert all(value in text for value in ['Cambiar contraseña', '12 caracteres', '72 bytes', 'Guardar nueva contraseña', 'Contraseña actual'])
 assert not re.search(r'acad[eé]mic', text, re.IGNORECASE)
 assert not re.search(r'mongodb\+srv://|sesha_session=|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+',text)
 shutil.copy2(target,PUBLIC/target.name)

@@ -5,13 +5,37 @@ on:
 permissions:
   contents: read
 jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Instalar escáner fijado y verificar integridad
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/sesha-gitleaks"
+          cd "$RUNNER_TEMP/sesha-gitleaks"
+          curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o gitleaks.tar.gz
+          printf '%s  gitleaks.tar.gz\n' '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb' | sha256sum --check --status
+          tar -xzf gitleaks.tar.gz gitleaks
+      - name: Buscar secretos sin imprimir valores ni líneas
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/sesha-source"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/sesha-source"
+          "$RUNNER_TEMP/sesha-gitleaks/gitleaks" dir "$RUNNER_TEMP/sesha-source" --no-banner --redact=100 --log-level=fatal \
+            --config qa/gitleaks.toml --report-format template --report-template qa/gitleaks-metadata.tmpl \
+            --report-path "$RUNNER_TEMP/sesha-secret-metadata.json"
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           cache: npm

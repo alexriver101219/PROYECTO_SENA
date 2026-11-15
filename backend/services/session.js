@@ -18,7 +18,8 @@ const csrfToken = (token) =>
     .update(token)
     .digest("hex");
 function csrfProtection(req, _res, next) {
-  if (["/auth/login", "/auth/register"].includes(req.path)) return next();
+  // Estas rutas verifican credenciales explícitas, nunca autorizan por la cookie.
+  if (["/auth/login", "/auth/register", "/auth/change-password"].includes(req.path)) return next();
   const token = cookieToken(req);
   if (!token || ["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
   const supplied = req.get("x-csrf-token") || "";

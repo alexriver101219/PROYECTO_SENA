@@ -1,0 +1,1 @@
+[{{range $i, $f := .}}{{if $i}},{{end}}{"file":{{printf "%q" $f.File}},"line":{{$f.StartLine}},"rule":{{printf "%q" $f.RuleID}}}{{end}}]

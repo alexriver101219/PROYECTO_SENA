@@ -20,6 +20,7 @@ test("registro actualiza sesión y no guarda credenciales en localStorage", asyn
   ];
   api.get.mockImplementation((path) => path === "/auth/positions"
     ? Promise.resolve({ data: newPositions.map(position => ({ position })) })
+    : path === "/auth/registration" ? Promise.resolve({ data: { enabled: true } })
     : Promise.reject({ response: { status: 401 } }));
   api.post.mockResolvedValue({
     data: {
@@ -47,18 +48,26 @@ test("registro actualiza sesión y no guarda credenciales en localStorage", asyn
     screen.getByLabelText("Cargo"),
     "Auxiliar de almacén",
   );
-  await user.type(screen.getByLabelText(/^contraseña/i), "Sesha2026!");
-  await user.type(screen.getByLabelText(/confirmar contraseña/i), "Sesha2026!");
+  await user.type(screen.getByLabelText(/^contraseña/i), "test-only-fixture-1-credentials");
+  await user.type(screen.getByLabelText(/confirmar contraseña/i), "test-only-fixture-1-credentials");
   await user.click(screen.getByRole("button", { name: /registrarse/i }));
   await waitFor(() =>
     expect(api.post).toHaveBeenCalledWith("/auth/register", {
       name: "Ana Díaz",
       email: "ana.diaz@sesha.com",
-      password: "Sesha2026!",
+      password: "test-only-fixture-1-credentials",
       position: "Auxiliar de almacén",
     }),
   );
   expect(screen.getByTestId("identity")).toHaveTextContent("Ana Díaz");
   expect(localStorage.getItem("token")).toBeNull();
   expect(localStorage.getItem("user")).toBeNull();
+});
+
+test("registro cerrado explica el alta por administrador y no muestra campos de contraseña", async () => {
+  api.get.mockResolvedValue({ data: { enabled: false } });
+  render(<MemoryRouter><AuthProvider><Register /></AuthProvider></MemoryRouter>);
+  expect(await screen.findByText(/el administrador debe crear tu cuenta/i)).toBeInTheDocument();
+  expect(screen.queryByLabelText(/^contraseña/i)).not.toBeInTheDocument();
+  expect(api.post).not.toHaveBeenCalled();
 });

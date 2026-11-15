@@ -1,7 +1,34 @@
 # Pruebas reproducibles de SESHA
 
+## Auditoría local del 14/11/2026
+
+Resultado revisado: [validación funcional y de seguridad](../VALIDACION_SEGURIDAD_2026-11-14.md). Hay hallazgos vigentes de JWT y cuentas demo; no interpretar tests aprobados como cierre de seguridad.
+
+Actualización posterior: [remediación y arquitectura de producción](../ARQUITECTURA_Y_PRODUCCION.md). El propietario autorizó la cuarentena de las demos y la rotación del JWT. La campaña posterior usa `QA_OUTPUT=.qa/remediation-2026-11-14`; el nuevo flujo sustituye el registro público de producción por alta administrativa. `backend/scripts/quarantine-demo-accounts.js` es una herramienta separada, con vista previa predeterminada y destino fijo; `--apply --approved-disable-demo` solo se usa después de autorización específica. No se ejecuta en CI, build o arranque.
+
+La campaña nueva conserva la evidencia anterior y usa `QA_OUTPUT`. Con Node 24 en PATH y desde la raíz, en PowerShell:
+
+```powershell
+$env:QA_OUTPUT = '.qa/assessment-2026-11-14'
+npm test
+npm run lint
+npm run build
+node qa/isolated-server.cjs
+```
+
+En otra terminal, definir el mismo `QA_OUTPUT` y ejecutar secuencialmente `node qa/functional-http.cjs`, `node qa/check-protection-limits.cjs`, `node qa/run-k6.cjs`, `node qa/refine-k6.cjs`, `node qa/prepare-zap.cjs` y `node qa/run-zap.cjs`. Detener el servidor temporal con Ctrl+C al terminar. No reutilizar una campaña para comparar resultados distintos. `K6_BINARY` permite elegir un ejecutable portable.
+
+Herramientas nuevas de auditoría:
+
+- `node qa/audit-dependencies.cjs`: npm audit; conserva solamente conteos y avisos, sin salida cruda de errores.
+- `node qa/scan-secrets.cjs`: Gitleaks local, historial completo, archivos actuales, compilado y extracción de PDF. Usa `.qa/tools/gitleaks/gitleaks.exe` y `.qa/pdf-venv/Scripts/python.exe`; admite `GITLEAKS_PATH`, `AUDIT_PYTHON` y `SECRET_AUDIT_OUTPUT`. Requiere pypdf. `--current-only` reutiliza un informe histórico existente y vuelve a analizar archivos actuales y compilado. No utilizarlo como sustituto de un nuevo escaneo del historial si este cambia.
+- `node qa/check-secret-boundaries.cjs`: lee el entorno privado en memoria y busca coincidencias sin mostrar valores; comprueba exclusiones de Git. No escribe en Atlas. Una coincidencia histórica produce estado de fallo.
+- `node qa/audit-exposed-credentials.cjs --atlas-read-only`: **excepción explícita de acceso a Atlas**, separada de los tests automáticos. Verifica host/base fijos, lee hashes y compara bcrypt en memoria con referencias históricas; únicamente conserva booleanos y conteos. No envía logins ni escribe. No registra claves o hashes. No ejecutarla como parte del build o arranque. Requiere un escaneo histórico previo y conectividad autorizada.
+
+Node 24.22.3 y Gitleaks 8.30.1 se usaron como herramientas portables verificadas; no se cambió la instalación global. Los escaneos no envían código a GitGuardian. Las carpetas `.qa/` siguen siendo privadas y están ignoradas.
+
 Las herramientas de la campaña local admiten únicamente el entorno desechable `sesha_qa_assessment`.
-Las pruebas locales nunca leen `backend/.env` ni utilizan Atlas. Las excepciones explícitas son la campaña `run-zap-vercel.cjs` y el respaldo privado descritos más abajo, autorizados por el propietario para su proyecto.
+Los tests funcionales locales nunca leen `backend/.env` ni utilizan Atlas. Las auditorías de secretos indicadas arriba, la campaña `run-zap-vercel.cjs` y el respaldo privado descritos más abajo son operaciones separadas con acceso privado o externo; requieren el alcance autorizado correspondiente.
 
 1. Usar Node 24 y compilar el frontend: `npm run build`.
 2. Iniciar `node qa/isolated-server.cjs` desde la raíz.
@@ -40,6 +67,6 @@ El archivo y los registros se conservan en `.qa/backups/<fecha>/`; `.qa/latest-b
 
 ## Manual ilustrado
 
-`python qa/generate_user_manual.py` genera el manual desde las capturas reales privadas de `.qa/handbook-2026-11-13/`, la verificación del respaldo y la comprobación de limpieza de las muestras. Requiere ReportLab, pypdf, Pillow y fuentes Segoe de Windows. Exporta el PDF, imágenes recortadas para excluir la interfaz personal del navegador y un JSON con campos explícitos a `docs/manual/2026-11-13/`. Revisar visualmente todas las páginas y capturas con Poppler antes de publicar.
+`python qa/generate_user_manual.py` genera la revisión de 11 páginas del 14/11/2026. Conserva las capturas privadas de `.qa/handbook-2026-11-13/` y la evidencia histórica del respaldo y limpieza de muestras. Añade `.qa/handbook-2026-11-14/01-ingreso.jpg` (1280 × 752) y `02-cambio-clave.jpg` (1280 × 800): capturas reales de Edge InPrivate sobre el entorno local aislado, con campos vacíos. Requiere ReportLab, pypdf, Pillow y fuentes Segoe de Windows. Exporta el PDF a `output/pdf/` y una copia idéntica, 15 capturas recortadas y el JSON de evidencia a `docs/manual/2026-11-14/`. Conserva la edición anterior en su carpeta histórica. Revisar visualmente todas las páginas renderizadas con Poppler y ejecutar `python qa/verify-publication.py` antes de publicar. La evidencia identifica la revisión local como pendiente de publicación.
 
 La campaña de esta entrega revisó Edge de escritorio y emulación adaptable de 400 × 547 píxeles CSS. No se probó un teléfono físico. La constancia se descargó por la interfaz; la carga y descarga de otro PDF se verificaron por API, porque la herramienta no controló el selector nativo. El documento y la solicitud de prueba se eliminaron después; no se guardaron modificaciones en perfiles existentes ni se creó una cuenta adicional por el navegador.

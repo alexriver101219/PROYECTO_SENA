@@ -2,6 +2,8 @@
 
 Aplicación académica para gestionar perfiles laborales, solicitudes y documentos. React + Vite en el navegador, Express en una función de Vercel y MongoDB Atlas para cuentas, registros y archivos.
 
+El sitio publicado se opera como producción: el registro público está cerrado. El administrador crea cuentas y perfiles verificados desde **Empleados → Nuevo empleado → Crear también su cuenta de acceso**, con contraseña inicial oculta. Véase [arquitectura y operación](ARQUITECTURA_Y_PRODUCCION.md) y [manejo de credenciales](SECURITY.md). Las 120 cuentas demo expuestas fueron desactivadas con autorización; los secretos JWT local y de producción se sustituyeron sin mostrarlos.
+
 ## Requisitos y estructura
 
 - Node.js 24 LTS y npm 11. Las versiones de dependencias quedan fijadas en un único package-lock.json.
@@ -46,15 +48,13 @@ Antes de utilizar una base existente, conservar una copia de seguridad. Ejecutar
 
 La migración conserva las cuentas históricas en empleados y separa los perfiles laborales en perfiles_empleados. Copia únicamente los perfiles heredados que tengan datos completos y válidos. Los documentos y solicitudes antiguos sin propietario no se asignan automáticamente a una persona; el administrador debe revisar esos registros. Crea índices únicos y el índice TTL de los contadores. Retira únicamente el índice heredado username_1 cuando coincide exactamente con ese campo obsoleto; no elimina documentos.
 
-La semilla es explícita y repetible. No se ejecuta al iniciar la API ni en cada login y no sobrescribe contraseñas existentes. Prepara estas cuentas académicas:
+La semilla es explícita y repetible. No se ejecuta al iniciar la API ni en cada login y no sobrescribe contraseñas existentes.
 
-| Cuenta                   | Contraseña | Permisos      |
-| ------------------------ | ---------- | ------------- |
-| admin@sesha.com          | 123456     | Administrador |
-| carlos.mendoza@sesha.com | Sesha2026! | Empleado      |
-| laura.gomez@sesha.com    | Sesha2026! | Empleado      |
+Las nuevas cuentas requieren `SEED_ADMIN_PASSWORD`, `SEED_CARLOS_PASSWORD` y `SEED_LAURA_PASSWORD` en el entorno privado. No hay claves predeterminadas. La semilla conserva claves y roles de cuentas existentes; no debe usarse para rotar accesos. `add-demo-employees.js --apply` requiere `DEMO_EMPLOYEES_PASSWORD`; sin `--apply` solo consulta el plan. No ejecutar estos scripts sobre producción sin autorización específica.
 
-Se conserva la contraseña académica por petición del autor. Estas credenciales compartidas permiten a cualquier visitante que las conozca usar sus permisos: cargar únicamente datos ficticios en la exposición. Preparar la semilla antes de habilitar el acceso público. Si ya existe admin@sesha.com con otro rol, el script se detiene para evitar elevar una cuenta inesperada; revisar esa cuenta directamente antes de continuar.
+Para inspeccionar el destino sin escrituras: `npm run passwords:inspect`. El cambio privado de claves y su autorización se describen en [SECURITY.md](SECURITY.md).
+
+En la pantalla de inicio de sesión, el botón **Cambiar contraseña** permite actualizar el acceso con correo, contraseña actual, nueva contraseña y confirmación. La nueva clave requiere al menos 12 caracteres y como máximo 72 bytes UTF-8. Al guardar se revocan las sesiones anteriores y se vuelve al login. Esta opción requiere conocer la clave actual; no recupera contraseñas olvidadas.
 
 Abrir dos terminales desde la raíz:
 
@@ -155,7 +155,7 @@ Se añadió un cuarto informe, `informe-seguridad-zap-vercel.pdf`, del análisis
 
 ## Manual y respaldo de la entrega
 
-El [manual ilustrado](docs/manual/2026-11-13/manual-usuario-sesha.pdf) explica los flujos de empleado y administrador con capturas reales de Edge, incluida la revisión móvil emulada de 400 × 547 píxeles CSS. Se publica en el mismo portal de GitHub Pages. Sus textos y las capturas de ingreso, panel e historial se actualizaron con la presentación actual de SESHA APP. El [resumen de verificación](docs/manual/2026-11-13/verificacion-entrega.json) identifica la versión de aplicación y conserva los resultados sin datos de sesiones ni el contenido del respaldo.
+El [manual ilustrado actualizado](docs/manual/2026-11-14/manual-usuario-sesha.pdf) tiene 11 páginas e incorpora el botón y el procedimiento de cambio de contraseña, con capturas reales del login y del formulario vacío. Explica la clave actual, nueva clave y confirmación, los límites de 12 caracteres mínimos y 72 bytes máximos, y el cierre de sesiones anteriores. La revisión del 14/11/2026 está preparada localmente y pendiente de publicar; conserva las capturas y evidencias del 13/11/2026 para los demás módulos, la revisión móvil emulada de 400 × 547 píxeles CSS y el respaldo. El [resumen de verificación](docs/manual/2026-11-14/verificacion-entrega.json) distingue ambas fechas y no incluye contraseñas, sesiones ni el contenido del respaldo. La edición anterior permanece en su carpeta histórica.
 
 Se creó un respaldo lógico completo de `proyecto_sena` y se comprobó su restauración solo en MongoDB temporal local: cinco colecciones, 304 documentos y 11 índices coincidentes. El archivo privado está en la carpeta indicada por `.qa/latest-backup.json`, excluida de Git y Vercel. No incluye usuarios de Atlas, claves ni configuración de red. Procedimiento reproducible: `node qa/backup-and-verify.cjs`; conservar una segunda copia privada fuera del proyecto.
 
