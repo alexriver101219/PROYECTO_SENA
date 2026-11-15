@@ -7,6 +7,7 @@ import api, {
 } from "../services/api";
 import { useCollection } from "../hooks/useCollection";
 import Pagination from "../components/Pagination";
+import PayslipSection from "../components/PayslipSection";
 export default function Documentos() {
   const collection = useCollection("/documentos");
   const [file, setFile] = useState(null);
@@ -66,6 +67,7 @@ export default function Documentos() {
           Descargar constancia laboral
         </button>
       </section>
+      <PayslipSection />
       <form
         onSubmit={submit}
         className="bg-white border rounded-xl p-5 space-y-3"

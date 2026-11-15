@@ -10,7 +10,23 @@ const { authenticate, scope } = require("../middlewares/authMiddleware");
 const { upload, validatePDF } = require("../middlewares/upload");
 const { asyncHandler, HttpError } = require("../utils/http");
 const v = require("../utils/validation");
+const { payslipDetails, payslipPDF } = require("../services/payslip");
 router.use(authenticate);
+async function payroll(req) {
+  v.fields(req.query, ["period"]);
+  const profile = await Empleado.findOne({ user: req.user._id });
+  return payslipDetails(req.user, profile, req.query.period);
+}
+router.get("/nomina", asyncHandler(async (req, res) => {
+  res.json(await payroll(req));
+}));
+router.get("/nomina/pdf", asyncHandler(async (req, res) => {
+  const details = await payroll(req);
+  const pdf = payslipPDF(details);
+  res.type("application/pdf").attachment(`desprendible-nomina-${details.period}-${details.document}.pdf`);
+  pdf.pipe(res);
+  pdf.end();
+}));
 router.get(
   "/",
   asyncHandler(async (req, res) => {

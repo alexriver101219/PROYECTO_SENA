@@ -56,6 +56,9 @@ export async function download(path, filename) {
 export function downloadEmploymentCertificate() {
   return download("/documentos/certificado");
 }
+export function downloadPayslip(period) {
+  return download(`/documentos/nomina/pdf?period=${encodeURIComponent(period)}`);
+}
 export async function uploadPDF(file) {
   if (!file || file.type !== "application/pdf" || file.size > 3 * 1024 * 1024)
     throw new Error("Selecciona un PDF de hasta 3 MB");

@@ -6,6 +6,7 @@ const laborPositions = [
   { position: "Coordinador de escoltas", department: "Operaciones" },
   { position: "Operador de medios tecnológicos", department: "Tecnología" },
   { position: "Técnico de medios tecnológicos", department: "Tecnología" },
+  { position: "Tecnólogo de medios tecnológicos", department: "Tecnología" },
   { position: "Supervisor de medios tecnológicos", department: "Tecnología" },
   { position: "Auxiliar de almacén", department: "Administración" },
   { position: "Coordinador de operaciones", department: "Operaciones" },

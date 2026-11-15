@@ -9,12 +9,19 @@ vi.mock("./services/api", () => ({
   uploadPDF: vi.fn(),
   download: vi.fn(),
   downloadEmploymentCertificate: vi.fn(),
+  downloadPayslip: vi.fn(),
 }));
 beforeEach(async () => {
   const { default: api } = await import("./services/api");
   vi.resetAllMocks();
   localStorage.clear();
   api.get.mockImplementation((path) => {
+    if (path.startsWith("/documentos/nomina?")) {
+      const period = new URLSearchParams(path.split("?")[1]).get("period");
+      return Promise.resolve({ data: { period, net: 2600000, deductionStatus: "Salud y pensión ya descontadas",
+        schedule: { code: "2x2x2", label: "2 días, 2 noches y 2 descansos" },
+        scopeNote: "Valor neto mensual informado por SESHA." } });
+    }
     if (path === "/auth/me")
       return Promise.reject({ response: { status: 401 } });
     if (path === "/auth/positions")
