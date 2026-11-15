@@ -16,6 +16,16 @@ class Links(HTMLParser):
             if key == 'href' and not value.startswith(('https:', '#')):
                 assert (ROOT / 'docs' / value).is_file(), 'Enlace local inexistente: ' + value
 Links().feed((ROOT / 'docs/index.html').read_text(encoding='utf-8'))
+technical_directory = ROOT / 'docs/informes/2026-11-14'
+if (technical_directory / 'documento.json').exists():
+    technical = json.loads((technical_directory / 'documento.json').read_text(encoding='utf-8'))
+    assert technical['file'] == 'informe-tecnico-consolidado-sesha.pdf'
+    technical_pdf = technical_directory / technical['file']
+    assert technical_pdf.read_bytes() == (ROOT / 'output/pdf' / technical['file']).read_bytes()
+    assert technical_pdf.stat().st_size == technical['bytes']
+    assert len(PdfReader(technical_pdf).pages) == technical['pages'] == 36
+    assert technical['historicalCaptures'] == 8 and technical['nonfunctionalReportCaptures'] == 6
+    assert technical['tables'] == 10
 pattern = re.compile(r'mongodb\+srv://[^\s]+:[^\s]+@|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+|gh[pousr]_[A-Za-z0-9]{20}')
 for directory in ['docs', 'qa']:
     for file in (ROOT / directory).rglob('*'):
