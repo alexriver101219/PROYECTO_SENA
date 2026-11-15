@@ -1,0 +1,14 @@
+{
+  "originalCommit": "314a6285ea098ba9f1fcb4caea60b4a9a5d888ba",
+  "alertNumber": 1,
+  "classification": "false_positive",
+  "origin": "ASCII85-encoded compressed image of the presentation cover",
+  "pages": 22,
+  "imagesVerifiedAgainstSourcePNG": 22,
+  "imagePixelsUnchanged": true,
+  "pageContentsUnchanged": true,
+  "hyperlinksUnchanged": true,
+  "vaultPatternMatchesInUpdatedPDF": 0,
+  "pdfSha256": "c656982339c2072848e46fb4822630ca8f8639fdbe633f6b12d11d569327a1e8",
+  "pdfBytes": 8431083
+}
