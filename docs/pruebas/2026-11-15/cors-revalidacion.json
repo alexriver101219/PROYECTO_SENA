@@ -1,0 +1,430 @@
+{
+  "project": "SESHA APP",
+  "date": "2026-11-15",
+  "target": "https://sesha-app.vercel.app",
+  "commit": "20e24bd915972094a4c73ddb5a8567352b725526",
+  "deploymentId": "dpl_w6b7vDbs3npaiTLsteiziw8hMtgb",
+  "verified": true,
+  "scope": "Revalidación pasiva de 5 recursos públicos, sin autenticación, spider, escaneo activo, carga o escrituras de negocio.",
+  "change": "Access-Control-Allow-Origin restringido al dominio de SESHA en recursos estáticos. La regla excluye /api y conserva el control de origen de Express.",
+  "staticRoutes": [
+    "/",
+    "/login",
+    "/register",
+    "/assets/index-CxR1GKYt.js",
+    "/assets/index-BvluUgBs.css"
+  ],
+  "httpChecks": 42,
+  "before": {
+    "version": "2.17.0",
+    "start": "2026-11-15T19:50:08.077Z",
+    "end": "2026-11-15T19:50:45.624Z",
+    "corsInstances": 5,
+    "alerts": [
+      {
+        "id": "10098",
+        "name": "Cross-Domain Misconfiguration",
+        "riskCode": 2,
+        "instances": 5
+      },
+      {
+        "id": "10027",
+        "name": "Information Disclosure - Suspicious Comments",
+        "riskCode": 0,
+        "instances": 1
+      },
+      {
+        "id": "10109",
+        "name": "Modern Web Application",
+        "riskCode": 0,
+        "instances": 3
+      },
+      {
+        "id": "10015",
+        "name": "Re-examine Cache-control Directives",
+        "riskCode": 0,
+        "instances": 1
+      },
+      {
+        "id": "10050",
+        "name": "Retrieved from Cache",
+        "riskCode": 0,
+        "instances": 5
+      }
+    ],
+    "http": [
+      {
+        "route": "/",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "*",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/api/ready",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/dashboard",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/documentos",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/solicitudes",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/dashboard",
+        "origin": "https://cors-review.invalid",
+        "status": 403,
+        "allowOrigin": null,
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/documentos",
+        "origin": "https://cors-review.invalid",
+        "status": 403,
+        "allowOrigin": null,
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      }
+    ]
+  },
+  "after": {
+    "version": "2.17.0",
+    "start": "2026-11-15T19:52:31.181Z",
+    "end": "2026-11-15T19:53:07.693Z",
+    "corsInstances": 0,
+    "alerts": [
+      {
+        "id": "10027",
+        "name": "Information Disclosure - Suspicious Comments",
+        "riskCode": 0,
+        "instances": 1
+      },
+      {
+        "id": "10109",
+        "name": "Modern Web Application",
+        "riskCode": 0,
+        "instances": 3
+      },
+      {
+        "id": "10015",
+        "name": "Re-examine Cache-control Directives",
+        "riskCode": 0,
+        "instances": 3
+      },
+      {
+        "id": "10050",
+        "name": "Retrieved from Cache",
+        "riskCode": 0,
+        "instances": 5
+      }
+    ],
+    "http": [
+      {
+        "route": "/",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/login",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/register",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-CxR1GKYt.js",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/javascript; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": null,
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/assets/index-BvluUgBs.css",
+        "origin": "https://cors-review.invalid",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "text/css; charset=utf-8"
+      },
+      {
+        "route": "/api/ready",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 200,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/dashboard",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/documentos",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/solicitudes",
+        "origin": "https://sesha-app.vercel.app",
+        "status": 401,
+        "allowOrigin": "https://sesha-app.vercel.app",
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/dashboard",
+        "origin": "https://cors-review.invalid",
+        "status": 403,
+        "allowOrigin": null,
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "route": "/api/documentos",
+        "origin": "https://cors-review.invalid",
+        "status": 403,
+        "allowOrigin": null,
+        "allowCredentials": null,
+        "contentType": "application/json; charset=utf-8"
+      }
+    ]
+  },
+  "limitations": "No sustituye ni repite el escaneo autenticado o las pruebas activas previas. Cero instancias de esta regla en el alcance comprobado no demuestra ausencia total de vulnerabilidades.",
+  "historicalCampaign": "zap-vercel-resultados.json"
+}
