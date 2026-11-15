@@ -1,7 +1,7 @@
 // Comprueba la publicación estática sin credenciales ni peticiones a la API de SESHA.
 const fs = require("node:fs"), path = require("node:path"), crypto = require("node:crypto"), assert = require("node:assert/strict");
 const root = path.resolve(__dirname, "..");
-const date = process.env.REPORT_DATE || "2026-11-14";
+const date = process.env.REPORT_DATE || "2026-11-15";
 assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
 const base = "https://alexriver101219.github.io/PROYECTO_SENA/";
 const directory = path.join(root, "docs/pruebas", date);

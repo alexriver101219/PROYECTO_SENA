@@ -3,7 +3,7 @@ const fs = require("node:fs"), path = require("node:path"), crypto = require("no
 const { execFileSync } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
 const localOnly = process.argv.includes("--local-only");
-const date = process.env.REPORT_DATE || "2026-11-14";
+const date = process.env.REPORT_DATE || "2026-11-15";
 if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Fecha inválida");
 const input = path.resolve(root, process.env.QA_OUTPUT || `.qa/reports-${date}`);
 const remote = path.resolve(root, process.env.ZAP_VERCEL_OUTPUT || `.qa/zap-vercel-${date}`);
@@ -19,13 +19,15 @@ function fingerprint(relative) {
   else { artifactHash.update(relative.replaceAll("\\", "/")); artifactHash.update(fs.readFileSync(file)); }
 }
 sources.forEach(fingerprint);
-const source = { commit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
-  applicationSha256: artifactHash.digest("hex"), note: "Huella de aplicación; cambios de esta entrega limitados a QA e informes. Los resultados de Vitest se conservan de la misma versión del código; HTTP, k6 y ZAP se repiten en esta campaña." };
+const sourceCommit = process.env.QA_APPLICATION_COMMIT || execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+if (!/^[a-f0-9]{40}$/.test(sourceCommit)) throw new Error("Commit de referencia inválido");
+const source = { commit: sourceCommit,
+  applicationSha256: artifactHash.digest("hex"), note: "Huella del código de aplicación medido. Vitest, HTTP, k6 y ZAP se ejecutaron de nuevo en esta campaña. La modificación del reloj en una prueba solo estabiliza su ventana temporal; no altera el límite de producción." };
 const tests = [], functional = {};
 for (const [suite, file] of [["Backend", "backend-vitest.json"], ["Frontend", "frontend-vitest.json"]]) {
   const data = read(input, file);
   functional[suite.toLowerCase()] = { total: data.numTotalTests, passed: data.numPassedTests, failed: data.numFailedTests,
-    executedAt: new Date(data.startTime).toISOString(), reusedVerifiedEvidence: true };
+    executedAt: new Date(data.startTime).toISOString(), reusedVerifiedEvidence: false };
   for (const group of data.testResults) for (const item of group.assertionResults)
     tests.push({ suite, name: item.title, status: item.status, durationMs: item.duration || 0 });
 }
@@ -35,9 +37,16 @@ tests.push(...http.tests.map((item) => ({ suite: "HTTP", name: item.name, status
 Object.assign(functional, { total: tests.length, passed: tests.filter((item) => item.status === "passed").length,
   failed: tests.filter((item) => item.status === "failed").length, tests });
 if (functional.passed !== functional.total) throw new Error("No publicar la campaña funcional como aprobada");
-const production = read(path.join(root, ".qa/remediation-2026-11-14"), "production-verification.json");
+const production = read(input, "production-verification.json");
 functional.production = { target: production.target, executedAt: production.timestamp, passed: production.passed, failed: production.failed,
   checks: production.checks.map(({ name, passed }) => ({ name, passed })), ownerPasswordsUsed: false, businessWritesPerformed: false };
+functional.previousAttempts = [];
+for (const [kind, file, correction] of [["Backend", "backend-vitest-first-attempt.json", "Se fijó Date.now en la prueba de 21 intentos para garantizar una sola ventana temporal. Sin cambios en el control de tasa de producción."],
+  ["HTTP", "functional-http-first-attempt.json", "La ampliación del fixture entregaba una propiedad inexistente del Buffer PDF. Se corrigió el dato de prueba y se repitió la suite completa."]]) {
+  if (!fs.existsSync(path.join(input, file))) continue;
+  const initial = read(input, file);
+  functional.previousAttempts.push({ kind, passed: initial.numPassedTests ?? initial.passed, failed: initial.numFailedTests ?? initial.failed, correction });
+}
 function aggregate(native, isRemote) {
   const unique = new Map();
   for (const site of native.site || []) for (const item of site.alerts || []) {
@@ -87,6 +96,7 @@ const summary = { project: "SESHA APP - Proyecto SENA", date, timezone: "America
     shortPeak: best(runs.filter((item) => item.kind === "mixed" && item.duration === "25s" && item.passed)),
     loginPassed: best(runs.filter((item) => item.kind === "login" && item.passed)),
     criteria: { mixedP95Ms: 500, certificateP95Ms: 1500, loginP95Ms: 1000, errorRateLessThan: 0.01, droppedIterations: 0 },
+    workloadMix: { dashboard: 30, employees: 15, requests: 15, documents: 10, certificate: 5, requestForm: 5, payrollPreview: 10, payrollPdf: 10 },
     note: "Carga exclusivamente local; generador, API y MongoDB comparten equipo. No mide capacidad de Vercel/Atlas ni usuarios simultáneos." },
   security: { ...localRun, ...aggregate(read(input, "zap-native.json"), false),
     productionHeaders: read(input, "production-headers.json"), npmAudit: dependencies.vulnerabilities },

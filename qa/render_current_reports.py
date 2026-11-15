@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image, ImageOps, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
-date = os.environ.get('REPORT_DATE', '2026-11-14')
+date = os.environ.get('REPORT_DATE', '2026-11-15')
 assert re.fullmatch(r'\d{4}-\d{2}-\d{2}', date)
 source = ROOT / 'docs/pruebas' / date
 output = ROOT / '.qa' / f'reports-{date}' / 'render'

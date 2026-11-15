@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-15",
+  "files": [
+    {
+      "file": "informe-pruebas-funcionales.pdf",
+      "pages": 16,
+      "bytes": 75178
+    },
+    {
+      "file": "informe-rendimiento-k6.pdf",
+      "pages": 4,
+      "bytes": 49979
+    },
+    {
+      "file": "informe-seguridad-zap.pdf",
+      "pages": 3,
+      "bytes": 47439
+    },
+    {
+      "file": "informe-seguridad-zap-vercel.pdf",
+      "pages": 4,
+      "bytes": 50799
+    }
+  ]
+}

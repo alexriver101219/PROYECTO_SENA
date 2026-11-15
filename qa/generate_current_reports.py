@@ -19,7 +19,7 @@ from reportlab.graphics.charts.barcharts import VerticalBarChart
 from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parent.parent
-DATE = os.environ.get('REPORT_DATE', '2026-11-14')
+DATE = os.environ.get('REPORT_DATE', '2026-11-15')
 assert re.fullmatch(r'\d{4}-\d{2}-\d{2}', DATE)
 PUBLIC = ROOT / 'docs/pruebas' / DATE
 OUT = ROOT / 'output/pdf'
@@ -78,7 +78,7 @@ def intro(title, subtitle):
 
 def provenance():
     return [h('Trazabilidad y conservación'), p('Aplicación de referencia: commit <b>'+safe(D['source']['commit'][:12])+'</b>. La identificación SHA-256 completa, las horas y los resultados numéricos están en <b>resultados.json</b>.'),
-        p('Los informes del 13/11/2026 se conservan en su carpeta histórica. Esta edición publica una campaña nueva, sin modificar las evidencias anteriores.'),
+        p('Los informes del 13 y 14/11/2026 se conservan en sus carpetas históricas. Esta edición publica una campaña nueva, sin modificar las evidencias anteriores.'),
         p('No se publican contraseñas, cookies, tokens, cadenas de conexión, cuerpos de respuestas privadas ni registros crudos de los escáneres. Los archivos originales permanecen en .qa/, excluidos de Git y Pages.', 'SmallS')]
 
 manifest = []
@@ -100,10 +100,14 @@ s += [p(f"{F['passed']} / {F['total']} comprobaciones locales", 'MetricS'),
     table([['Conjunto', 'Aprobadas', 'Fallidas'], ['Backend', F['backend']['passed'], F['backend']['failed']],
         ['Frontend', F['frontend']['passed'], F['frontend']['failed']], ['HTTP con MongoDB temporal', F['http']['passed'], F['http']['failed']],
         ['Comprobaciones de publicación (separadas)', F['production']['passed'], F['production']['failed']]], [.64, .18, .18]),
-    h('Qué se comprobó'), p('Cookie HttpOnly y CSRF, control por rol y propietario, documentos PDF, solicitudes, perfiles y constancias. El cambio de clave exige la anterior, usa bcrypt de coste 12 y revoca sesiones. El alta administrativa crea cuenta y perfil en una transacción; el registro público de producción permanece cerrado.'),
+    h('Qué se comprobó'), p('Cookie HttpOnly y CSRF, control por rol y propietario, documentos PDF, solicitudes, perfiles y constancias. Se repitieron las pruebas del desprendible quincenal y del nuevo formato: identidad del servidor, fechas, N/A, cuatro tipos y soporte opcional. El cambio de clave exige la anterior y revoca sesiones; el alta administrativa es transaccional y el registro público permanece cerrado.'),
     p('También se comprobaron destino exacto y autorización de las cuarentenas, cancelación ante conflictos y reversión si falla una escritura. Los ensayos usan cuentas ficticias y no cambian datos de producción.'),
     h('Protecciones de tasa'), p(f"API: la petición {D['protection']['api']['firstBlockedRequest']} devuelve HTTP 429. Autenticación: el intento {D['protection']['auth']['firstBlockedRequest']} devuelve HTTP 429. Se probaron en el puerto estricto, separado de la medición de capacidad."),
-    p('Las evidencias de Vitest se conservan de esta misma versión del código; las verificaciones HTTP se repitieron para esta campaña. Las fechas por conjunto figuran en el JSON. No se presenta una ejecución conservada como si acabara de repetirse.', 'SmallS')]
+    p('Vitest y HTTP se ejecutaron de nuevo en esta campaña. Las fechas por conjunto figuran en el JSON. Los intentos iniciales y sus correcciones se conservan separadamente; no se suman a los resultados finales.', 'SmallS')]
+if F.get('previousAttempts'):
+    s += [PageBreak(), h('Intentos iniciales y correcciones verificadas'),
+        table([['Conjunto', 'Resultado inicial', 'Corrección del ensayo']] + [[item['kind'], str(item['passed'])+' aprobadas / '+str(item['failed'])+' fallidas', item['correction']] for item in F['previousAttempts']], [.15, .25, .60]),
+        p('Después de corregir los datos o supuestos de la prueba se repitió la suite completa correspondiente. No se modificó el límite de autenticación de producción. Los resultados finales se detallan a continuación.')]
 for suite in ['HTTP', 'Backend', 'Frontend']:
     cases = [item for item in F['tests'] if item['suite'] == suite]
     chunk = 18 if suite != 'Frontend' else 15
@@ -132,14 +136,14 @@ s += [h('Aprobaciones y límites observados'), table([['Escenario', 'Resultado']
 s += [PageBreak(), h('Método, equipo y criterios'), table([['Condición', 'Configuración'],
     ['Generador', P['version']+'; constant-arrival-rate; 50 VU preasignados y máximo 100'],
     ['Tiempo máximo por petición', '10 s; ventana de finalización de 15 s'],
-    ['Mezcla', '40 % dashboard; 20 % empleados; 20 % solicitudes; 15 % documentos; 5 % constancias PDF'],
+    ['Mezcla', '30 % dashboard; 15 % empleados; 15 % historial de solicitudes; 10 % documentos; 5 % constancia PDF; 5 % formato de solicitudes; 10 % nómina JSON; 10 % nómina PDF'],
     ['Equipo', f"{env['cpu']}; {env['logicalCpus']} CPU lógicas; {number(env['totalMemoryGB'], 2)} GiB RAM"],
     ['Memoria libre al inicio', number(env['freeMemoryGB'], 2)+' GiB; equipo compartido con otras aplicaciones'],
     ['Runtime y datos', env['node']+'; '+env['database']+'; '+str(env['seededProfiles'])+' perfiles sintéticos iniciales'],
     ['Topología', 'Generador, API y MongoDB comparten el portátil; solo loopback'],
     ['Límites', 'Desactivados únicamente en el puerto 8101 de capacidad; autenticación y permisos conservados']], [.31, .69]),
     h('Umbrales'), p('Mezcla: p95 inferior a 500 ms; PDF: p95 inferior a 1.500 ms. Login: p95 inferior a 1.000 ms. Errores HTTP y de negocio inferiores al 1 %, con cero iteraciones descartadas. La escalera se detiene al primer fallo y después refina y confirma un nivel durante 60 s.'),
-    p('No se ejecutó ZAP ni se generaron los PDF durante la medición, para reducir competencia de CPU. El entorno sigue siendo un equipo compartido.', 'SmallS')]
+    p('La mezcla incorpora las rutas nuevas y difiere de la campaña del 14/11; sus tasas no se comparan como si fuera la misma carga. No se ejecutó ZAP ni se generaron PDF de informes durante la medición. El entorno sigue siendo un equipo compartido.', 'SmallS')]
 s += [PageBreak(), h('Resultados de todas las etapas'), table([['Etapa', 'Tiempo', 'HTTP', 'p95 ms', 'Descartes', 'Estado']] +
     [[item['label'], item['duration'], item['requests'], number(item['p95Ms']), item['droppedIterations'], 'Pasa' if item['passed'] else 'Falla'] for item in P['runs']], [.25, .10, .13, .15, .15, .22]),
     h('Errores y carga lograda'), table([['Etapa', 'HTTP %', 'Negocio %', 'Tasa lograda/s']] +
@@ -176,7 +180,7 @@ s += [p(risk_metric(risk), 'MetricS'), p(f"Además: {risk['informational']} clas
     h('Política aplicada'), table([['Control', 'Alcance'], ['Autenticación', 'Token sintético del administrador de la base temporal; nunca una clave real'],
     ['Exploración', 'Requestor, crawler tradicional, análisis pasivo y activo'], ['Límite activo', str(L['activeMinutesLimit'])+' minutos; '+str(L['threads'])+' hilos'],
     ['Datos', 'MongoDB temporal y perfiles ficticios; sin conexión a Atlas'], ['Exclusiones', 'Sin DOM/AJAX spider ni evaluación visual integral']], [.29, .71]),
-    h('Cambios frente a la edición histórica'), p('Se retiró unsafe-inline de la política de estilos y X-Powered-By de los servidores auxiliares. La clasificación que aparece aquí proviene de esta nueva ejecución; la edición del 13/11 se conserva para comparación.')]
+    h('Cobertura de la versión actual'), p('Se consultaron también el formato de solicitudes, la vista de nómina y su PDF con una sesión sintética de empleado. Las demás rutas usan la sesión sintética administrativa. La clasificación procede de esta ejecución; las ediciones del 13 y 14/11 permanecen como evidencia histórica.')]
 s += alert_pages(L)
 s += [PageBreak(), h('Contraste de publicación y dependencias'),
     table([['Ruta pública', 'Estado HTTP', 'X-Powered-By']] + [[item['route'], item['status'], item['headers'].get('x-powered-by') or 'No presente'] for item in L['productionHeaders']['results']], [.40, .25, .35]),
@@ -186,6 +190,7 @@ s += [PageBreak(), h('Contraste de publicación y dependencias'),
 build('informe-seguridad-zap.pdf', s)
 
 if V is None:
+    (PUBLIC / 'documentos.json').write_text(json.dumps({'date': DATE, 'remotePending': True, 'files': manifest}, indent=2), encoding='utf-8')
     print('Tres PDF locales generados; el informe autenticado de Vercel sigue pendiente.')
     sys.exit(0)
 risk = V['riskCounts']; E = V['execution']; C = V['checks']

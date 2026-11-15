@@ -32,7 +32,7 @@ async function counters(cookie) {
   return {dashboard:values[0],employees:values[1].total,documents:values[2].total,requests:values[3].total};
 }
 async function main() {
-  const privateSessions = process.env.QA_ZAP_SESSION_FILE ? require('./private-zap-session.cjs').readSessions(root) : null;
+  const privateSessions = (process.env.QA_ZAP_SESSION_FILE || process.env.QA_ZAP_SESSION_JSON) ? require('./private-zap-session.cjs').readSessions(root) : null;
   if (!privateSessions && !process.env.QA_ADMIN_PASSWORD) throw Error("Se requiere sesión privada o QA_ADMIN_PASSWORD");
   if(!fs.existsSync(jar))throw Error('ZAP 2.17.0 no está instalado en la ruta esperada.');
   const betaDir=path.join(root,'.qa/zap-vercel-tools/plugin');

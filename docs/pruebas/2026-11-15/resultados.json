@@ -1,0 +1,2052 @@
+{
+  "project": "SESHA APP - Proyecto SENA",
+  "date": "2026-11-15",
+  "timezone": "America/Bogota",
+  "generatedAt": "2026-11-15T18:16:25.787Z",
+  "source": {
+    "commit": "3667358435062f345fffc2dc49d33ba1141e5c35",
+    "applicationSha256": "f2b89d254bd851557bef1bb68b3d7b53b4dcd6095ba6fca4c3c0c10884bd4149",
+    "note": "Huella del código de aplicación medido. Vitest, HTTP, k6 y ZAP se ejecutaron de nuevo en esta campaña. La modificación del reloj en una prueba solo estabiliza su ventana temporal; no altera el límite de producción."
+  },
+  "environment": {
+    "measuredAt": "2026-11-15T17:35:39.974Z",
+    "runId": "sesha-qa-1794764139372",
+    "node": "v24.22.3",
+    "cpu": "Intel(R) Core(TM) i3-N300",
+    "logicalCpus": 8,
+    "totalMemoryGB": 7.731925964355469,
+    "freeMemoryGB": 0.8902320861816406,
+    "os": "win32 10.0.26300",
+    "seededProfiles": 152,
+    "database": "MongoDB temporal, replica set de un nodo",
+    "productionUntouched": true,
+    "capacityMode": "Mismo createApp con limits:false; autenticación y autorización conservadas",
+    "strictMode": "Mismo createApp con límites 120/min e intentos 20/15min"
+  },
+  "functional": {
+    "backend": {
+      "total": 105,
+      "passed": 105,
+      "failed": 0,
+      "executedAt": "2026-11-15T17:35:02.460Z",
+      "reusedVerifiedEvidence": false
+    },
+    "frontend": {
+      "total": 33,
+      "passed": 33,
+      "failed": 0,
+      "executedAt": "2026-11-15T17:28:47.234Z",
+      "reusedVerifiedEvidence": false
+    },
+    "http": {
+      "total": 58,
+      "passed": 58,
+      "failed": 0,
+      "executedAt": "2026-11-15T17:37:31.328Z"
+    },
+    "total": 196,
+    "passed": 196,
+    "failed": 0,
+    "tests": [
+      {
+        "suite": "Backend",
+        "name": "reactiva exactamente 120, elimina etiquetas de nombres y correos y conserva IDs, cargos y otras cuentas",
+        "status": "passed",
+        "durationMs": 1305.6328000000003
+      },
+      {
+        "suite": "Backend",
+        "name": "un fallo a mitad de las escrituras revierte cuentas y perfiles juntos",
+        "status": "passed",
+        "durationMs": 933.3910999999998
+      },
+      {
+        "suite": "Backend",
+        "name": "cancela ante falta de autorización, destino distinto, contraseña inconsistente o datos concurrentes",
+        "status": "passed",
+        "durationMs": 782.0883000000003
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza perfiles sin vínculo, cuentas privilegiadas y colisiones de correo",
+        "status": "passed",
+        "durationMs": 657.8059999999996
+      },
+      {
+        "suite": "Backend",
+        "name": "vista previa conserva todo; solo las 19 autorizadas se desactivan y una repetición es inocua",
+        "status": "passed",
+        "durationMs": 144.13680000000022
+      },
+      {
+        "suite": "Backend",
+        "name": "sin aprobación, con destino erróneo o cuenta protegida no escribe",
+        "status": "passed",
+        "durationMs": 28.6570999999999
+      },
+      {
+        "suite": "Backend",
+        "name": "una contraseña ya corregida o un manifiesto incompleto cancela sin desactivar a nadie",
+        "status": "passed",
+        "durationMs": 35.74499999999989
+      },
+      {
+        "suite": "Backend",
+        "name": "una segunda escritura fallida revierte también la primera",
+        "status": "passed",
+        "durationMs": 59.79630000000043
+      },
+      {
+        "suite": "Backend",
+        "name": "continúa 121–151, activa las restantes y cambia todos los documentos conservando acceso admin y 120 cuentas",
+        "status": "passed",
+        "durationMs": 761.9856000000004
+      },
+      {
+        "suite": "Backend",
+        "name": "un fallo tras modificar cuentas revierte también los documentos",
+        "status": "passed",
+        "durationMs": 265.34879999999976
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza duplicados, acceso admin en el plan, claves inconsistentes y falta de autorización",
+        "status": "passed",
+        "durationMs": 251.94400000000041
+      },
+      {
+        "suite": "Backend",
+        "name": "no sobrescribe cambios concurrentes y exige un vínculo único por cuenta",
+        "status": "passed",
+        "durationMs": 223.08850000000075
+      },
+      {
+        "suite": "Backend",
+        "name": "vista previa no escribe; cuarentena preserva cuentas, claves, roles, perfiles y es idempotente",
+        "status": "passed",
+        "durationMs": 366.15369999999984
+      },
+      {
+        "suite": "Backend",
+        "name": "requiere autorización y destino exactos, sin escrituras",
+        "status": "passed",
+        "durationMs": 67.08529999999973
+      },
+      {
+        "suite": "Backend",
+        "name": "un fallo después de la primera escritura revierte toda la cuarentena",
+        "status": "passed",
+        "durationMs": 72.32720000000018
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance missing cancela toda la operación",
+        "status": "passed",
+        "durationMs": 95.63619999999992
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance duplicate cancela toda la operación",
+        "status": "passed",
+        "durationMs": 188.13689999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance role cancela toda la operación",
+        "status": "passed",
+        "durationMs": 66.75059999999985
+      },
+      {
+        "suite": "Backend",
+        "name": "el formulario devuelve identidad propia, fecha de Bogotá y cuatro tipos; exige sesión y perfil activo",
+        "status": "passed",
+        "durationMs": 157.04640000000018
+      },
+      {
+        "suite": "Backend",
+        "name": "Día de la familia persiste identidad y fechas del servidor y aparece en historial propio y administrativo",
+        "status": "passed",
+        "durationMs": 119.65230000000065
+      },
+      {
+        "suite": "Backend",
+        "name": "Permiso remunerado persiste identidad y fechas del servidor y aparece en historial propio y administrativo",
+        "status": "passed",
+        "durationMs": 88.78380000000016
+      },
+      {
+        "suite": "Backend",
+        "name": "Permiso no remunerado persiste identidad y fechas del servidor y aparece en historial propio y administrativo",
+        "status": "passed",
+        "durationMs": 84.79399999999987
+      },
+      {
+        "suite": "Backend",
+        "name": "Ajuste de nómina persiste identidad y fechas del servidor y aparece en historial propio y administrativo",
+        "status": "passed",
+        "durationMs": 92.04220000000078
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza fechas inválidas, pasadas y datos personales o estado falsificados, sin escribir solicitudes",
+        "status": "passed",
+        "durationMs": 87.0547000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "la fecha de radicación usa Bogotá en el límite del día; ajustes admiten N/A y permisos una fecha futura",
+        "status": "passed",
+        "durationMs": 6.594900000000052
+      },
+      {
+        "suite": "Backend",
+        "name": "el soporte es opcional, debe pertenecer al solicitante y sigue protegido mientras esté referenciado",
+        "status": "passed",
+        "durationMs": 78.48110000000088
+      },
+      {
+        "suite": "Backend",
+        "name": "los trámites anteriores siguen siendo legibles y compatibles",
+        "status": "passed",
+        "durationMs": 30.02050000000054
+      },
+      {
+        "suite": "Backend",
+        "name": "la constancia laboral usa la identidad autenticada, sus datos y la fecha actual",
+        "status": "passed",
+        "durationMs": 230.6273999999994
+      },
+      {
+        "suite": "Backend",
+        "name": "la fecha de expedición cambia por el día de Colombia y la de ingreso permanece fija",
+        "status": "passed",
+        "durationMs": 21.151200000000244
+      },
+      {
+        "suite": "Backend",
+        "name": "completar perfiles cubre todos los usuarios y conserva los datos válidos",
+        "status": "passed",
+        "durationMs": 62.971300000000156
+      },
+      {
+        "suite": "Backend",
+        "name": "el registro prepara el perfil y revierte la cuenta si falla su creación",
+        "status": "passed",
+        "durationMs": 1111.0757999999996
+      },
+      {
+        "suite": "Backend",
+        "name": "el catálogo publica los ocho cargos nuevos y el registro conserva cargo, área y rol employee",
+        "status": "passed",
+        "durationMs": 2898.7905
+      },
+      {
+        "suite": "Backend",
+        "name": "registro persistido: cookie HttpOnly, sin JWT ni hash en respuesta y duplicados rechazados",
+        "status": "passed",
+        "durationMs": 576.5122000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "registro rechaza privilegios, operadores y contraseñas cortas",
+        "status": "passed",
+        "durationMs": 78.4368999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "la clave académica funciona únicamente para una cuenta persistida; logout exige CSRF",
+        "status": "passed",
+        "durationMs": 500.4460999999992
+      },
+      {
+        "suite": "Backend",
+        "name": "JWT falso, expirado y cuenta deshabilitada no dan acceso",
+        "status": "passed",
+        "durationMs": 45.39819999999963
+      },
+      {
+        "suite": "Backend",
+        "name": "sin BD devuelve 503 sin filtrar el error; distingue vida y disponibilidad",
+        "status": "passed",
+        "durationMs": 26.928100000000086
+      },
+      {
+        "suite": "Backend",
+        "name": "validación de CORS, JSON y configuración obligatoria",
+        "status": "passed",
+        "durationMs": 22.54230000000007
+      },
+      {
+        "suite": "Backend",
+        "name": "solo admin gestiona perfiles; los modelos y hashes permanecen separados",
+        "status": "passed",
+        "durationMs": 108.40920000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "perfiles rechazan duplicados, campos inesperados e identificadores inválidos",
+        "status": "passed",
+        "durationMs": 70.14649999999983
+      },
+      {
+        "suite": "Backend",
+        "name": "PDF persiste y solo propietario o admin lo descargan y eliminan",
+        "status": "passed",
+        "durationMs": 155.2491
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza PDF falso y archivos superiores a 3 MB",
+        "status": "passed",
+        "durationMs": 47.57080000000042
+      },
+      {
+        "suite": "Backend",
+        "name": "constancia se genera con el perfil autenticado",
+        "status": "passed",
+        "durationMs": 182.9331000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "solicitudes persisten, aíslan propietarios y solo admin aprueba",
+        "status": "passed",
+        "durationMs": 133.6224000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "el soporte debe ser propio y no se borra mientras esté referenciado",
+        "status": "passed",
+        "durationMs": 105.89449999999943
+      },
+      {
+        "suite": "Backend",
+        "name": "dashboard calcula métricas desde datos persistidos y filtra por usuario",
+        "status": "passed",
+        "durationMs": 67.41830000000027
+      },
+      {
+        "suite": "Backend",
+        "name": "limitación de intentos compartida entre instancias",
+        "status": "passed",
+        "durationMs": 304.72809999999936
+      },
+      {
+        "suite": "Backend",
+        "name": "el contador compartido es atómico bajo concurrencia",
+        "status": "passed",
+        "durationMs": 43.14310000000023
+      },
+      {
+        "suite": "Backend",
+        "name": "migración y semilla son repetibles y conservan las contraseñas existentes",
+        "status": "passed",
+        "durationMs": 1582.0086000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "entrada serverless conserva rutas y rechaza archivos historicos sin contenido",
+        "status": "passed",
+        "durationMs": 51.49959999999919
+      },
+      {
+        "suite": "Backend",
+        "name": "inspección por defecto no escribe ni muestra URI, claves o hashes",
+        "status": "passed",
+        "durationMs": 76.94090000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "rotación atómica con bcrypt 12, invalida JWT y preserva roles y todos los demás campos",
+        "status": "passed",
+        "durationMs": 3827.7394999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "sin autorización o con destino distinto no actualiza cuentas",
+        "status": "passed",
+        "durationMs": 20.32670000000053
+      },
+      {
+        "suite": "Backend",
+        "name": "cuenta ausente no crea cuentas ni cambia la primera",
+        "status": "passed",
+        "durationMs": 524.2287999999999
+      },
+      {
+        "suite": "Backend",
+        "name": "si falla la segunda actualización revierte la primera",
+        "status": "passed",
+        "durationMs": 546.3976000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "las cuentas duplicadas detienen inspección y rotación sin escrituras",
+        "status": "passed",
+        "durationMs": 666.567500000001
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza claves inválidas, iguales entre sí o iguales a la anterior sin cambios",
+        "status": "passed",
+        "durationMs": 534.5048000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "destino explícito, TLS Atlas y argumentos sin secretos",
+        "status": "passed",
+        "durationMs": 20.03729999999996
+      },
+      {
+        "suite": "Backend",
+        "name": "entrada oculta: no eco, borrado, UTF-8 dividido y restauración del terminal",
+        "status": "passed",
+        "durationMs": 15.124499999999898
+      },
+      {
+        "suite": "Backend",
+        "name": "Ctrl+C y pegados multilínea cancelan sin eco; tuberías se rechazan",
+        "status": "passed",
+        "durationMs": 15.382900000000518
+      },
+      {
+        "suite": "Backend",
+        "name": "la semilla exige sus variables privadas antes de conectar o escribir",
+        "status": "passed",
+        "durationMs": 19.496100000000297
+      },
+      {
+        "suite": "Backend",
+        "name": "una clave inválida o una confirmación distinta permite corregir sin revelar entradas ni escribir",
+        "status": "passed",
+        "durationMs": 16.629899999999907
+      },
+      {
+        "suite": "Backend",
+        "name": "una clave repetida entre cuentas vuelve a pedir solo la segunda",
+        "status": "passed",
+        "durationMs": 15.241400000000795
+      },
+      {
+        "suite": "Backend",
+        "name": "cancelar la entrada detiene la captura sin reintentos ni escrituras",
+        "status": "passed",
+        "durationMs": 18.996900000000096
+      },
+      {
+        "suite": "Backend",
+        "name": "los mensajes de error públicos usan textos fijos y omiten detalles privados del driver",
+        "status": "passed",
+        "durationMs": 15.980800000001182
+      },
+      {
+        "suite": "Backend",
+        "name": "Guarda de seguridad conserva el neto de 2600000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 45.585199999999986
+      },
+      {
+        "suite": "Backend",
+        "name": "Supervisor conserva el neto de 3200000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 10.006600000000162
+      },
+      {
+        "suite": "Backend",
+        "name": "Guarda canino conserva el neto de 2800000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 10.076599999999871
+      },
+      {
+        "suite": "Backend",
+        "name": "Escolta de mercancías conserva el neto de 3200000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 10.476500000000215
+      },
+      {
+        "suite": "Backend",
+        "name": "Escolta VIP conserva el neto de 3500000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 10.817800000000261
+      },
+      {
+        "suite": "Backend",
+        "name": "Coordinador de operaciones conserva el neto de 4500000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 10.689699999999903
+      },
+      {
+        "suite": "Backend",
+        "name": "Coordinador de escoltas conserva el neto de 4600000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 14.699200000000019
+      },
+      {
+        "suite": "Backend",
+        "name": "Operador de medios tecnológicos conserva el neto de 2900000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 11.302300000000287
+      },
+      {
+        "suite": "Backend",
+        "name": "Asistente administrativo conserva el neto de 2000000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 13.284700000000157
+      },
+      {
+        "suite": "Backend",
+        "name": "Técnico de medios tecnológicos conserva el neto de 2200000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 6.476000000000113
+      },
+      {
+        "suite": "Backend",
+        "name": "Tecnólogo de medios tecnológicos conserva el neto de 2500000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 9.096399999999903
+      },
+      {
+        "suite": "Backend",
+        "name": "Supervisor de medios tecnológicos conserva el neto de 3200000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 6.863100000000031
+      },
+      {
+        "suite": "Backend",
+        "name": "Auxiliar de tecnología conserva el neto de 2200000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 6.169699999999921
+      },
+      {
+        "suite": "Backend",
+        "name": "Auxiliar de operaciones conserva el neto de 2000000 al discriminar el devengado y las deducciones",
+        "status": "passed",
+        "durationMs": 7.706499999999778
+      },
+      {
+        "suite": "Backend",
+        "name": "Laura conserva asignación mensual de 3.200.000 y recibe 1.600.000 en cada quincena",
+        "status": "passed",
+        "durationMs": 14.374499999999898
+      },
+      {
+        "suite": "Backend",
+        "name": "el redondeo al peso mantiene devengado menos descuentos igual a neto en límites consecutivos",
+        "status": "passed",
+        "durationMs": 12.876100000000406
+      },
+      {
+        "suite": "Backend",
+        "name": "cubre todo el catálogo y reconoce tildes sin asignar valores a cargos desconocidos",
+        "status": "passed",
+        "durationMs": 21.607899999999972
+      },
+      {
+        "suite": "Backend",
+        "name": "períodos por fecha de Colombia, sin meses futuros ni anteriores al ingreso",
+        "status": "passed",
+        "durationMs": 11.320099999999911
+      },
+      {
+        "suite": "Backend",
+        "name": "quincenas cerradas: noviembre actual no produce un mes completo ni una segunda quincena futura",
+        "status": "passed",
+        "durationMs": 12.089999999999236
+      },
+      {
+        "suite": "Backend",
+        "name": "las dos quincenas conservan el mensual; el ingreso parcial requiere revisión",
+        "status": "passed",
+        "durationMs": 9.08600000000024
+      },
+      {
+        "suite": "Backend",
+        "name": "JWT exige sesión y el servidor usa únicamente el perfil del empleado autenticado",
+        "status": "passed",
+        "durationMs": 111.89420000000064
+      },
+      {
+        "suite": "Backend",
+        "name": "PDF personal contiene logo, período, programación y neto exacto; no duplica descuentos",
+        "status": "passed",
+        "durationMs": 122.35239999999976
+      },
+      {
+        "suite": "Backend",
+        "name": "acepta el parámetro interno del rewrite de Vercel solo para la ruta resuelta",
+        "status": "passed",
+        "durationMs": 105.39390000000003
+      },
+      {
+        "suite": "Backend",
+        "name": "perfil faltante o inactivo se explica y el rol admin no se convierte en empleado",
+        "status": "passed",
+        "durationMs": 69.33399999999983
+      },
+      {
+        "suite": "Backend",
+        "name": "producción cierra el registro público en ruta y servicio sin crear perfiles ficticios",
+        "status": "passed",
+        "durationMs": 75.76149999999961
+      },
+      {
+        "suite": "Backend",
+        "name": "desarrollo también cierra el registro salvo habilitación explícita para datos desechables",
+        "status": "passed",
+        "durationMs": 24.307800000000498
+      },
+      {
+        "suite": "Backend",
+        "name": "solo admin crea cuenta y perfil real juntos; bcrypt 12 sin claves ni sesiones en respuesta",
+        "status": "passed",
+        "durationMs": 660.5963999999994
+      },
+      {
+        "suite": "Backend",
+        "name": "si el documento ya existe revierte la cuenta; rechaza privilegios y claves débiles",
+        "status": "passed",
+        "durationMs": 831.7748000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "un JWT firmado con el secreto retirado deja de ser válido",
+        "status": "passed",
+        "durationMs": 25.743600000000697
+      },
+      {
+        "suite": "Backend",
+        "name": "producción exige base explícita, TLS verificado y orígenes HTTPS exactos",
+        "status": "passed",
+        "durationMs": 15.915200000000368
+      },
+      {
+        "suite": "Backend",
+        "name": "redistribuye solo 44 guardas, conserva identidad y otros cargos y no se aplica dos veces",
+        "status": "passed",
+        "durationMs": 282.7995000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza un plan desactualizado sin cambiar cargos",
+        "status": "passed",
+        "durationMs": 112.60500000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "un error posterior a las escrituras revierte todos los cambios de cargos",
+        "status": "passed",
+        "durationMs": 87.76049999999987
+      },
+      {
+        "suite": "Backend",
+        "name": "cambio web de admin@sesha.com conserva datos, bcrypt 12 y revoca todas sus sesiones",
+        "status": "passed",
+        "durationMs": 1536.3120999999992
+      },
+      {
+        "suite": "Backend",
+        "name": "cambio web de carlos.mendoza@sesha.com conserva datos, bcrypt 12 y revoca todas sus sesiones",
+        "status": "passed",
+        "durationMs": 1484.5967999999993
+      },
+      {
+        "suite": "Backend",
+        "name": "correo inexistente, contraseña incorrecta y cuenta inactiva responden igual y no escriben",
+        "status": "passed",
+        "durationMs": 305.5592000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza confirmación distinta, reutilización, límites bcrypt, controles e inyección sin cambios",
+        "status": "passed",
+        "durationMs": 61.45269999999982
+      },
+      {
+        "suite": "Backend",
+        "name": "cookie y JWT ajenos no sustituyen la contraseña actual; CORS bloquea otro origen",
+        "status": "passed",
+        "durationMs": 45.0630000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "la ruta comparte el límite de intentos de autenticación",
+        "status": "passed",
+        "durationMs": 252.9972999999991
+      },
+      {
+        "suite": "Backend",
+        "name": "un cambio concurrente evita sobrescribir la cuenta",
+        "status": "passed",
+        "durationMs": 303.40889999999854
+      },
+      {
+        "suite": "Frontend",
+        "name": "el ingreso abre el panel completo con su navegación",
+        "status": "passed",
+        "durationMs": 848.781
+      },
+      {
+        "suite": "Frontend",
+        "name": "un error de render muestra una recuperación en lugar de dejar la página vacía",
+        "status": "passed",
+        "durationMs": 19.92579999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "botón inferior abre el formulario y el cambio confirmado vuelve al login sin guardar claves",
+        "status": "passed",
+        "durationMs": 2290.1319000000003
+      },
+      {
+        "suite": "Frontend",
+        "name": "confirmación distinta muestra un error sin enviar peticiones",
+        "status": "passed",
+        "durationMs": 1492.0032999999967
+      },
+      {
+        "suite": "Frontend",
+        "name": "fallo del servidor se muestra sin anunciar éxito y vacía los campos secretos",
+        "status": "passed",
+        "durationMs": 2027.820200000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "puede cancelar y no duplica la petición mientras está guardando",
+        "status": "passed",
+        "durationMs": 1998.6213999999964
+      },
+      {
+        "suite": "Frontend",
+        "name": "muestra métricas de API y oculta administración a empleados",
+        "status": "passed",
+        "durationMs": 263.6279999999997
+      },
+      {
+        "suite": "Frontend",
+        "name": "despliega detalles del servicio seleccionado",
+        "status": "passed",
+        "durationMs": 103.95040000000017
+      },
+      {
+        "suite": "Frontend",
+        "name": "no anuncia carga exitosa si falla la persistencia",
+        "status": "passed",
+        "durationMs": 381.1397999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "alta administrativa captura la clave enmascarada, la envía solo al guardar y la elimina tras respuesta",
+        "status": "passed",
+        "durationMs": 2018.3051999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "Documentos incluye datos personales de solo lectura, fecha, cuatro tipos y conserva Examinar independiente",
+        "status": "passed",
+        "durationMs": 248.16770000000542
+      },
+      {
+        "suite": "Frontend",
+        "name": "radica el permiso con fecha sin enviar identidad ni fecha de radicación del cliente",
+        "status": "passed",
+        "durationMs": 1122.2872000000061
+      },
+      {
+        "suite": "Frontend",
+        "name": "al pasar a ajuste muestra N/A, guarda fecha nula y reutiliza soporte si falla la radicación",
+        "status": "passed",
+        "durationMs": 894.1563000000024
+      },
+      {
+        "suite": "Frontend",
+        "name": "un error de perfil impide enviar y permite volver a cargar los datos",
+        "status": "passed",
+        "durationMs": 96.33430000000226
+      },
+      {
+        "suite": "Frontend",
+        "name": "los clics repetidos durante el envío no duplican la solicitud",
+        "status": "passed",
+        "durationMs": 528.4573000000019
+      },
+      {
+        "suite": "Frontend",
+        "name": "un soporte que no se pudo guardar impide radicar y conserva el motivo",
+        "status": "passed",
+        "durationMs": 657.4412000000011
+      },
+      {
+        "suite": "Frontend",
+        "name": "el administrador ve datos, fechas y N/A del historial y puede revisar el estado sin crear solicitudes de empleado",
+        "status": "passed",
+        "durationMs": 104.43860000000132
+      },
+      {
+        "suite": "Frontend",
+        "name": "Documentos solicita la constancia laboral personalizada",
+        "status": "passed",
+        "durationMs": 352.46479999999974
+      },
+      {
+        "suite": "Frontend",
+        "name": "Mi perfil muestra fecha de ingreso y usa el mismo generador",
+        "status": "passed",
+        "durationMs": 66.78409999999985
+      },
+      {
+        "suite": "Frontend",
+        "name": "Renderiza correctamente la Landing Page",
+        "status": "passed",
+        "durationMs": 109.8108000000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "Permite consultar definición y características desde la página de inicio",
+        "status": "passed",
+        "durationMs": 205.42849999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "login presenta el error real y no inicia una sesión fallida",
+        "status": "passed",
+        "durationMs": 552.3584999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "Documentos discrimina devengado y descuentos conservando el total y descarga el mes seleccionado",
+        "status": "passed",
+        "durationMs": 328.07469999999967
+      },
+      {
+        "suite": "Frontend",
+        "name": "cambiar período deshabilita la descarga hasta recibir la nueva liquidación y descarta respuestas antiguas",
+        "status": "passed",
+        "durationMs": 61.2485999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "elige la última quincena cerrada y deshabilita la segunda cuando aún no finaliza",
+        "status": "passed",
+        "durationMs": 31.584499999999935
+      },
+      {
+        "suite": "Frontend",
+        "name": "un error de descarga no anuncia éxito ni duplica solicitudes mientras genera",
+        "status": "passed",
+        "durationMs": 129.74009999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "error de asignación salarial ofrece reintento y un administrador no consulta nómina propia",
+        "status": "passed",
+        "durationMs": 87.03160000000025
+      },
+      {
+        "suite": "Frontend",
+        "name": "registro actualiza sesión y no guarda credenciales en localStorage",
+        "status": "passed",
+        "durationMs": 1710.6545999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "registro cerrado explica el alta por administrador y no muestra campos de contraseña",
+        "status": "passed",
+        "durationMs": 15.86790000000019
+      },
+      {
+        "suite": "Frontend",
+        "name": "un token antiguo en localStorage no permite entrar",
+        "status": "passed",
+        "durationMs": 59.25889999999981
+      },
+      {
+        "suite": "Frontend",
+        "name": "logout limpia usuario y CSRF después de confirmar el cierre del servidor",
+        "status": "passed",
+        "durationMs": 123.38689999999997
+      },
+      {
+        "suite": "Frontend",
+        "name": "sin permisos administrativos la ruta de empleados redirige",
+        "status": "passed",
+        "durationMs": 11.826100000000224
+      },
+      {
+        "suite": "Frontend",
+        "name": "una solicitud fallida conserva el motivo y nunca simula éxito",
+        "status": "passed",
+        "durationMs": 634.3951999999999
+      },
+      {
+        "suite": "HTTP",
+        "name": "F01 - Inicio compilado y recarga directa de ruta React",
+        "status": "passed",
+        "durationMs": 21.25070000000005
+      },
+      {
+        "suite": "HTTP",
+        "name": "F02 - Salud y disponibilidad de MongoDB temporal",
+        "status": "passed",
+        "durationMs": 12.13559999999984
+      },
+      {
+        "suite": "HTTP",
+        "name": "F03 - Dashboard exige autenticación",
+        "status": "passed",
+        "durationMs": 3.871399999999994
+      },
+      {
+        "suite": "HTTP",
+        "name": "F04 - Credenciales incorrectas se rechazan",
+        "status": "passed",
+        "durationMs": 355.3958
+      },
+      {
+        "suite": "HTTP",
+        "name": "F05 - Ingreso admin con cookie HttpOnly Secure Strict y CSRF",
+        "status": "passed",
+        "durationMs": 330.0648000000001
+      },
+      {
+        "suite": "HTTP",
+        "name": "F06 - Ingreso de dos empleados independientes",
+        "status": "passed",
+        "durationMs": 1044.0804999999998
+      },
+      {
+        "suite": "HTTP",
+        "name": "F07 - Perfil autenticado tiene fecha y datos laborales",
+        "status": "passed",
+        "durationMs": 9.34900000000016
+      },
+      {
+        "suite": "HTTP",
+        "name": "F08 - Empleado no consulta administración de personal",
+        "status": "passed",
+        "durationMs": 8.857500000000073
+      },
+      {
+        "suite": "HTTP",
+        "name": "F09 - Listado admin paginado y sin hashes",
+        "status": "passed",
+        "durationMs": 21.10420000000022
+      },
+      {
+        "suite": "HTTP",
+        "name": "F10 - Escritura con cookie y sin CSRF se bloquea",
+        "status": "passed",
+        "durationMs": 7.546499999999924
+      },
+      {
+        "suite": "HTTP",
+        "name": "F11 - Admin crea perfil persistido en MongoDB",
+        "status": "passed",
+        "durationMs": 22.950200000000223
+      },
+      {
+        "suite": "HTTP",
+        "name": "F12 - Admin modifica fecha y cargo",
+        "status": "passed",
+        "durationMs": 28.923699999999826
+      },
+      {
+        "suite": "HTTP",
+        "name": "F13 - Fecha laboral futura se rechaza",
+        "status": "passed",
+        "durationMs": 7.2577000000001135
+      },
+      {
+        "suite": "HTTP",
+        "name": "F14 - Documento duplicado se rechaza",
+        "status": "passed",
+        "durationMs": 15.820999999999913
+      },
+      {
+        "suite": "HTTP",
+        "name": "F15 - Inactivación conserva el perfil y el borrado físico no está expuesto",
+        "status": "passed",
+        "durationMs": 36.50520000000006
+      },
+      {
+        "suite": "HTTP",
+        "name": "F16 - Constancia laboral válida y nombre de archivo personalizado",
+        "status": "passed",
+        "durationMs": 95.53859999999986
+      },
+      {
+        "suite": "HTTP",
+        "name": "F17 - Carga PDF guarda los bytes en MongoDB",
+        "status": "passed",
+        "durationMs": 23.480800000000272
+      },
+      {
+        "suite": "HTTP",
+        "name": "F18 - Listado y descarga conservan el PDF",
+        "status": "passed",
+        "durationMs": 16.29210000000012
+      },
+      {
+        "suite": "HTTP",
+        "name": "F19 - Otro empleado no descarga el documento",
+        "status": "passed",
+        "durationMs": 6.490099999999984
+      },
+      {
+        "suite": "HTTP",
+        "name": "F20 - Admin puede revisar el documento",
+        "status": "passed",
+        "durationMs": 9.462799999999788
+      },
+      {
+        "suite": "HTTP",
+        "name": "F21 - Archivo falso con extensión PDF se rechaza",
+        "status": "passed",
+        "durationMs": 6.143800000000283
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22 - Archivo superior a 3 MiB se rechaza",
+        "status": "passed",
+        "durationMs": 35.983000000000175
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22b - Límite exacto de 3 MiB se acepta",
+        "status": "passed",
+        "durationMs": 104.0922999999998
+      },
+      {
+        "suite": "HTTP",
+        "name": "F23 - Empleado crea solicitud con soporte propio",
+        "status": "passed",
+        "durationMs": 18.873299999999745
+      },
+      {
+        "suite": "HTTP",
+        "name": "F24 - Solicitud de otra cuenta no aparece en su listado",
+        "status": "passed",
+        "durationMs": 9.509000000000015
+      },
+      {
+        "suite": "HTTP",
+        "name": "F25 - Soporte ajeno no se puede asociar",
+        "status": "passed",
+        "durationMs": 7.468800000000101
+      },
+      {
+        "suite": "HTTP",
+        "name": "F26 - Adjunto referenciado queda protegido contra borrado",
+        "status": "passed",
+        "durationMs": 8.139599999999973
+      },
+      {
+        "suite": "HTTP",
+        "name": "F27 - Dashboard calcula sus documentos y pendientes",
+        "status": "passed",
+        "durationMs": 10.682200000000194
+      },
+      {
+        "suite": "HTTP",
+        "name": "F28 - Empleado no aprueba solicitudes",
+        "status": "passed",
+        "durationMs": 5.366199999999935
+      },
+      {
+        "suite": "HTTP",
+        "name": "F29 - Admin aprueba y conserva el cambio",
+        "status": "passed",
+        "durationMs": 23.5921000000003
+      },
+      {
+        "suite": "HTTP",
+        "name": "F30 - Empleado no cancela una solicitud ya aprobada",
+        "status": "passed",
+        "durationMs": 6.379399999999805
+      },
+      {
+        "suite": "HTTP",
+        "name": "F31 - Admin retira la solicitud sintética",
+        "status": "passed",
+        "durationMs": 8.713399999999638
+      },
+      {
+        "suite": "HTTP",
+        "name": "F32 - Propietario elimina PDF ya no referenciado",
+        "status": "passed",
+        "durationMs": 25.512300000000323
+      },
+      {
+        "suite": "HTTP",
+        "name": "F33 - Admin crea cuenta y perfil verificados en una transacción",
+        "status": "passed",
+        "durationMs": 483.8804
+      },
+      {
+        "suite": "HTTP",
+        "name": "F34 - Alta duplicada y elevación de rol se rechazan",
+        "status": "passed",
+        "durationMs": 1001.5170999999996
+      },
+      {
+        "suite": "HTTP",
+        "name": "F35 - Operador NoSQL como correo se rechaza",
+        "status": "passed",
+        "durationMs": 3.329000000000633
+      },
+      {
+        "suite": "HTTP",
+        "name": "F36 - JWT manipulado no autoriza acceso",
+        "status": "passed",
+        "durationMs": 4.492099999999482
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37 - Origen no permitido y JSON inválido se rechazan",
+        "status": "passed",
+        "durationMs": 18.05999999999949
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37b - JSON superior a 16 KiB se rechaza con 413",
+        "status": "passed",
+        "durationMs": 4.470400000000154
+      },
+      {
+        "suite": "HTTP",
+        "name": "F38 - Salir exige CSRF y revoca la sesión anterior",
+        "status": "passed",
+        "durationMs": 31.195699999999306
+      },
+      {
+        "suite": "HTTP",
+        "name": "F39 - El cambio web rechaza clave actual incorrecta y confirmación distinta",
+        "status": "passed",
+        "durationMs": 869.2875999999997
+      },
+      {
+        "suite": "HTTP",
+        "name": "F40 - El cambio web guarda bcrypt sin devolver claves, hashes o JWT",
+        "status": "passed",
+        "durationMs": 1578.4544999999998
+      },
+      {
+        "suite": "HTTP",
+        "name": "F41 - La nueva clave permite entrar y la anterior queda rechazada",
+        "status": "passed",
+        "durationMs": 774.4668000000001
+      },
+      {
+        "suite": "HTTP",
+        "name": "F42 - El cambio invalida la sesión previa y conserva la nueva",
+        "status": "passed",
+        "durationMs": 10.413899999999558
+      },
+      {
+        "suite": "HTTP",
+        "name": "F43 - El cambio conserva otros usuarios, los roles y los perfiles",
+        "status": "passed",
+        "durationMs": 399.77410000000054
+      },
+      {
+        "suite": "HTTP",
+        "name": "F44 - Los archivos privados no se sirven desde el frontend compilado",
+        "status": "passed",
+        "durationMs": 15.316500000000815
+      },
+      {
+        "suite": "HTTP",
+        "name": "F45 - Un homónimo conserva identidad, documento y cuenta independientes",
+        "status": "passed",
+        "durationMs": 384.2569000000003
+      },
+      {
+        "suite": "HTTP",
+        "name": "F46 - Producción impide el registro público y comunica el alta por administrador",
+        "status": "passed",
+        "durationMs": 6.432300000000396
+      },
+      {
+        "suite": "HTTP",
+        "name": "F47 - Formato propio con identidad, fecha de Bogotá y cuatro tipos",
+        "status": "passed",
+        "durationMs": 44.759500000000116
+      },
+      {
+        "suite": "HTTP",
+        "name": "F48 - Los tres permisos guardan fecha e identidad verificadas en MongoDB",
+        "status": "passed",
+        "durationMs": 53.969600000000355
+      },
+      {
+        "suite": "HTTP",
+        "name": "F49 - Ajuste de nómina con N/A y soporte PDF opcional persistido",
+        "status": "passed",
+        "durationMs": 33.13540000000103
+      },
+      {
+        "suite": "HTTP",
+        "name": "F50 - Rechaza identidad o fecha de radicación falsificadas y fechas incompatibles",
+        "status": "passed",
+        "durationMs": 32.109300000000076
+      },
+      {
+        "suite": "HTTP",
+        "name": "F51 - Historial propio y rechazo de soporte ajeno",
+        "status": "passed",
+        "durationMs": 24.5012999999999
+      },
+      {
+        "suite": "HTTP",
+        "name": "F52 - Solo administrador aprueba el nuevo formato y el empleado no borra aprobadas",
+        "status": "passed",
+        "durationMs": 29.616700000000492
+      },
+      {
+        "suite": "HTTP",
+        "name": "F53 - Soporte referenciado protegido y limpieza de los trámites sintéticos",
+        "status": "passed",
+        "durationMs": 96.76670000000013
+      },
+      {
+        "suite": "HTTP",
+        "name": "F54 - Desprendible quincenal concilia asignación, devengado, deducciones y neto",
+        "status": "passed",
+        "durationMs": 7.043999999999869
+      },
+      {
+        "suite": "HTTP",
+        "name": "F55 - PDF de nómina privado con corte y documento del empleado autenticado",
+        "status": "passed",
+        "durationMs": 103.33089999999902
+      },
+      {
+        "suite": "HTTP",
+        "name": "F56 - Nómina rechaza anónimos, importes e identidad suministrados y cortes futuros",
+        "status": "passed",
+        "durationMs": 18.76549999999952
+      }
+    ],
+    "production": {
+      "target": "https://sesha-app.vercel.app",
+      "executedAt": "2026-11-15T17:48:47.726Z",
+      "passed": 15,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Portada disponible y CSP estricta",
+          "passed": true
+        },
+        {
+          "name": "/login disponible",
+          "passed": true
+        },
+        {
+          "name": "/register disponible",
+          "passed": true
+        },
+        {
+          "name": "/api/health disponible",
+          "passed": true
+        },
+        {
+          "name": "/api/ready disponible",
+          "passed": true
+        },
+        {
+          "name": "Registro público cerrado y sin caché",
+          "passed": true
+        },
+        {
+          "name": "Entrada inválida a /api/auth/register rechazada",
+          "passed": true
+        },
+        {
+          "name": "Entrada inválida a /api/auth/change-password rechazada",
+          "passed": true
+        },
+        {
+          "name": "Entrada inválida a /api/empleados rechazada",
+          "passed": true
+        },
+        {
+          "name": "/api/auth/me exige autenticación",
+          "passed": true
+        },
+        {
+          "name": "/api/documentos/nomina exige autenticación",
+          "passed": true
+        },
+        {
+          "name": "/api/documentos/nomina/pdf exige autenticación",
+          "passed": true
+        },
+        {
+          "name": "/api/solicitudes/formulario exige autenticación",
+          "passed": true
+        },
+        {
+          "name": "JavaScript publicado coincide con la compilación contrastada",
+          "passed": true
+        },
+        {
+          "name": "Archivos privados no expuestos por HTTP",
+          "passed": true
+        }
+      ],
+      "ownerPasswordsUsed": false,
+      "businessWritesPerformed": false
+    },
+    "previousAttempts": [
+      {
+        "kind": "Backend",
+        "passed": 104,
+        "failed": 1,
+        "correction": "Se fijó Date.now en la prueba de 21 intentos para garantizar una sola ventana temporal. Sin cambios en el control de tasa de producción."
+      },
+      {
+        "kind": "HTTP",
+        "passed": 50,
+        "failed": 1,
+        "correction": "La ampliación del fixture entregaba una propiedad inexistente del Buffer PDF. Se corrigió el dato de prueba y se repitió la suite completa."
+      }
+    ]
+  },
+  "protection": {
+    "api": {
+      "allowed": 120,
+      "windowSeconds": 60,
+      "firstBlockedRequest": 121,
+      "status": 429
+    },
+    "auth": {
+      "allowed": 20,
+      "windowSeconds": 900,
+      "firstBlockedRequest": 21,
+      "status": 429
+    },
+    "scope": "por IP, contadores en MongoDB temporal",
+    "passed": true
+  },
+  "performance": {
+    "version": "k6.exe v2.3.0 (commit/e088784614, go1.26.8, windows/amd64)",
+    "runs": [
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "10s",
+        "label": "warmup",
+        "start": "2026-11-15T17:39:34.317Z",
+        "end": "2026-11-15T17:39:45.063Z",
+        "p95Ms": 46.230739999999976,
+        "p99Ms": 65.64453699999999,
+        "avgMs": 12.892521999999996,
+        "maxMs": 67.8783,
+        "pdfP95Ms": 67.650365,
+        "payrollPdfP95Ms": 48.66758,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 50,
+        "achievedRps": 4.991043273383318,
+        "requestMix": {
+          "dashboard": 18,
+          "employees": 9,
+          "requests": 7,
+          "documents": 4,
+          "certificate": 2,
+          "requestForm": 2,
+          "payrollPreview": 4,
+          "payrollPdf": 4
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "25s",
+        "label": "mixed-5",
+        "start": "2026-11-15T17:39:45.066Z",
+        "end": "2026-11-15T17:40:10.233Z",
+        "p95Ms": 41.870819999999995,
+        "p99Ms": 57.814572000000055,
+        "avgMs": 12.272260799999996,
+        "maxMs": 62.328,
+        "pdfP95Ms": 59.066475000000004,
+        "payrollPdfP95Ms": 49.47202999999998,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 125,
+        "achievedRps": 4.998853283052281,
+        "requestMix": {
+          "dashboard": 41,
+          "employees": 18,
+          "requests": 18,
+          "documents": 12,
+          "certificate": 6,
+          "requestForm": 6,
+          "payrollPreview": 12,
+          "payrollPdf": 12
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 25,
+        "duration": "25s",
+        "label": "mixed-25",
+        "start": "2026-11-15T17:40:10.234Z",
+        "end": "2026-11-15T17:40:35.392Z",
+        "p95Ms": 41.8806,
+        "p99Ms": 57.979749999999996,
+        "avgMs": 11.898604153354631,
+        "maxMs": 91.1953,
+        "pdfP95Ms": 68.39165,
+        "payrollPdfP95Ms": 55.65707,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 626,
+        "achievedRps": 25.03063293642,
+        "requestMix": {
+          "dashboard": 192,
+          "employees": 93,
+          "requests": 93,
+          "documents": 62,
+          "certificate": 31,
+          "requestForm": 31,
+          "payrollPreview": 62,
+          "payrollPdf": 62
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 50,
+        "duration": "25s",
+        "label": "mixed-50",
+        "start": "2026-11-15T17:40:35.394Z",
+        "end": "2026-11-15T17:41:00.585Z",
+        "p95Ms": 45.822119999999984,
+        "p99Ms": 73.15682099999997,
+        "avgMs": 13.89351000000001,
+        "maxMs": 147.3518,
+        "pdfP95Ms": 70.95550499999996,
+        "payrollPdfP95Ms": 78.434515,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 1250,
+        "achievedRps": 49.987901128362495,
+        "requestMix": {
+          "dashboard": 378,
+          "employees": 189,
+          "requests": 187,
+          "documents": 124,
+          "certificate": 62,
+          "requestForm": 62,
+          "payrollPreview": 124,
+          "payrollPdf": 124
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "25s",
+        "label": "mixed-100",
+        "start": "2026-11-15T17:41:00.586Z",
+        "end": "2026-11-15T17:41:25.799Z",
+        "p95Ms": 112.7182,
+        "p99Ms": 264.8909,
+        "avgMs": 32.71272003198724,
+        "maxMs": 416.607,
+        "pdfP95Ms": 323.0512199999999,
+        "payrollPdfP95Ms": 328.1029499999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 2501,
+        "achievedRps": 99.84342586691099,
+        "requestMix": {
+          "dashboard": 751,
+          "employees": 375,
+          "requests": 375,
+          "documents": 250,
+          "certificate": 125,
+          "requestForm": 125,
+          "payrollPreview": 250,
+          "payrollPdf": 250
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 16,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 200,
+        "duration": "25s",
+        "label": "mixed-200",
+        "start": "2026-11-15T17:41:25.800Z",
+        "end": "2026-11-15T17:41:51.757Z",
+        "p95Ms": 1042.6687399999998,
+        "p99Ms": 1163.6985039999995,
+        "avgMs": 718.1286291703586,
+        "maxMs": 1325.7141,
+        "pdfP95Ms": 1019.4992,
+        "payrollPdfP95Ms": 1034.971205,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3387,
+        "achievedRps": 131.31612229097107,
+        "requestMix": {
+          "dashboard": 1020,
+          "employees": 508,
+          "requests": 507,
+          "documents": 338,
+          "certificate": 169,
+          "requestForm": 169,
+          "payrollPreview": 338,
+          "payrollPdf": 338
+        },
+        "droppedIterations": 1613,
+        "maxActiveVus": 100,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "recovery",
+        "start": "2026-11-15T17:41:51.759Z",
+        "end": "2026-11-15T17:42:12.032Z",
+        "p95Ms": 36.108925,
+        "p99Ms": 48.984962000000074,
+        "avgMs": 11.220208,
+        "maxMs": 63.6233,
+        "pdfP95Ms": 60.66606,
+        "payrollPdfP95Ms": 41.40121499999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 100,
+        "achievedRps": 4.9978399835375145,
+        "requestMix": {
+          "dashboard": 30,
+          "employees": 15,
+          "requests": 15,
+          "documents": 10,
+          "certificate": 5,
+          "requestForm": 5,
+          "payrollPreview": 10,
+          "payrollPdf": 10
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 1,
+        "duration": "20s",
+        "label": "login-1",
+        "start": "2026-11-15T17:42:12.034Z",
+        "end": "2026-11-15T17:42:32.460Z",
+        "p95Ms": 318.0558,
+        "p99Ms": 341.62428,
+        "avgMs": 279.4568761904762,
+        "maxMs": 347.5164,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 21,
+        "achievedRps": 1.035312824502782,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0,
+          "requestForm": 0,
+          "payrollPreview": 0,
+          "payrollPdf": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 2,
+        "duration": "20s",
+        "label": "login-2",
+        "start": "2026-11-15T17:42:32.462Z",
+        "end": "2026-11-15T17:42:52.868Z",
+        "p95Ms": 330.7221,
+        "p99Ms": 354.83874000000003,
+        "avgMs": 282.8862365853659,
+        "maxMs": 370.0431,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 41,
+        "achievedRps": 2.02226693459895,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0,
+          "requestForm": 0,
+          "payrollPreview": 0,
+          "payrollPdf": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 3,
+        "duration": "20s",
+        "label": "login-3",
+        "start": "2026-11-15T17:42:52.870Z",
+        "end": "2026-11-15T17:43:13.019Z",
+        "p95Ms": 351.90639999999996,
+        "p99Ms": 441.81646299999994,
+        "avgMs": 281.45743333333326,
+        "maxMs": 452.5039,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 60,
+        "achievedRps": 2.9991101490232337,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0,
+          "requestForm": 0,
+          "payrollPreview": 0,
+          "payrollPdf": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 4,
+        "duration": "20s",
+        "label": "login-4",
+        "start": "2026-11-15T17:43:13.020Z",
+        "end": "2026-11-15T17:43:35.449Z",
+        "p95Ms": 3902.07626,
+        "p99Ms": 4022.012998999998,
+        "avgMs": 2186.0147074999995,
+        "maxMs": 4219.3802,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 80,
+        "achievedRps": 3.58760366694711,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0,
+          "requestForm": 0,
+          "payrollPreview": 0,
+          "payrollPdf": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 14,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 150,
+        "duration": "25s",
+        "label": "refine-150",
+        "start": "2026-11-15T17:43:35.572Z",
+        "end": "2026-11-15T17:44:01.374Z",
+        "p95Ms": 1249.1675349999998,
+        "p99Ms": 1551.5626319999994,
+        "avgMs": 757.7095418241047,
+        "maxMs": 1870.764,
+        "pdfP95Ms": 1344.2384000000002,
+        "payrollPdfP95Ms": 1357.9101,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3070,
+        "achievedRps": 119.72827578112764,
+        "requestMix": {
+          "dashboard": 924,
+          "employees": 462,
+          "requests": 460,
+          "documents": 306,
+          "certificate": 153,
+          "requestForm": 153,
+          "payrollPreview": 306,
+          "payrollPdf": 306
+        },
+        "droppedIterations": 681,
+        "maxActiveVus": 100,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 125,
+        "duration": "25s",
+        "label": "refine-125",
+        "start": "2026-11-15T17:44:01.377Z",
+        "end": "2026-11-15T17:44:26.723Z",
+        "p95Ms": 955.5207199999998,
+        "p99Ms": 1116.495072,
+        "avgMs": 382.15247194599925,
+        "maxMs": 1363.0951,
+        "pdfP95Ms": 1002.5648749999999,
+        "payrollPdfP95Ms": 1010.835555,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3037,
+        "achievedRps": 120.54163161453351,
+        "requestMix": {
+          "dashboard": 912,
+          "employees": 456,
+          "requests": 456,
+          "documents": 304,
+          "certificate": 152,
+          "requestForm": 152,
+          "payrollPreview": 303,
+          "payrollPdf": 302
+        },
+        "droppedIterations": 88,
+        "maxActiveVus": 98,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "60s",
+        "label": "confirmation-100",
+        "start": "2026-11-15T17:44:26.724Z",
+        "end": "2026-11-15T17:45:26.949Z",
+        "p95Ms": 66.1473,
+        "p99Ms": 129.5809,
+        "avgMs": 22.489174970838096,
+        "maxMs": 223.7579,
+        "pdfP95Ms": 129.96498500000004,
+        "payrollPdfP95Ms": 138.107595,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 6001,
+        "achievedRps": 99.9473689912713,
+        "requestMix": {
+          "dashboard": 1801,
+          "employees": 900,
+          "requests": 900,
+          "documents": 600,
+          "certificate": 300,
+          "requestForm": 300,
+          "payrollPreview": 600,
+          "payrollPdf": 600
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 6,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "final-recovery",
+        "start": "2026-11-15T17:45:26.951Z",
+        "end": "2026-11-15T17:45:47.104Z",
+        "p95Ms": 31.1278,
+        "p99Ms": 39.4556,
+        "avgMs": 9.897784158415842,
+        "maxMs": 45.6334,
+        "pdfP95Ms": 44.39356,
+        "payrollPdfP95Ms": 35.64220999999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 101,
+        "achievedRps": 5.047332737015124,
+        "requestMix": {
+          "dashboard": 31,
+          "employees": 15,
+          "requests": 15,
+          "documents": 10,
+          "certificate": 5,
+          "requestForm": 5,
+          "payrollPreview": 10,
+          "payrollPdf": 10
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      }
+    ],
+    "sustained": {
+      "kind": "mixed",
+      "targetRps": 100,
+      "duration": "60s",
+      "label": "confirmation-100",
+      "start": "2026-11-15T17:44:26.724Z",
+      "end": "2026-11-15T17:45:26.949Z",
+      "p95Ms": 66.1473,
+      "p99Ms": 129.5809,
+      "avgMs": 22.489174970838096,
+      "maxMs": 223.7579,
+      "pdfP95Ms": 129.96498500000004,
+      "payrollPdfP95Ms": 138.107595,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 6001,
+      "achievedRps": 99.9473689912713,
+      "requestMix": {
+        "dashboard": 1801,
+        "employees": 900,
+        "requests": 900,
+        "documents": 600,
+        "certificate": 300,
+        "requestForm": 300,
+        "payrollPreview": 600,
+        "payrollPdf": 600
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 6,
+      "passed": true
+    },
+    "shortPeak": {
+      "kind": "mixed",
+      "targetRps": 100,
+      "duration": "25s",
+      "label": "mixed-100",
+      "start": "2026-11-15T17:41:00.586Z",
+      "end": "2026-11-15T17:41:25.799Z",
+      "p95Ms": 112.7182,
+      "p99Ms": 264.8909,
+      "avgMs": 32.71272003198724,
+      "maxMs": 416.607,
+      "pdfP95Ms": 323.0512199999999,
+      "payrollPdfP95Ms": 328.1029499999999,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 2501,
+      "achievedRps": 99.84342586691099,
+      "requestMix": {
+        "dashboard": 751,
+        "employees": 375,
+        "requests": 375,
+        "documents": 250,
+        "certificate": 125,
+        "requestForm": 125,
+        "payrollPreview": 250,
+        "payrollPdf": 250
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 16,
+      "passed": true
+    },
+    "loginPassed": {
+      "kind": "login",
+      "targetRps": 3,
+      "duration": "20s",
+      "label": "login-3",
+      "start": "2026-11-15T17:42:52.870Z",
+      "end": "2026-11-15T17:43:13.019Z",
+      "p95Ms": 351.90639999999996,
+      "p99Ms": 441.81646299999994,
+      "avgMs": 281.45743333333326,
+      "maxMs": 452.5039,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 60,
+      "achievedRps": 2.9991101490232337,
+      "requestMix": {
+        "dashboard": 0,
+        "employees": 0,
+        "requests": 0,
+        "documents": 0,
+        "certificate": 0,
+        "requestForm": 0,
+        "payrollPreview": 0,
+        "payrollPdf": 0
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 1,
+      "passed": true
+    },
+    "criteria": {
+      "mixedP95Ms": 500,
+      "certificateP95Ms": 1500,
+      "loginP95Ms": 1000,
+      "errorRateLessThan": 0.01,
+      "droppedIterations": 0
+    },
+    "workloadMix": {
+      "dashboard": 30,
+      "employees": 15,
+      "requests": 15,
+      "documents": 10,
+      "certificate": 5,
+      "requestForm": 5,
+      "payrollPreview": 10,
+      "payrollPdf": 10
+    },
+    "note": "Carga exclusivamente local; generador, API y MongoDB comparten equipo. No mide capacidad de Vercel/Atlas ni usuarios simultáneos."
+  },
+  "security": {
+    "start": "2026-11-15T17:46:04.563Z",
+    "end": "2026-11-15T17:48:46.438Z",
+    "code": 0,
+    "version": "2.17.0",
+    "activeMinutesLimit": 3,
+    "threads": 2,
+    "scope": [
+      "127.0.0.1:4174",
+      "127.0.0.1:8101"
+    ],
+    "riskCounts": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "informational": 4
+    },
+    "alerts": [
+      {
+        "id": "10027",
+        "reference": "10027",
+        "name": "Information Disclosure - Suspicious Comments",
+        "riskCode": 0,
+        "confidence": "1",
+        "cwe": "615",
+        "count": 1,
+        "paths": [
+          "/assets/index-CxR1GKYt.js"
+        ],
+        "description": "The response appears to contain suspicious comments which may help an attacker.",
+        "solution": "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.",
+        "review": "La detección de comentarios es informativa y no demuestra por sí sola una contraseña o dato privado expuesto. No se publica la evidencia cruda."
+      },
+      {
+        "id": "10104",
+        "reference": "10104",
+        "name": "User Agent Fuzzer",
+        "riskCode": 0,
+        "confidence": "2",
+        "cwe": "0",
+        "count": 6,
+        "paths": [
+          "/api/documentos/certificado",
+          "/assets"
+        ],
+        "description": "Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.",
+        "solution": "",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      },
+      {
+        "id": "10109",
+        "reference": "10109",
+        "name": "Modern Web Application",
+        "riskCode": 0,
+        "confidence": "2",
+        "cwe": "-1",
+        "count": 4,
+        "paths": [
+          "/",
+          "/register",
+          "/sitemap.xml"
+        ],
+        "description": "The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.",
+        "solution": "This is an informational alert and so no changes are required.",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      },
+      {
+        "id": "10111",
+        "reference": "10111",
+        "name": "Authentication Request Identified",
+        "riskCode": 0,
+        "confidence": "1",
+        "cwe": "-1",
+        "count": 2,
+        "paths": [
+          "/api/auth/change-password",
+          "/api/auth/login"
+        ],
+        "description": "The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.",
+        "solution": "This is an informational alert rather than a vulnerability and so there is nothing to fix.",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      }
+    ],
+    "productionHeaders": {
+      "timestamp": "2026-11-15T17:39:11.106Z",
+      "base": "https://sesha-app.vercel.app",
+      "method": "cuatro solicitudes GET; sin escaneo activo ni prueba de carga",
+      "results": [
+        {
+          "route": "/",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/login",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/health",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/ready",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "no-store",
+            "x-powered-by": null
+          }
+        }
+      ]
+    },
+    "npmAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "historicalEvidence": "../2026-11-13/resultados.json"
+}

@@ -12,7 +12,7 @@ const duration = __ENV.QA_DURATION || "25s";
 if (base !== "http://127.0.0.1:8101") throw new Error("Solo se permite la API local aislada 8101");
 const failures = new Rate("business_failures");
 const requests = new Counter("workload_requests");
-const mix = Object.fromEntries(["dashboard", "employees", "requests", "documents", "certificate"].map(name => [name, new Counter("requests_" + name)]));
+const mix = Object.fromEntries(["dashboard", "employees", "requests", "documents", "certificate", "requestForm", "payrollPreview", "payrollPdf"].map(name => [name, new Counter("requests_" + name)]));
 export const options = {
   scenarios: { measured: { executor: "constant-arrival-rate", rate, timeUnit: "1s", duration,
     preAllocatedVUs: 50, maxVUs: 100, gracefulStop: "15s" } },
@@ -21,7 +21,7 @@ export const options = {
     "http_req_failed{kind:workload}": ["rate<0.01"],
     business_failures: ["rate<0.01"],
     dropped_iterations: ["count==0"],
-    ...(kind === "mixed" ? { "http_req_duration{endpoint:/api/documentos/certificado}": ["p(95)<1500"] } : {}),
+    ...(kind === "mixed" ? { "http_req_duration{endpoint:/api/documentos/certificado}": ["p(95)<1500"], "http_req_duration{endpoint:/api/documentos/nomina/pdf}": ["p(95)<1500"] } : {}),
   },
   summaryTrendStats: ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
 };
@@ -29,7 +29,8 @@ export function setup() {
   const response = http.get(base + "/__qa/identity", { tags: { kind: "guard" } });
   if (response.status !== 200 || response.json("isolated") !== true || response.json("runId") !== state.runId || response.json("limits") !== false)
     fail("El servidor no corresponde al entorno de capacidad aislado");
-  return { token: state.adminToken };
+  if (!state.employeeToken || !state.payrollToken || !state.payrollPeriod) fail("Prepara las sesiones sintéticas de empleado antes de medir");
+  return { token: state.adminToken, employeeToken: state.employeeToken, payrollToken: state.payrollToken, payrollPeriod: state.payrollPeriod };
 }
 export default function (data) {
   let response, valid;
@@ -40,16 +41,22 @@ export default function (data) {
     valid = response.status === 200 && response.json("user.role") === "admin";
   } else {
     const step = execution.scenario.iterationInTest % 20;
-    const name = step < 8 ? "dashboard" : step < 12 ? "employees" : step < 16 ? "requests" : step < 19 ? "documents" : "certificate";
+    const name = step < 6 ? "dashboard" : step < 9 ? "employees" : step < 12 ? "requests" : step < 14 ? "documents" : step === 14 ? "certificate" : step === 15 ? "requestForm" : step < 18 ? "payrollPreview" : "payrollPdf";
     mix[name].add(1);
-    const endpoint = step < 8 ? "/api/dashboard" : step < 12 ? "/api/empleados?limit=10&page=1" : step < 16 ? "/api/solicitudes" : step < 19 ? "/api/documentos" : "/api/documentos/certificado";
-    const pdf = endpoint.endsWith("certificado");
+    const period = "?period=" + data.payrollPeriod.period + "&half=" + data.payrollPeriod.half;
+    const endpoint = step < 6 ? "/api/dashboard" : step < 9 ? "/api/empleados?limit=10&page=1" : step < 12 ? "/api/solicitudes" : step < 14 ? "/api/documentos" : step === 14 ? "/api/documentos/certificado" : step === 15 ? "/api/solicitudes/formulario" : step < 18 ? "/api/documentos/nomina" + period : "/api/documentos/nomina/pdf" + period;
+    const pdf = name === "certificate" || name === "payrollPdf";
+    const token = name === "requestForm" ? data.employeeToken : name.startsWith("payroll") ? data.payrollToken : data.token;
     response = http.get(base + endpoint, {
-      headers: { Authorization: "Bearer " + data.token }, tags: { kind: "workload", endpoint: endpoint.split("?")[0] },
+      headers: { Authorization: "Bearer " + token }, tags: { kind: "workload", endpoint: endpoint.split("?")[0] },
       timeout: "10s", responseType: pdf ? "binary" : "text",
     });
     valid = response.status === 200;
-    if (valid) valid = pdf ? new Uint8Array(response.body).slice(0, 5).join(",") === "37,80,68,70,45" : endpoint.endsWith("dashboard") ? typeof response.json("documentos") === "number" : Array.isArray(response.json("items"));
+    if (valid) valid = pdf ? new Uint8Array(response.body).slice(0, 5).join(",") === "37,80,68,70,45"
+      : name === "dashboard" ? typeof response.json("documentos") === "number"
+      : name === "requestForm" ? response.json("types").length === 4 && typeof response.json("employee.document") === "string"
+      : name === "payrollPreview" ? response.json("gross") - response.json("deductions") === response.json("net") && response.json("net") === 1600000
+      : Array.isArray(response.json("items"));
   }
   requests.add(1); check(response, { "respuesta y contenido de negocio válidos": () => valid }); failures.add(!valid);
 }

@@ -1,5 +1,17 @@
 # Pruebas reproducibles de SESHA
 
+## Campaña repetida del 15/11/2026
+
+Entradas privadas: `QA_OUTPUT=.qa/revalidation-2026-11-15` y `ZAP_VERCEL_OUTPUT=.qa/zap-vercel-revalidation-2026-11-15`. Salida pública: `REPORT_DATE=2026-11-15`. Usar Node 24. Guardar cada nueva ejecución de Vitest con reportero JSON en `backend-vitest.json` y `frontend-vitest.json`; no reutilizar resultados de otra campaña. Conservar los intentos fallidos antes de repetirlos. `QA_APPLICATION_COMMIT` identifica el commit publicado contrastado y el exportador calcula además la huella del código de aplicación medido.
+
+1. Ejecutar lint, build y ambas suites completas de Vitest. Iniciar `qa/isolated-server.cjs`; ejecutar `qa/functional-http.cjs` y `qa/check-protection-limits.cjs`. Las 58 comprobaciones HTTP incluyen permisos, N/A, soportes y nómina. La prueba del límite de autenticación fija `Date.now` para que las 21 peticiones pertenezcan a una sola ventana; el control real no cambió.
+2. Ejecutar `qa/prepare-performance-session.cjs` para preparar tres sesiones **sintéticas** y el corte cerrado. Ejecutar `qa/run-k6.cjs` y `qa/refine-k6.cjs` secuencialmente. La mezcla es 30 % dashboard, 15 % empleados, 15 % solicitudes, 10 % documentos, 5 % constancia, 5 % formulario, 10 % nómina JSON y 10 % nómina PDF. No es equivalente a la carga anterior. No ejecutar ZAP ni renderizar informes durante k6.
+3. Después de k6, crear `.qa/revalidation-2026-11-15/k6-complete.flag`. Ejecutar `qa/prepare-zap.cjs` y `qa/run-zap.cjs`; el plan local incorpora formulario y nómina con un token sintético de empleado. Ejecutar `qa/verify-revalidation-production.cjs` (15 comprobaciones acotadas sin escrituras de negocio), `qa/check-production-headers.cjs` y `qa/audit-dependencies.cjs` (este usa `SECRET_AUDIT_OUTPUT` para la salida).
+4. Para sesiones actuales de Vercel, configurar `QA_ZAP_EMPLOYEE_EMAIL=carlos.mendoza.122@sesha.com`, `QA_ZAP_IN_MEMORY=1` y `QA_ZAP_START_GATE=.qa/revalidation-2026-11-15/k6-complete.flag` junto con `ZAP_VERCEL_OUTPUT`. Ejecutar `qa/private-zap-login.cjs` y completar el formulario de loopback en el puerto 5177. Este modo conserva sesiones únicamente en memoria y las transmite por entorno a los dos procesos hijos; no crea `sessions-private.json`. La política ACL del modo anterior no está disponible en este entorno Windows. El plan privado temporal de ZAP se elimina al finalizar; los originales de los escáneres nunca se publican. Los hijos ejecutan ZAP y el contraste de CORS/caché después de que exista la señal de fin de k6. No imprimir ni copiar `QA_ZAP_SESSION_JSON`.
+5. Verificar y conservar `deployment.json` del destino fijo y los resultados de ambos procesos. Ejecutar `qa/export-current-results.cjs`, `qa/generate_current_reports.py`, `qa/generate_documentation_update.py` y `qa/build-report-index.cjs`. Renderizar con `qa/render_current_reports.py` y `qa/render_documentation_update.py`. Revisar todas las páginas, ejecutar `qa/verify-publication.py`, escanear secretos y verificar las descargas remotas con `qa/verify-pages-release.cjs`. La generación completa exige la nueva evidencia de Vercel; no convertir una ejecución pendiente en un informe aprobado.
+
+Las instrucciones siguientes se conservan como procedimientos históricos de las campañas anteriores.
+
 ## Publicación actualizada de los cuatro informes
 
 La campaña del 14/11/2026 conserva `docs/pruebas/2026-11-13/` y publica una edición independiente en `docs/pruebas/2026-11-14/`. La generación usa listas explícitas de campos y no copia informes crudos, cookies o cuerpos privados.

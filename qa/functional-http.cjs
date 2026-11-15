@@ -163,6 +163,90 @@ function upload(data, name = "prueba.pdf", type = "application/pdf") {
     status(await call("/api/auth/register", { method: "POST", body: { name: "No Autorizado", email: "no.autorizado@sesha.com", password: "test-only-no-registration" } }), 403);
     assert.equal(await database.db.collection("empleados").countDocuments({ email: "no.autorizado@sesha.com" }), 0);
   });
+  const requestEmployee = await login("carlos.mendoza@sesha.com", "test-only-fixture-1-credentials");
+  const payrollEmployee = await login("laura.gomez@sesha.com", "test-only-fixture-1-credentials");
+  const reviewAdmin = await login("admin@sesha.com", "test-only-fixture-0-credentials");
+  const { dateInBogota } = require("../backend/utils/dates");
+  const { latestClosedFortnight } = require("../backend/services/payrollPeriods");
+  const requestIds = [];
+  let context, supportId, payrollDetails;
+  await test("F47 - Formato propio con identidad, fecha de Bogotá y cuatro tipos", async () => {
+    context = status(await call("/api/solicitudes/formulario", { session: requestEmployee }), 200).json;
+    assert.equal(context.requestDate, dateInBogota());
+    assert.equal(context.employee.email, "carlos.mendoza@sesha.com");
+    assert.equal(context.types.length, 4);
+    status(await call("/api/solicitudes/formulario"), 401);
+    status(await call("/api/solicitudes/formulario", { session: reviewAdmin }), 403);
+  });
+  await test("F48 - Los tres permisos guardan fecha e identidad verificadas en MongoDB", async () => {
+    for (const tipo of context.types.filter(value => value !== "Ajuste de nómina")) {
+      const created = status(await call("/api/solicitudes", { method: "POST", session: requestEmployee,
+        body: { tipo, descripcion: "Solicitud sintética de permiso", fechaPermiso: context.requestDate } }), 201).json;
+      requestIds.push(created.id);
+      assert.deepEqual(created.empleado, context.employee);
+      assert.equal(created.fechaSolicitud, context.requestDate);
+      const saved = await database.db.collection("solicituds").findOne({ _id: new mongoose.Types.ObjectId(created.id) });
+      assert.equal(saved.fechaPermiso, context.requestDate);
+    }
+  });
+  await test("F49 - Ajuste de nómina con N/A y soporte PDF opcional persistido", async () => {
+    supportId = status(await call("/api/documentos", { method: "POST", session: requestEmployee, raw: upload(certificate, "soporte-solicitud.pdf") }), 201).json.id;
+    const created = status(await call("/api/solicitudes", { method: "POST", session: requestEmployee,
+      body: { tipo: "Ajuste de nómina", descripcion: "Revisión sintética de quincena", fechaPermiso: null, documento: supportId } }), 201).json;
+    requestIds.push(created.id);
+    assert.equal(created.fechaPermiso, null); assert.equal(created.estado, "Pendiente");
+    const saved = await database.db.collection("solicituds").findOne({ _id: new mongoose.Types.ObjectId(created.id) });
+    assert.equal(saved.fechaPermiso, null); assert.equal(String(saved.documento), supportId);
+  });
+  await test("F50 - Rechaza identidad o fecha de radicación falsificadas y fechas incompatibles", async () => {
+    const valid = { tipo: "Permiso remunerado", descripcion: "Prueba de validación", fechaPermiso: context.requestDate };
+    for (const payload of [{ ...valid, owner: requestEmployee.response.json.user._id }, { ...valid, empleado: context.employee },
+      { ...valid, fechaSolicitud: "2020-01-01" }, { ...valid, fechaPermiso: "2020-01-01" }, { ...valid, fechaPermiso: "N/A" },
+      { ...valid, tipo: "Ajuste de nómina" }]) status(await call("/api/solicitudes", { method: "POST", session: requestEmployee, body: payload }), 400);
+  });
+  await test("F51 - Historial propio y rechazo de soporte ajeno", async () => {
+    const own = status(await call("/api/solicitudes?limit=100", { session: requestEmployee }), 200).json;
+    const otherHistory = status(await call("/api/solicitudes?limit=100", { session: payrollEmployee }), 200).json;
+    assert.ok(requestIds.every(id => own.items.some(item => item.id === id)));
+    assert.ok(!otherHistory.items.some(item => requestIds.includes(item.id)));
+    status(await call("/api/solicitudes", { method: "POST", session: payrollEmployee,
+      body: { tipo: "Ajuste de nómina", descripcion: "Soporte ajeno no permitido", fechaPermiso: null, documento: supportId } }), 404);
+  });
+  await test("F52 - Solo administrador aprueba el nuevo formato y el empleado no borra aprobadas", async () => {
+    const route = "/api/solicitudes/" + requestIds[0];
+    status(await call(route, { method: "PUT", session: requestEmployee, body: { estado: "Aprobado" } }), 403);
+    status(await call(route, { method: "PUT", session: reviewAdmin, body: { estado: "Aprobado" } }), 200);
+    status(await call(route, { method: "DELETE", session: requestEmployee }), 404);
+  });
+  await test("F53 - Soporte referenciado protegido y limpieza de los trámites sintéticos", async () => {
+    status(await call("/api/documentos/" + supportId, { method: "DELETE", session: requestEmployee }), 409);
+    for (const id of requestIds) status(await call("/api/solicitudes/" + id, { method: "DELETE", session: reviewAdmin }), 204);
+    status(await call("/api/documentos/" + supportId, { method: "DELETE", session: requestEmployee }), 204);
+    assert.equal(await database.db.collection("solicituds").countDocuments({ _id: { $in: requestIds.map(id => new mongoose.Types.ObjectId(id)) } }), 0);
+  });
+  const closed = latestClosedFortnight();
+  const payrollRoute = "/api/documentos/nomina?period=" + closed.period + "&half=" + closed.half;
+  await test("F54 - Desprendible quincenal concilia asignación, devengado, deducciones y neto", async () => {
+    payrollDetails = status(await call(payrollRoute, { session: payrollEmployee }), 200).json;
+    assert.equal(payrollDetails.monthlyNet, 3200000); assert.equal(payrollDetails.net, 1600000);
+    assert.equal(payrollDetails.gross - payrollDetails.health - payrollDetails.pension, payrollDetails.net);
+    assert.equal(payrollDetails.health, Math.round(payrollDetails.gross * .02));
+    assert.equal(payrollDetails.pension, Math.round(payrollDetails.gross * .02));
+    assert.equal(payrollDetails.payment.bank, "Bancolombia");
+  });
+  await test("F55 - PDF de nómina privado con corte y documento del empleado autenticado", async () => {
+    const result = status(await call("/api/documentos/nomina/pdf?period=" + closed.period + "&half=" + closed.half, { session: payrollEmployee }), 200);
+    assert.equal(result.bytes.subarray(0, 5).toString(), "%PDF-");
+    assert.match(result.headers.get("content-type"), /application\/pdf/);
+    assert.ok(result.headers.get("content-disposition").includes(payrollDetails.document));
+    assert.equal(result.headers.get("cache-control"), "no-store");
+  });
+  await test("F56 - Nómina rechaza anónimos, importes e identidad suministrados y cortes futuros", async () => {
+    status(await call(payrollRoute), 401);
+    for (const extra of ["&net=1", "&owner=otro", "&document=12345678"])
+      status(await call(payrollRoute + extra, { session: payrollEmployee }), 400);
+    status(await call("/api/documentos/nomina?period=2099-01&half=1", { session: payrollEmployee }), 400);
+  });
   const freshAdmin = await login("admin@sesha.com", "test-only-fixture-0-credentials");
   const token = decodeURIComponent(freshAdmin.cookie.slice("sesha_session=".length));
   state.adminToken = token; state.adminCsrf = freshAdmin.csrf;

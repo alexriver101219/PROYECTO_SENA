@@ -90,11 +90,16 @@ test("cookie y JWT ajenos no sustituyen la contraseña actual; CORS bloquea otro
 test("la ruta comparte el límite de intentos de autenticación", async () => {
   const limited = createApp({ limits: true });
   const before = await snapshot();
-  for (let i = 0; i < 20; i++)
-    expect((await request(limited).post("/api/auth/change-password").send({})).status).toBe(400);
-  const response = await request(limited).post("/api/auth/change-password").send(body());
-  expect(response.status).toBe(429);
-  expect(await snapshot()).toEqual(before);
+  // Una secuencia que cruza un cuarto de hora corresponde a dos ventanas.
+  // Fijar Date.now conserva una sola ventana y deja su TTL en el futuro real.
+  const clock = vi.spyOn(Date, "now").mockReturnValue(Date.now() + 15 * 60000);
+  try {
+    for (let i = 0; i < 20; i++)
+      expect((await request(limited).post("/api/auth/change-password").send({})).status).toBe(400);
+    const response = await request(limited).post("/api/auth/change-password").send(body());
+    expect(response.status).toBe(429);
+    expect(await snapshot()).toEqual(before);
+  } finally { clock.mockRestore(); }
 });
 
 test("un cambio concurrente evita sobrescribir la cuenta", async () => {

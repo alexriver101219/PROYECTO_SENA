@@ -24,6 +24,12 @@ jobs:
         matchString: Authorization
         matchRegex: false
         replacementString: 'Bearer __QA_BEARER__'
+      - description: Sesión sintética de empleado en solicitudes y nómina propias
+        url: 'http://127\.0\.0\.1:(4174|8101)/api/(solicitudes/formulario|documentos/nomina).*'
+        matchType: req_header
+        matchString: Authorization
+        matchRegex: false
+        replacementString: 'Bearer __QA_EMPLOYEE__'
   - type: requestor
     requests:
       - url: http://127.0.0.1:4174/
@@ -45,6 +51,12 @@ jobs:
       - url: http://127.0.0.1:8101/api/solicitudes
         responseCode: 200
       - url: http://127.0.0.1:8101/api/documentos/certificado
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/solicitudes/formulario
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/documentos/nomina?period=__QA_PAYROLL_PERIOD__&half=__QA_PAYROLL_HALF__
+        responseCode: 200
+      - url: http://127.0.0.1:8101/api/documentos/nomina/pdf?period=__QA_PAYROLL_PERIOD__&half=__QA_PAYROLL_HALF__
         responseCode: 200
       - url: http://127.0.0.1:8101/api/auth/login
         method: POST

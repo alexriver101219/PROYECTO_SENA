@@ -1,9 +1,11 @@
 {
   "date": "2026-11-15",
+  "revision": "Campaña completa de pruebas repetidas",
+  "generatedAt": "2026-11-15T18:16:33.614201+00:00",
   "timezone": "America/Bogota",
-  "applicationCommit": "4fdbd9686367fbada6aee3c62761e0ded956e5bc",
+  "applicationCommit": "3667358435062f345fffc2dc49d33ba1141e5c35",
   "target": "https://sesha-app.vercel.app",
-  "deployment": "dpl_743nJboQY8eBPQiY8xzX9xPYRAnx",
+  "deployment": "dpl_F6ZtJUGcPj2CNLYbCYr49QnifrTv",
   "applicationChangesPublished": true,
   "requests": {
     "verifiedAt": "2026-11-15T15:04:19.807Z",
@@ -37,13 +39,47 @@
   "localTests": {
     "backend": 105,
     "frontend": 33,
-    "total": 138,
+    "http": 58,
+    "total": 196,
     "failed": 0,
     "commands": [
       "cd backend: vitest run",
-      "cd Style/login_app: vitest run"
+      "cd Style/login_app: vitest run",
+      "node qa/functional-http.cjs"
     ],
-    "scope": "Ejecuciones locales del 15/11/2026; suites aisladas, incluidas herramientas de mantenimiento locales. No se suman a las campañas HTTP/Jest anteriores."
+    "scope": "Suites completas repetidas en esta campaña. Incluye mantenimiento aislado. Los intentos iniciales se conservan separadamente; no se suman a las campañas anteriores."
+  },
+  "currentCampaign": {
+    "results": "../../pruebas/2026-11-15/resultados.json",
+    "remoteResults": "../../pruebas/2026-11-15/zap-vercel-resultados.json",
+    "sustainedRps": 100,
+    "k6FailedStages": 4,
+    "localRisks": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "informational": 4
+    },
+    "vercelRisks": {
+      "high": 0,
+      "medium": 1,
+      "low": 0,
+      "informational": 4
+    },
+    "previousAttempts": [
+      {
+        "kind": "Backend",
+        "passed": 104,
+        "failed": 1,
+        "correction": "Se fijó Date.now en la prueba de 21 intentos para garantizar una sola ventana temporal. Sin cambios en el control de tasa de producción."
+      },
+      {
+        "kind": "HTTP",
+        "passed": 50,
+        "failed": 1,
+        "correction": "La ampliación del fixture entregaba una propiedad inexistente del Buffer PDF. Se corrigió el dato de prueba y se repitió la suite completa."
+      }
+    ]
   },
   "currentBrowserVisualCheck": {
     "completed": false,
@@ -54,9 +90,10 @@
     "currentForms": "Tablas y diagramas explicativos del manual; no se presentan como capturas actuales."
   },
   "historicalEvidence": {
-    "reportDate": "2026-11-14",
-    "newK6Run": false,
-    "newZAPRun": false,
+    "previousReportDate": "2026-11-14",
+    "reportDate": "2026-11-15",
+    "newK6Run": true,
+    "newZAPRun": true,
     "newBackupRun": false
   },
   "publicContent": "Sin contraseñas, tokens, correos de empleados, documentos personales ni respaldos."

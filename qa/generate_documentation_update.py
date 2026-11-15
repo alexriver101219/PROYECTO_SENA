@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+from datetime import datetime, timezone
 import re
 import shutil
 from pathlib import Path
@@ -35,6 +36,17 @@ release = read('.qa/requests-release-verification.json')
 payroll = read('.qa/payroll-release-verification.json')
 accounts = read('.qa/access-accounts-complete-2026-11-15/verification.json')
 account_changes = read('.qa/access-accounts-complete-2026-11-15/applied.json')
+campaign = read('docs/pruebas/2026-11-15/resultados.json')
+remote_campaign = read('docs/pruebas/2026-11-15/zap-vercel-resultados.json')
+FC, PERF, ZS = campaign['functional'], campaign['performance'], campaign['security']
+TOTAL = FC['total']
+APP_COMMIT = campaign['source']['commit']
+APP_DEPLOYMENT = remote_campaign['deployment']['id']
+stable = PERF['sustained']
+def risks(section):
+    counts = section['riskCounts']
+    return f"{counts['high']} altas, {counts['medium']} medias, {counts['low']} bajas y {counts['informational']} informativas"
+capacity = f"{stable['targetRps']} solicitudes/s durante 60 s, p95 {stable['p95Ms']:.1f} ms" if stable else 'Sin capacidad sostenida confirmada'
 assert all(release[key] is True for key in ['frontendMatchesTestedBuild', 'ownProfile', 'forgedIdentityRejected', 'missingDateRejected',
     'datedLeaveSavedAndReloaded', 'payrollAdjustmentSavedWithNullDate', 'optionalSupportSavedAndDownloaded', 'referencedSupportDeletionBlocked', 'temporaryRecordsRemoved'])
 assert accounts['totalAccounts'] == accounts['activeAccounts'] == 152
@@ -43,8 +55,9 @@ assert account_changes['adminAccessUnchanged']
 
 # Publicar únicamente evidencias agregadas y verificaciones sin datos personales.
 proof = {
-    'date': DATE, 'timezone': 'America/Bogota', 'applicationCommit': release['commit'],
-    'target': release['site'], 'deployment': release['deployment'], 'applicationChangesPublished': True,
+    'date': DATE, 'revision': 'Campaña completa de pruebas repetidas', 'generatedAt': datetime.now(timezone.utc).isoformat(),
+    'timezone': 'America/Bogota', 'applicationCommit': APP_COMMIT,
+    'target': release['site'], 'deployment': APP_DEPLOYMENT, 'applicationChangesPublished': True,
     'requests': {key: release[key] for key in ['verifiedAt', 'requestTypes', 'ownProfile', 'forgedIdentityRejected', 'missingDateRejected',
         'datedLeaveSavedAndReloaded', 'payrollAdjustmentSavedWithNullDate', 'optionalSupportSavedAndDownloaded', 'referencedSupportDeletionBlocked', 'temporaryRecordsRemoved']},
     'payroll': {'verifiedAt': payroll['verifiedAt'], 'commit': payroll['commit'], 'liveEmployeeChecks': payroll['liveEmployeeChecks'],
@@ -52,13 +65,16 @@ proof = {
     'accountMaintenance': {'verifiedAt': accounts['completedAt'], 'totalAccounts': accounts['totalAccounts'], 'activeAccounts': accounts['activeAccounts'],
         'employeeAccesses': accounts['employeeAccesses'], 'passwordsVerified': accounts['passwordsVerified'], 'uniqueDocuments': accounts['uniqueDocuments'],
         'adminAccessUnchanged': account_changes['adminAccessUnchanged']},
-    'localTests': {'backend': 105, 'frontend': 33, 'total': 138, 'failed': 0,
-        'commands': ['cd backend: vitest run', 'cd Style/login_app: vitest run'],
-        'scope': 'Ejecuciones locales del 15/11/2026; suites aisladas, incluidas herramientas de mantenimiento locales. No se suman a las campañas HTTP/Jest anteriores.'},
+    'localTests': {'backend': FC['backend']['passed'], 'frontend': FC['frontend']['passed'], 'http': FC['http']['passed'], 'total': TOTAL, 'failed': FC['failed'],
+        'commands': ['cd backend: vitest run', 'cd Style/login_app: vitest run', 'node qa/functional-http.cjs'],
+        'scope': 'Suites completas repetidas en esta campaña. Incluye mantenimiento aislado. Los intentos iniciales se conservan separadamente; no se suman a las campañas anteriores.'},
+    'currentCampaign': {'results': '../../pruebas/2026-11-15/resultados.json', 'remoteResults': '../../pruebas/2026-11-15/zap-vercel-resultados.json',
+        'sustainedRps': stable['targetRps'] if stable else None, 'k6FailedStages': sum(not item['passed'] for item in PERF['runs']),
+        'localRisks': ZS['riskCounts'], 'vercelRisks': remote_campaign['riskCounts'], 'previousAttempts': FC.get('previousAttempts', [])},
     'currentBrowserVisualCheck': {'completed': False, 'reason': 'La herramienta de control no admite la política de URL del navegador Windows disponible.'},
     'illustrations': {'historicalScreenshots': 'Login y cambio de contraseña: 14/11/2026. Formulario vacío.',
         'currentForms': 'Tablas y diagramas explicativos del manual; no se presentan como capturas actuales.'},
-    'historicalEvidence': {'reportDate': '2026-11-14', 'newK6Run': False, 'newZAPRun': False, 'newBackupRun': False},
+    'historicalEvidence': {'previousReportDate': '2026-11-14', 'reportDate': DATE, 'newK6Run': True, 'newZAPRun': True, 'newBackupRun': False},
     'publicContent': 'Sin contraseñas, tokens, correos de empleados, documentos personales ni respaldos.'
 }
 (EVIDENCE / 'verificacion.json').write_text(json.dumps(proof, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -234,10 +250,10 @@ mp('10. Resolver incidencias y proteger el acceso', [
     Spacer(1, 10), p('Utiliza una contraseña propia y mantenla privada. Cierra la sesión en equipos compartidos. No publiques listados de acceso, datos personales ni archivos de respaldo en el portal de informes.')])
 
 mp('11. Versión y alcance de esta guía', [
-    p('Esta edición describe la versión de SESHA publicada en Vercel el <b>15/11/2026</b>, con desprendibles quincenales y el nuevo formato de solicitudes. Las instrucciones se contrastaron con el código y con verificaciones de API y persistencia.'),
+    p('Esta edición describe la versión de SESHA publicada en Vercel el <b>15/11/2026</b>, con desprendibles quincenales y el nuevo formato de solicitudes. Las instrucciones se contrastaron con el código y con una nueva campaña funcional, de rendimiento y seguridad.'),
     p('Las dos imágenes de acceso proceden del 14/11/2026 y contienen campos vacíos. Los nuevos formularios se explican mediante tablas; no se presentan capturas históricas como evidencia visual de la versión actual.'),
-    p('Se verificaron en Vercel un permiso con fecha, un ajuste con fecha nula, la carga y descarga del soporte y la consulta del historial. Los registros temporales se eliminaron después de la prueba.'),
-    p('No se completó una nueva revisión visual del navegador ni una nueva campaña móvil. La revisión móvil emulada y el respaldo restaurado del 14/11/2026 permanecen como evidencia histórica, sin atribuirles cobertura de los cambios actuales.'),
+    p(f"La nueva campaña aprobó {FC['backend']['passed']} pruebas de backend, {FC['frontend']['passed']} de interfaz y {FC['http']['passed']} verificaciones HTTP, incluidas fechas, N/A, soporte y nómina. Las escrituras de prueba se realizaron con datos sintéticos en MongoDB temporal. El sitio publicado se contrastó con lecturas y entradas inválidas sin escrituras de negocio."),
+    p('Se repitieron k6 local y ZAP local y autenticado en Vercel; los resultados y límites están en los informes de pruebas del 15/11. No se completó una nueva revisión visual del navegador, una campaña móvil ni un nuevo respaldo; las evidencias anteriores conservan su fecha.'),
     p('Documentación complementaria', 'SubS'),
     p('<link href="https://alexriver101219.github.io/PROYECTO_SENA/" color="#087f80">Portal de manual e informes</link>'),
     p('<link href="https://github.com/alexriver101219/PROYECTO_SENA/blob/4fdbd9686367fbada6aee3c62761e0ded956e5bc/NOMINA.md" color="#087f80">Criterios de los desprendibles</link>'),
@@ -251,7 +267,8 @@ assert len(manual_reader.pages) == 12, f'Revisar paginación del manual: {len(ma
 shutil.copy2(manual_target, MANUAL / manual_target.name)
 manual_meta = {'date': DATE, 'title': 'Manual de usuario de SESHA APP', 'file': manual_target.name, 'pages': len(manual_reader.pages),
     'bytes': manual_target.stat().st_size, 'sha256': hashlib.sha256(manual_target.read_bytes()).hexdigest(),
-    'applicationChangesPublished': True, 'applicationCommit': release['commit'], 'evidence': '../../actualizaciones/2026-11-15/verificacion.json',
+    'applicationChangesPublished': True, 'applicationCommit': APP_COMMIT, 'evidence': '../../actualizaciones/2026-11-15/verificacion.json',
+    'revision': 'Campaña completa de pruebas repetidas',
     'currentSections': ['Acceso y contraseña', 'Constancia y PDF', 'Desprendible quincenal', 'Permisos y ajuste de nómina', 'Revisión administrativa', 'Ayuda y seguridad'],
     'historicalScreenshotsDate': '2026-11-14', 'newBrowserVisualReview': False}
 (MANUAL / 'verificacion-entrega.json').write_text(json.dumps(manual_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -267,8 +284,8 @@ def tp(title, items):
 tp('Informe técnico consolidado', [Spacer(1, 12), figure(LOGO, 67), Spacer(1, 15), p('Evolución, seguridad y validación de SESHA APP', 'TitleS'),
     p('<b>Aprendiz:</b> Alexander Rivera Sánchez<br/><b>Instructor:</b> Alexander Mosquera Aguirre<br/><b>Ficha:</b> 3186701<br/><b>Institución:</b> SENA 2026'),
     p('<b>Fecha de corte:</b> 15 de noviembre de 2026.<br/><b>Periodo documentado:</b> 27/07/2026 a 15/11/2026, más una captura histórica sin fecha.'),
-    p('La parte I presenta el estado vigente y los cambios del 15/11. La parte II conserva la edición del 14/11 como anexo histórico, incluidas sus pruebas fallidas, capturas y referencias.'),
-    p('Resumen', 'SubS'), p('La aplicación incorpora desprendibles quincenales privados y solicitudes de personal con identidad verificada, fecha de radicación del servidor y soporte opcional. La revisión local registra 105 pruebas de backend y 33 de interfaz aprobadas. La validación en Vercel confirmó persistencia, aislamiento y limpieza de registros temporales. Estos resultados no certifican seguridad absoluta ni capacidad de producción.'),
+    p('La parte I presenta el estado vigente y la campaña repetida del 15/11. La parte II conserva la edición del 14/11 como anexo histórico, incluidas sus pruebas fallidas, capturas y referencias.'),
+    p('Resumen', 'SubS'), p(f"La aplicación incorpora desprendibles quincenales privados y solicitudes de personal con identidad del servidor, fechas y soporte opcional. La nueva campaña registra {TOTAL} comprobaciones funcionales locales aprobadas. k6: {capacity}. ZAP local: {risks(ZS)}. ZAP en Vercel: {risks(remote_campaign)}. Estos resultados se limitan al entorno y casos ejecutados, sin certificar seguridad absoluta ni capacidad de producción."),
     p('Presentación con alineación izquierda y elementos institucionales; referencias según APA 7. Las fechas operativas corresponden a America/Bogota.', 'SmallS')])
 
 tp('Parte I. Introducción y objetivos vigentes', [
@@ -276,7 +293,7 @@ tp('Parte I. Introducción y objetivos vigentes', [
     p('Objetivo general', 'SubS'), p('Actualizar la documentación funcional y técnica del sistema publicado, relacionando cada cambio con sus controles de identidad, persistencia y evidencia de verificación.'),
     p('Objetivos específicos', 'SubS'), p('1. Describir la liquidación quincenal configurada, sus períodos, redondeos y límites.<br/>2. Documentar datos, tipos, fechas y soportes del nuevo formato de solicitudes.<br/>3. Verificar permisos por rol y la persistencia de los trámites.<br/>4. Diferenciar las verificaciones actuales de las campañas históricas de seguridad, carga y respaldo.'),
     p('Alcance y organización', 'SubS'), p('La parte I sustituye, para el estado actual, las descripciones y conclusiones funcionales de la edición anterior. La parte II conserva esa edición completa como evidencia histórica. Sus menciones a cuentas en cuarentena, cantidades de pruebas y formularios antiguos corresponden al corte del 14/11; no describen por sí solas el estado del 15/11.'),
-    p('No se realizaron nuevas campañas k6, ZAP ni de restauración de respaldo durante esta actualización documental. Las mediciones anteriores mantienen su fecha, entorno y limitaciones.', 'SmallS')])
+    p('Se repitieron Vitest, HTTP, k6, ZAP local y ZAP autenticado en Vercel. No se realizó una nueva restauración de respaldo. La mezcla de k6 incorpora nómina y formulario de solicitudes y difiere de la campaña anterior; no se comparan sus tasas como si fueran cargas idénticas.', 'SmallS')])
 
 tp('Arquitectura y mantenimiento de cuentas', [
     p('El cliente React consulta la API de la misma aplicación en Vercel. El servidor autentica cada solicitud mediante JWT y recupera la cuenta desde MongoDB. Las sesiones web se transportan mediante cookie HttpOnly; las escrituras con cookie requieren protección CSRF.'),
@@ -312,22 +329,24 @@ tp('Autorización, experiencia de uso y persistencia', [
     p('Radicar o aprobar un ajuste no altera automáticamente una liquidación ni ejecuta transferencias. No se implementaron notificaciones por correo. Estos límites deben acompañar cualquier demostración del flujo.', 'SmallS')])
 
 tp('Validación del 15/11/2026 y sus límites', [
-    table([['Evidencia', 'Resultado y alcance'], ['Pruebas locales con Vitest', '105 backend + 33 frontend = 138 aprobadas. Suites aisladas; no se suman a campañas anteriores.'],
-        ['Lint y compilación', 'Comprobaciones completadas sin errores para el cambio publicado.'], ['Solicitudes en Vercel', 'Permiso con fecha y ajuste con fecha null guardados y releídos; soporte cargado y descargado.'],
-        ['Controles de API', 'Rechazo de identidad falsificada y permiso sin fecha; bloqueo de borrado del soporte referenciado.'], ['Limpieza', 'Dos solicitudes y el soporte de verificación eliminados al terminar.'],
-        ['Desprendibles', 'Cuatro cuentas contrastadas por API; catálogo salarial aplicable a los 151 perfiles de empleado revisados.']], [TW * .35, TW * .65]),
-    p('Trazabilidad de la aplicación', 'SubS'), p('Commit verificado: <font size="8">4fdbd9686367fbada6aee3c62761e0ded956e5bc</font>.<br/>Despliegue: <font size="8">dpl_743nJboQY8eBPQiY8xzX9xPYRAnx</font>.<br/>La compilación servida coincidió byte a byte con el artefacto local contrastado (SESHA APP, 2026c).'),
+    table([['Evidencia', 'Resultado y alcance'], ['Funcionales locales', f"{FC['backend']['passed']} backend + {FC['frontend']['passed']} interfaz + {FC['http']['passed']} HTTP = {TOTAL} aprobadas; ejecución nueva."],
+        ['Producción', f"{FC['production']['passed']} comprobaciones aprobadas sin escrituras de negocio; compilado contrastado."],
+        ['k6 local', capacity], ['Etapas k6 fallidas', str(sum(not item['passed'] for item in PERF['runs']))+'; se conservan con sus errores, latencias y descartes.'],
+        ['ZAP local', risks(ZS)], ['ZAP Vercel', risks(remote_campaign)],
+        ['Dependencias', str(ZS['npmAudit']['total'])+' vulnerabilidades conocidas en npm audit.'], ['Alcance funcional nuevo', 'Fechas, identidad, N/A, adjuntos, aislamiento, aprobación y nómina quincenal.']], [TW * .29, TW * .71]),
+    p('Trazabilidad de la aplicación', 'SubS'), p(f'Commit de referencia: <font size="8">{APP_COMMIT}</font>.<br/>Despliegue: <font size="8">{APP_DEPLOYMENT}</font>.<br/>Las horas, la huella del código medido, los intentos iniciales y los resultados completos se conservan en los JSON sanitizados (SESHA APP, 2026c, 2026d).'),
     p('El escáner del código actual no dejó hallazgos pendientes y la compilación no presentó coincidencias. Los hallazgos históricos y los falsos positivos revisados siguen documentados; no se declara un historial libre de exposición.'),
-    p('No se completó una nueva revisión visual del navegador, pruebas en teléfono físico ni una evaluación de carga de Vercel/Atlas. Las pruebas de componentes y API no sustituyen esas coberturas. Los datos de k6 y ZAP del anexo corresponden al 14/11; no se presentan como ensayos de las nuevas rutas.', 'SmallS')])
+    p('Los intentos iniciales fallidos y las correcciones del ensayo se conservan en el informe funcional. No se completó revisión visual nueva, prueba en teléfono físico ni carga sobre Vercel/Atlas. Los resultados del anexo mantienen su corte del 14/11.', 'SmallS')])
 
 tp('Conclusiones y referencias de la actualización', [
     p('La ampliación conserva el control de identidad en el servidor y conecta la radicación con MongoDB. El formulario unifica datos personales, fechas y soportes, mientras el historial distingue consulta del empleado y decisión administrativa.'),
     p('El desprendible respeta el neto mensual configurado, divide el pago por quincena y presenta devengado y deducciones conciliados. Su alcance debe comunicarse con claridad: tasas solicitadas, ausencia de liquidación de novedades y sin confirmación bancaria.'),
-    p('Las 138 pruebas locales y la verificación HTTP de producción respaldan los casos ejecutados. Permanecen pendientes una nueva revisión visual completa, una liquidación histórica de novedades y mediciones de capacidad de producción. La actualización documental mantiene los resultados anteriores sin convertirlos en garantías actuales.'),
+    p(f"Las {TOTAL} comprobaciones locales y la revisión acotada de producción respaldan los casos ejecutados. k6 confirmó {capacity.lower()}; las etapas fallidas se conservan. ZAP local y Vercel mantienen los riesgos observados sin atribuirles una cobertura total. Siguen pendientes la revisión visual completa, una liquidación histórica de novedades y medir capacidad de producción."),
     p('Referencias', 'SubS'),
     p('SESHA APP. (2026a, 15 de noviembre). <i>Desprendible de nómina de SESHA</i> [Documentación técnica]. GitHub. <link href="https://github.com/alexriver101219/PROYECTO_SENA/blob/4fdbd9686367fbada6aee3c62761e0ded956e5bc/NOMINA.md" color="#087f80">NOMINA.md, versión verificada</link>.', 'RefS'),
     p('SESHA APP. (2026b, 15 de noviembre). <i>Solicitudes de los empleados</i> [Documentación técnica]. GitHub. <link href="https://github.com/alexriver101219/PROYECTO_SENA/blob/4fdbd9686367fbada6aee3c62761e0ded956e5bc/SOLICITUDES.md" color="#087f80">SOLICITUDES.md, versión verificada</link>.', 'RefS'),
     p('SESHA APP. (2026c, 15 de noviembre). <i>Verificación de la actualización documental y funcional</i> [Resumen sanitizado de evidencias]. GitHub Pages. <link href="https://alexriver101219.github.io/PROYECTO_SENA/actualizaciones/2026-11-15/verificacion.json" color="#087f80">Evidencia agregada del 15/11/2026</link>.', 'RefS'),
+    p('SESHA APP. (2026d, 15 de noviembre). <i>Resultados de la campaña repetida de pruebas</i> [Conjunto de datos]. GitHub Pages. <link href="https://alexriver101219.github.io/PROYECTO_SENA/pruebas/2026-11-15/resultados.json" color="#087f80">Funcionales, k6 y ZAP local</link>; <link href="https://alexriver101219.github.io/PROYECTO_SENA/pruebas/2026-11-15/zap-vercel-resultados.json" color="#087f80">ZAP autenticado en Vercel</link>.', 'RefS'),
     p('La parte II conserva las referencias APA 7, las diez tablas y las catorce imágenes de la edición anterior con su procedencia original.', 'SmallS')])
 
 tp('Parte II. Anexo histórico íntegro', [Spacer(1, 25), p('Informe consolidado con corte al 14/11/2026', 'TitleS'),
@@ -364,8 +383,8 @@ technical_meta = {'date': DATE, 'title': 'Informe técnico consolidado de SESHA 
     'bytes': tech_target.stat().st_size, 'sha256': hashlib.sha256(tech_target.read_bytes()).hexdigest(),
     'period': '27/07/2026 a 15/11/2026, más una captura histórica sin fecha', 'tables': 15, 'historicalTables': 10,
     'historicalCaptures': 8, 'nonfunctionalReportCaptures': 6, 'author': 'Alexander Rivera Sánchez', 'instructor': 'Alexander Mosquera Aguirre',
-    'ficha': '3186701', 'applicationCommit': release['commit'], 'format': 'Referencias APA 7, alineación izquierda y elementos institucionales.',
-    'note': 'Parte vigente de 9 páginas seguida por la entrega histórica íntegra de 36 páginas rotulada. Sin nuevos ensayos k6/ZAP.',
+    'ficha': '3186701', 'applicationCommit': APP_COMMIT, 'format': 'Referencias APA 7, alineación izquierda y elementos institucionales.',
+    'note': 'Parte vigente de 9 páginas con la campaña repetida de funcionales, k6 y ZAP; entrega histórica íntegra de 36 páginas rotulada.',
     'evidence': '../../actualizaciones/2026-11-15/verificacion.json'}
 (TECH / 'documento.json').write_text(json.dumps(technical_meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 

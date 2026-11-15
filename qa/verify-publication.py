@@ -11,7 +11,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 LATEST_MANUAL = ROOT / 'docs/manual/2026-11-15'
 HISTORICAL_MANUAL = ROOT / 'docs/manual/2026-11-14'
-LATEST_REPORTS = ROOT / 'docs/pruebas' / os.environ.get('REPORT_DATE', '2026-11-14')
+LATEST_REPORTS = ROOT / 'docs/pruebas' / os.environ.get('REPORT_DATE', '2026-11-15')
 class Links(HTMLParser):
     def handle_starttag(self, tag, attrs):
         for key, value in attrs:
@@ -126,7 +126,7 @@ for phrase in ['Día de la familia', 'Permiso remunerado', 'Permiso no remunerad
     assert phrase in manual_text, phrase
 evidence = json.loads((ROOT / 'docs/actualizaciones/2026-11-15/verificacion.json').read_text(encoding='utf-8'))
 assert evidence['requests']['temporaryRecordsRemoved']
-assert evidence['localTests']['total'] == evidence['localTests']['backend'] + evidence['localTests']['frontend'] == 138
+assert evidence['localTests']['total'] == sum(evidence['localTests'][field] for field in ['backend', 'frontend', 'http'])
 assert evidence['currentBrowserVisualCheck']['completed'] is False
-assert not evidence['historicalEvidence']['newK6Run'] and not evidence['historicalEvidence']['newZAPRun']
+assert evidence['historicalEvidence']['newK6Run'] and evidence['historicalEvidence']['newZAPRun']
 print('Archivos locales verificados: enlaces, copias PDF, evidencia y patrones de secretos. Sin publicación remota.')
