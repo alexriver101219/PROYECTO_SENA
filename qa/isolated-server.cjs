@@ -17,7 +17,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const servers = [];
-let memory, timer, requests = 0;
+let memory, timer, requests = 0, phase = "database-start";
 
 async function main() {
   memory = await MongoMemoryReplSet.create({
@@ -25,13 +25,17 @@ async function main() {
     binary: { downloadDir: path.join(root, ".mongodb-binaries") },
   });
   process.env.MONGO_URI = memory.getUri("sesha_qa_assessment");
+  phase = "database-connect";
   const { connectDB } = require("../backend/config/db");
   await connectDB();
   const { seed } = require("../backend/scripts/seed");
   process.env.SEED_ADMIN_PASSWORD = "test-only-fixture-0-credentials";
   process.env.SEED_CARLOS_PASSWORD = "test-only-fixture-1-credentials";
   process.env.SEED_LAURA_PASSWORD = "test-only-fixture-1-credentials";
-  await seed();
+  phase = "synthetic-fixtures";
+  // Solo la carga sintética usa modo test; las API medidas vuelven a producción.
+  process.env.NODE_ENV = "test";
+  try { await seed(); } finally { process.env.NODE_ENV = "production"; }
   const User = require("../backend/models/User");
   const Empleado = require("../backend/models/Empleado");
   const password = await bcrypt.hash("test-only-fixture-1-credentials", 12);
@@ -44,6 +48,7 @@ async function main() {
     position: "Guarda de seguridad", department: "Operaciones", status: "Activo", hireDate: "2022-01-10",
   })));
   const { createApp } = require("../backend/app");
+  phase = "server-start";
   for (const Model of Object.values(mongoose.models)) await Model.createIndexes();
   const runId = "sesha-qa-" + Date.now();
   const identity = limits => ({ isolated: true, database: "sesha_qa_assessment", runId, limits });
@@ -107,4 +112,4 @@ async function stop() {
 }
 process.once("SIGINT", () => stop().then(() => process.exit(0)));
 process.once("SIGTERM", () => stop().then(() => process.exit(0)));
-main().catch(async error => { console.error("Fallo QA aislado:", error.name, error.code || "sin código"); await stop(); process.exit(1); });
+main().catch(async error => { console.error("Fallo QA aislado:", phase, error.name, error.code || "sin código"); await stop(); process.exit(1); });

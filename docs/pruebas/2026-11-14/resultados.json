@@ -1,0 +1,1597 @@
+{
+  "project": "SESHA APP - Proyecto SENA",
+  "date": "2026-11-14",
+  "timezone": "America/Bogota",
+  "generatedAt": "2026-11-15T03:09:18.866Z",
+  "source": {
+    "commit": "3baffa68b32494e653faf39ef7ab70b129f60f2e",
+    "applicationSha256": "7ac7051ce42c7dcc5816502602a1b7ec9b97ad6bb19af547de8c638a2c080642",
+    "note": "Huella de aplicación; cambios de esta entrega limitados a QA e informes. Los resultados de Vitest se conservan de la misma versión del código; HTTP, k6 y ZAP se repiten en esta campaña."
+  },
+  "environment": {
+    "measuredAt": "2026-11-15T02:38:39.059Z",
+    "runId": "sesha-qa-1794710318522",
+    "node": "v24.22.3",
+    "cpu": "Intel(R) Core(TM) i3-N300",
+    "logicalCpus": 8,
+    "totalMemoryGB": 7.731925964355469,
+    "freeMemoryGB": 0.7493553161621094,
+    "os": "win32 10.0.26300",
+    "seededProfiles": 152,
+    "database": "MongoDB temporal, replica set de un nodo",
+    "productionUntouched": true,
+    "capacityMode": "Mismo createApp con limits:false; autenticación y autorización conservadas",
+    "strictMode": "Mismo createApp con límites 120/min e intentos 20/15min"
+  },
+  "functional": {
+    "backend": {
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "executedAt": "2026-11-15T02:17:23.165Z",
+      "reusedVerifiedEvidence": true
+    },
+    "frontend": {
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "executedAt": "2026-11-15T00:07:06.428Z",
+      "reusedVerifiedEvidence": true
+    },
+    "http": {
+      "total": 48,
+      "passed": 48,
+      "failed": 0,
+      "executedAt": "2026-11-15T02:40:33.709Z"
+    },
+    "total": 133,
+    "passed": 133,
+    "failed": 0,
+    "tests": [
+      {
+        "suite": "Backend",
+        "name": "vista previa conserva todo; solo las 19 autorizadas se desactivan y una repetición es inocua",
+        "status": "passed",
+        "durationMs": 164.85870000000023
+      },
+      {
+        "suite": "Backend",
+        "name": "sin aprobación, con destino erróneo o cuenta protegida no escribe",
+        "status": "passed",
+        "durationMs": 46.02059999999983
+      },
+      {
+        "suite": "Backend",
+        "name": "una contraseña ya corregida o un manifiesto incompleto cancela sin desactivar a nadie",
+        "status": "passed",
+        "durationMs": 48.65310000000045
+      },
+      {
+        "suite": "Backend",
+        "name": "una segunda escritura fallida revierte también la primera",
+        "status": "passed",
+        "durationMs": 85.4345000000003
+      },
+      {
+        "suite": "Backend",
+        "name": "vista previa no escribe; cuarentena preserva cuentas, claves, roles, perfiles y es idempotente",
+        "status": "passed",
+        "durationMs": 266.7983000000004
+      },
+      {
+        "suite": "Backend",
+        "name": "requiere autorización y destino exactos, sin escrituras",
+        "status": "passed",
+        "durationMs": 49.67059999999992
+      },
+      {
+        "suite": "Backend",
+        "name": "un fallo después de la primera escritura revierte toda la cuarentena",
+        "status": "passed",
+        "durationMs": 48.81240000000025
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance missing cancela toda la operación",
+        "status": "passed",
+        "durationMs": 45.79340000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance duplicate cancela toda la operación",
+        "status": "passed",
+        "durationMs": 165.4350999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "un alcance role cancela toda la operación",
+        "status": "passed",
+        "durationMs": 49.90949999999975
+      },
+      {
+        "suite": "Backend",
+        "name": "la constancia laboral usa la identidad autenticada, sus datos y la fecha actual",
+        "status": "passed",
+        "durationMs": 231.4757999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "la fecha de expedición cambia por el día de Colombia y la de ingreso permanece fija",
+        "status": "passed",
+        "durationMs": 13.53590000000031
+      },
+      {
+        "suite": "Backend",
+        "name": "completar perfiles cubre todos los usuarios y conserva los datos válidos",
+        "status": "passed",
+        "durationMs": 75.47739999999976
+      },
+      {
+        "suite": "Backend",
+        "name": "el registro prepara el perfil y revierte la cuenta si falla su creación",
+        "status": "passed",
+        "durationMs": 616.2981999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "el catálogo publica los ocho cargos nuevos y el registro conserva cargo, área y rol employee",
+        "status": "passed",
+        "durationMs": 2257.1493
+      },
+      {
+        "suite": "Backend",
+        "name": "registro persistido: cookie HttpOnly, sin JWT ni hash en respuesta y duplicados rechazados",
+        "status": "passed",
+        "durationMs": 403.1230999999998
+      },
+      {
+        "suite": "Backend",
+        "name": "registro rechaza privilegios, operadores y contraseñas cortas",
+        "status": "passed",
+        "durationMs": 51.04959999999937
+      },
+      {
+        "suite": "Backend",
+        "name": "la clave académica funciona únicamente para una cuenta persistida; logout exige CSRF",
+        "status": "passed",
+        "durationMs": 392.45920000000024
+      },
+      {
+        "suite": "Backend",
+        "name": "JWT falso, expirado y cuenta deshabilitada no dan acceso",
+        "status": "passed",
+        "durationMs": 32.28150000000005
+      },
+      {
+        "suite": "Backend",
+        "name": "sin BD devuelve 503 sin filtrar el error; distingue vida y disponibilidad",
+        "status": "passed",
+        "durationMs": 18.691400000000613
+      },
+      {
+        "suite": "Backend",
+        "name": "validación de CORS, JSON y configuración obligatoria",
+        "status": "passed",
+        "durationMs": 14.888899999999921
+      },
+      {
+        "suite": "Backend",
+        "name": "solo admin gestiona perfiles; los modelos y hashes permanecen separados",
+        "status": "passed",
+        "durationMs": 70.9971999999998
+      },
+      {
+        "suite": "Backend",
+        "name": "perfiles rechazan duplicados, campos inesperados e identificadores inválidos",
+        "status": "passed",
+        "durationMs": 61.65340000000015
+      },
+      {
+        "suite": "Backend",
+        "name": "PDF persiste y solo propietario o admin lo descargan y eliminan",
+        "status": "passed",
+        "durationMs": 94.35720000000038
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza PDF falso y archivos superiores a 3 MB",
+        "status": "passed",
+        "durationMs": 49.24279999999999
+      },
+      {
+        "suite": "Backend",
+        "name": "constancia se genera con el perfil autenticado",
+        "status": "passed",
+        "durationMs": 108.67050000000017
+      },
+      {
+        "suite": "Backend",
+        "name": "solicitudes persisten, aíslan propietarios y solo admin aprueba",
+        "status": "passed",
+        "durationMs": 83.07290000000012
+      },
+      {
+        "suite": "Backend",
+        "name": "el soporte debe ser propio y no se borra mientras esté referenciado",
+        "status": "passed",
+        "durationMs": 61.41949999999997
+      },
+      {
+        "suite": "Backend",
+        "name": "dashboard calcula métricas desde datos persistidos y filtra por usuario",
+        "status": "passed",
+        "durationMs": 47.66569999999956
+      },
+      {
+        "suite": "Backend",
+        "name": "limitación de intentos compartida entre instancias",
+        "status": "passed",
+        "durationMs": 248.2499000000007
+      },
+      {
+        "suite": "Backend",
+        "name": "el contador compartido es atómico bajo concurrencia",
+        "status": "passed",
+        "durationMs": 26.72530000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "migración y semilla son repetibles y conservan las contraseñas existentes",
+        "status": "passed",
+        "durationMs": 1167.4362999999994
+      },
+      {
+        "suite": "Backend",
+        "name": "entrada serverless conserva rutas y rechaza archivos historicos sin contenido",
+        "status": "passed",
+        "durationMs": 39.343699999999444
+      },
+      {
+        "suite": "Backend",
+        "name": "inspección por defecto no escribe ni muestra URI, claves o hashes",
+        "status": "passed",
+        "durationMs": 99.13550000000032
+      },
+      {
+        "suite": "Backend",
+        "name": "rotación atómica con bcrypt 12, invalida JWT y preserva roles y todos los demás campos",
+        "status": "passed",
+        "durationMs": 3245.0976
+      },
+      {
+        "suite": "Backend",
+        "name": "sin autorización o con destino distinto no actualiza cuentas",
+        "status": "passed",
+        "durationMs": 25.21050000000014
+      },
+      {
+        "suite": "Backend",
+        "name": "cuenta ausente no crea cuentas ni cambia la primera",
+        "status": "passed",
+        "durationMs": 537.0689999999995
+      },
+      {
+        "suite": "Backend",
+        "name": "si falla la segunda actualización revierte la primera",
+        "status": "passed",
+        "durationMs": 556.1689000000006
+      },
+      {
+        "suite": "Backend",
+        "name": "las cuentas duplicadas detienen inspección y rotación sin escrituras",
+        "status": "passed",
+        "durationMs": 678.2412000000004
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza claves inválidas, iguales entre sí o iguales a la anterior sin cambios",
+        "status": "passed",
+        "durationMs": 535.8611999999994
+      },
+      {
+        "suite": "Backend",
+        "name": "destino explícito, TLS Atlas y argumentos sin secretos",
+        "status": "passed",
+        "durationMs": 19.9270000000015
+      },
+      {
+        "suite": "Backend",
+        "name": "entrada oculta: no eco, borrado, UTF-8 dividido y restauración del terminal",
+        "status": "passed",
+        "durationMs": 15.763600000000224
+      },
+      {
+        "suite": "Backend",
+        "name": "Ctrl+C y pegados multilínea cancelan sin eco; tuberías se rechazan",
+        "status": "passed",
+        "durationMs": 15.920000000000073
+      },
+      {
+        "suite": "Backend",
+        "name": "la semilla exige sus variables privadas antes de conectar o escribir",
+        "status": "passed",
+        "durationMs": 19.763700000001336
+      },
+      {
+        "suite": "Backend",
+        "name": "una clave inválida o una confirmación distinta permite corregir sin revelar entradas ni escribir",
+        "status": "passed",
+        "durationMs": 18.33729999999923
+      },
+      {
+        "suite": "Backend",
+        "name": "una clave repetida entre cuentas vuelve a pedir solo la segunda",
+        "status": "passed",
+        "durationMs": 12.824500000000626
+      },
+      {
+        "suite": "Backend",
+        "name": "cancelar la entrada detiene la captura sin reintentos ni escrituras",
+        "status": "passed",
+        "durationMs": 17.37920000000122
+      },
+      {
+        "suite": "Backend",
+        "name": "los mensajes de error públicos usan textos fijos y omiten detalles privados del driver",
+        "status": "passed",
+        "durationMs": 15.334800000000541
+      },
+      {
+        "suite": "Backend",
+        "name": "producción cierra el registro público en ruta y servicio sin crear perfiles ficticios",
+        "status": "passed",
+        "durationMs": 65.20530000000053
+      },
+      {
+        "suite": "Backend",
+        "name": "desarrollo también cierra el registro salvo habilitación explícita para datos desechables",
+        "status": "passed",
+        "durationMs": 18.148600000000442
+      },
+      {
+        "suite": "Backend",
+        "name": "solo admin crea cuenta y perfil real juntos; bcrypt 12 sin claves ni sesiones en respuesta",
+        "status": "passed",
+        "durationMs": 610.7914000000001
+      },
+      {
+        "suite": "Backend",
+        "name": "si el documento ya existe revierte la cuenta; rechaza privilegios y claves débiles",
+        "status": "passed",
+        "durationMs": 884.2829000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "un JWT firmado con el secreto retirado deja de ser válido",
+        "status": "passed",
+        "durationMs": 25.083599999999933
+      },
+      {
+        "suite": "Backend",
+        "name": "producción exige base explícita, TLS verificado y orígenes HTTPS exactos",
+        "status": "passed",
+        "durationMs": 15.670000000000073
+      },
+      {
+        "suite": "Backend",
+        "name": "redistribuye solo 44 guardas, conserva identidad y otros cargos y no se aplica dos veces",
+        "status": "passed",
+        "durationMs": 177.02140000000009
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza un plan desactualizado sin cambiar cargos",
+        "status": "passed",
+        "durationMs": 79.07079999999996
+      },
+      {
+        "suite": "Backend",
+        "name": "un error posterior a las escrituras revierte todos los cambios de cargos",
+        "status": "passed",
+        "durationMs": 70.88690000000042
+      },
+      {
+        "suite": "Backend",
+        "name": "cambio web de admin@sesha.com conserva datos, bcrypt 12 y revoca todas sus sesiones",
+        "status": "passed",
+        "durationMs": 1659.1804000000002
+      },
+      {
+        "suite": "Backend",
+        "name": "cambio web de carlos.mendoza@sesha.com conserva datos, bcrypt 12 y revoca todas sus sesiones",
+        "status": "passed",
+        "durationMs": 1328.9106999999995
+      },
+      {
+        "suite": "Backend",
+        "name": "correo inexistente, contraseña incorrecta y cuenta inactiva responden igual y no escriben",
+        "status": "passed",
+        "durationMs": 305.34040000000005
+      },
+      {
+        "suite": "Backend",
+        "name": "rechaza confirmación distinta, reutilización, límites bcrypt, controles e inyección sin cambios",
+        "status": "passed",
+        "durationMs": 63.04160000000047
+      },
+      {
+        "suite": "Backend",
+        "name": "cookie y JWT ajenos no sustituyen la contraseña actual; CORS bloquea otro origen",
+        "status": "passed",
+        "durationMs": 50.67000000000007
+      },
+      {
+        "suite": "Backend",
+        "name": "la ruta comparte el límite de intentos de autenticación",
+        "status": "passed",
+        "durationMs": 278.6406999999999
+      },
+      {
+        "suite": "Backend",
+        "name": "un cambio concurrente evita sobrescribir la cuenta",
+        "status": "passed",
+        "durationMs": 298.4297999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "el ingreso abre el panel completo con su navegación",
+        "status": "passed",
+        "durationMs": 899.1292000000003
+      },
+      {
+        "suite": "Frontend",
+        "name": "un error de render muestra una recuperación en lugar de dejar la página vacía",
+        "status": "passed",
+        "durationMs": 32.49070000000029
+      },
+      {
+        "suite": "Frontend",
+        "name": "botón inferior abre el formulario y el cambio confirmado vuelve al login sin guardar claves",
+        "status": "passed",
+        "durationMs": 1946.3729999999996
+      },
+      {
+        "suite": "Frontend",
+        "name": "confirmación distinta muestra un error sin enviar peticiones",
+        "status": "passed",
+        "durationMs": 1595.733500000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "fallo del servidor se muestra sin anunciar éxito y vacía los campos secretos",
+        "status": "passed",
+        "durationMs": 1825.6275999999998
+      },
+      {
+        "suite": "Frontend",
+        "name": "puede cancelar y no duplica la petición mientras está guardando",
+        "status": "passed",
+        "durationMs": 1986.2778999999937
+      },
+      {
+        "suite": "Frontend",
+        "name": "muestra métricas de API y oculta administración a empleados",
+        "status": "passed",
+        "durationMs": 210.79520000000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "despliega detalles del servicio seleccionado",
+        "status": "passed",
+        "durationMs": 102.2521999999999
+      },
+      {
+        "suite": "Frontend",
+        "name": "no anuncia carga exitosa si falla la persistencia",
+        "status": "passed",
+        "durationMs": 312.91179999999986
+      },
+      {
+        "suite": "Frontend",
+        "name": "alta administrativa captura la clave enmascarada, la envía solo al guardar y la elimina tras respuesta",
+        "status": "passed",
+        "durationMs": 1859.4337000000014
+      },
+      {
+        "suite": "Frontend",
+        "name": "Documentos solicita la constancia laboral personalizada",
+        "status": "passed",
+        "durationMs": 176.89890000000014
+      },
+      {
+        "suite": "Frontend",
+        "name": "Mi perfil muestra fecha de ingreso y usa el mismo generador",
+        "status": "passed",
+        "durationMs": 88.9086000000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "Renderiza correctamente la Landing Page",
+        "status": "passed",
+        "durationMs": 97.4676999999997
+      },
+      {
+        "suite": "Frontend",
+        "name": "Permite consultar definición y características desde la página de inicio",
+        "status": "passed",
+        "durationMs": 176.50900000000001
+      },
+      {
+        "suite": "Frontend",
+        "name": "login presenta el error real y no inicia una sesión fallida",
+        "status": "passed",
+        "durationMs": 602.5705000000003
+      },
+      {
+        "suite": "Frontend",
+        "name": "registro actualiza sesión y no guarda credenciales en localStorage",
+        "status": "passed",
+        "durationMs": 1599.1539000000002
+      },
+      {
+        "suite": "Frontend",
+        "name": "registro cerrado explica el alta por administrador y no muestra campos de contraseña",
+        "status": "passed",
+        "durationMs": 21.401499999999942
+      },
+      {
+        "suite": "Frontend",
+        "name": "un token antiguo en localStorage no permite entrar",
+        "status": "passed",
+        "durationMs": 77.42250000000013
+      },
+      {
+        "suite": "Frontend",
+        "name": "logout limpia usuario y CSRF después de confirmar el cierre del servidor",
+        "status": "passed",
+        "durationMs": 142.55249999999978
+      },
+      {
+        "suite": "Frontend",
+        "name": "sin permisos administrativos la ruta de empleados redirige",
+        "status": "passed",
+        "durationMs": 11.938200000000052
+      },
+      {
+        "suite": "Frontend",
+        "name": "una solicitud fallida conserva el motivo y nunca simula éxito",
+        "status": "passed",
+        "durationMs": 498.6275999999998
+      },
+      {
+        "suite": "HTTP",
+        "name": "F01 - Inicio compilado y recarga directa de ruta React",
+        "status": "passed",
+        "durationMs": 25.192800000000034
+      },
+      {
+        "suite": "HTTP",
+        "name": "F02 - Salud y disponibilidad de MongoDB temporal",
+        "status": "passed",
+        "durationMs": 13.314800000000105
+      },
+      {
+        "suite": "HTTP",
+        "name": "F03 - Dashboard exige autenticación",
+        "status": "passed",
+        "durationMs": 5.725900000000138
+      },
+      {
+        "suite": "HTTP",
+        "name": "F04 - Credenciales incorrectas se rechazan",
+        "status": "passed",
+        "durationMs": 339.3319999999999
+      },
+      {
+        "suite": "HTTP",
+        "name": "F05 - Ingreso admin con cookie HttpOnly Secure Strict y CSRF",
+        "status": "passed",
+        "durationMs": 389.2201
+      },
+      {
+        "suite": "HTTP",
+        "name": "F06 - Ingreso de dos empleados independientes",
+        "status": "passed",
+        "durationMs": 684.4950000000001
+      },
+      {
+        "suite": "HTTP",
+        "name": "F07 - Perfil autenticado tiene fecha y datos laborales",
+        "status": "passed",
+        "durationMs": 25.457499999999982
+      },
+      {
+        "suite": "HTTP",
+        "name": "F08 - Empleado no consulta administración de personal",
+        "status": "passed",
+        "durationMs": 28.30510000000004
+      },
+      {
+        "suite": "HTTP",
+        "name": "F09 - Listado admin paginado y sin hashes",
+        "status": "passed",
+        "durationMs": 63.42540000000008
+      },
+      {
+        "suite": "HTTP",
+        "name": "F10 - Escritura con cookie y sin CSRF se bloquea",
+        "status": "passed",
+        "durationMs": 6.8573999999998705
+      },
+      {
+        "suite": "HTTP",
+        "name": "F11 - Admin crea perfil persistido en MongoDB",
+        "status": "passed",
+        "durationMs": 38.91350000000011
+      },
+      {
+        "suite": "HTTP",
+        "name": "F12 - Admin modifica fecha y cargo",
+        "status": "passed",
+        "durationMs": 37.48330000000033
+      },
+      {
+        "suite": "HTTP",
+        "name": "F13 - Fecha laboral futura se rechaza",
+        "status": "passed",
+        "durationMs": 10.66210000000001
+      },
+      {
+        "suite": "HTTP",
+        "name": "F14 - Documento duplicado se rechaza",
+        "status": "passed",
+        "durationMs": 22.983900000000176
+      },
+      {
+        "suite": "HTTP",
+        "name": "F15 - Inactivación conserva el perfil y el borrado físico no está expuesto",
+        "status": "passed",
+        "durationMs": 34.86210000000028
+      },
+      {
+        "suite": "HTTP",
+        "name": "F16 - Constancia laboral válida y nombre de archivo personalizado",
+        "status": "passed",
+        "durationMs": 204.77009999999973
+      },
+      {
+        "suite": "HTTP",
+        "name": "F17 - Carga PDF guarda los bytes en MongoDB",
+        "status": "passed",
+        "durationMs": 50.56680000000006
+      },
+      {
+        "suite": "HTTP",
+        "name": "F18 - Listado y descarga conservan el PDF",
+        "status": "passed",
+        "durationMs": 29.24519999999984
+      },
+      {
+        "suite": "HTTP",
+        "name": "F19 - Otro empleado no descarga el documento",
+        "status": "passed",
+        "durationMs": 9.928000000000338
+      },
+      {
+        "suite": "HTTP",
+        "name": "F20 - Admin puede revisar el documento",
+        "status": "passed",
+        "durationMs": 19.85430000000042
+      },
+      {
+        "suite": "HTTP",
+        "name": "F21 - Archivo falso con extensión PDF se rechaza",
+        "status": "passed",
+        "durationMs": 20.716199999999844
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22 - Archivo superior a 3 MiB se rechaza",
+        "status": "passed",
+        "durationMs": 71.83750000000009
+      },
+      {
+        "suite": "HTTP",
+        "name": "F22b - Límite exacto de 3 MiB se acepta",
+        "status": "passed",
+        "durationMs": 213.70420000000013
+      },
+      {
+        "suite": "HTTP",
+        "name": "F23 - Empleado crea solicitud con soporte propio",
+        "status": "passed",
+        "durationMs": 40.388900000000376
+      },
+      {
+        "suite": "HTTP",
+        "name": "F24 - Solicitud de otra cuenta no aparece en su listado",
+        "status": "passed",
+        "durationMs": 25.15119999999979
+      },
+      {
+        "suite": "HTTP",
+        "name": "F25 - Soporte ajeno no se puede asociar",
+        "status": "passed",
+        "durationMs": 13.225100000000111
+      },
+      {
+        "suite": "HTTP",
+        "name": "F26 - Adjunto referenciado queda protegido contra borrado",
+        "status": "passed",
+        "durationMs": 14.24940000000015
+      },
+      {
+        "suite": "HTTP",
+        "name": "F27 - Dashboard calcula sus documentos y pendientes",
+        "status": "passed",
+        "durationMs": 24.965299999999843
+      },
+      {
+        "suite": "HTTP",
+        "name": "F28 - Empleado no aprueba solicitudes",
+        "status": "passed",
+        "durationMs": 8.748700000000099
+      },
+      {
+        "suite": "HTTP",
+        "name": "F29 - Admin aprueba y conserva el cambio",
+        "status": "passed",
+        "durationMs": 28.97649999999976
+      },
+      {
+        "suite": "HTTP",
+        "name": "F30 - Empleado no cancela una solicitud ya aprobada",
+        "status": "passed",
+        "durationMs": 14.035599999999704
+      },
+      {
+        "suite": "HTTP",
+        "name": "F31 - Admin retira la solicitud sintética",
+        "status": "passed",
+        "durationMs": 14.843599999999697
+      },
+      {
+        "suite": "HTTP",
+        "name": "F32 - Propietario elimina PDF ya no referenciado",
+        "status": "passed",
+        "durationMs": 25.660100000000057
+      },
+      {
+        "suite": "HTTP",
+        "name": "F33 - Admin crea cuenta y perfil verificados en una transacción",
+        "status": "passed",
+        "durationMs": 459.8588999999997
+      },
+      {
+        "suite": "HTTP",
+        "name": "F34 - Alta duplicada y elevación de rol se rechazan",
+        "status": "passed",
+        "durationMs": 781.1764999999996
+      },
+      {
+        "suite": "HTTP",
+        "name": "F35 - Operador NoSQL como correo se rechaza",
+        "status": "passed",
+        "durationMs": 3.425199999999677
+      },
+      {
+        "suite": "HTTP",
+        "name": "F36 - JWT manipulado no autoriza acceso",
+        "status": "passed",
+        "durationMs": 2.9473000000007232
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37 - Origen no permitido y JSON inválido se rechazan",
+        "status": "passed",
+        "durationMs": 7.052400000000489
+      },
+      {
+        "suite": "HTTP",
+        "name": "F37b - JSON superior a 16 KiB se rechaza con 413",
+        "status": "passed",
+        "durationMs": 3.731300000000374
+      },
+      {
+        "suite": "HTTP",
+        "name": "F38 - Salir exige CSRF y revoca la sesión anterior",
+        "status": "passed",
+        "durationMs": 27.86359999999968
+      },
+      {
+        "suite": "HTTP",
+        "name": "F39 - El cambio web rechaza clave actual incorrecta y confirmación distinta",
+        "status": "passed",
+        "durationMs": 746.2519999999995
+      },
+      {
+        "suite": "HTTP",
+        "name": "F40 - El cambio web guarda bcrypt sin devolver claves, hashes o JWT",
+        "status": "passed",
+        "durationMs": 1566.6346999999996
+      },
+      {
+        "suite": "HTTP",
+        "name": "F41 - La nueva clave permite entrar y la anterior queda rechazada",
+        "status": "passed",
+        "durationMs": 703.9131000000007
+      },
+      {
+        "suite": "HTTP",
+        "name": "F42 - El cambio invalida la sesión previa y conserva la nueva",
+        "status": "passed",
+        "durationMs": 13.991899999999987
+      },
+      {
+        "suite": "HTTP",
+        "name": "F43 - El cambio conserva otros usuarios, los roles y los perfiles",
+        "status": "passed",
+        "durationMs": 382.29010000000017
+      },
+      {
+        "suite": "HTTP",
+        "name": "F44 - Los archivos privados no se sirven desde el frontend compilado",
+        "status": "passed",
+        "durationMs": 14.407499999999345
+      },
+      {
+        "suite": "HTTP",
+        "name": "F45 - Un homónimo conserva identidad, documento y cuenta independientes",
+        "status": "passed",
+        "durationMs": 405.0569999999989
+      },
+      {
+        "suite": "HTTP",
+        "name": "F46 - Producción impide el registro público y comunica el alta por administrador",
+        "status": "passed",
+        "durationMs": 12.922500000000582
+      }
+    ],
+    "production": {
+      "target": "https://sesha-app.vercel.app",
+      "executedAt": "2026-11-15T02:23:21.812Z",
+      "passed": 12,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Portada HTTP 200 y política CSP estricta",
+          "passed": true
+        },
+        {
+          "name": "/login disponible",
+          "passed": true
+        },
+        {
+          "name": "/register disponible",
+          "passed": true
+        },
+        {
+          "name": "/api/health disponible",
+          "passed": true
+        },
+        {
+          "name": "/api/ready disponible",
+          "passed": true
+        },
+        {
+          "name": "Registro público cerrado y sin caché",
+          "passed": true
+        },
+        {
+          "name": "Cambio de contraseña publicado y valida campos",
+          "passed": true
+        },
+        {
+          "name": "Alta administrativa exige autenticación",
+          "passed": true
+        },
+        {
+          "name": "API privada rechaza acceso anónimo",
+          "passed": true
+        },
+        {
+          "name": "Javascript publicado coincide con el compilado probado",
+          "passed": true
+        },
+        {
+          "name": "Archivos privados no expuestos por HTTP",
+          "passed": true
+        },
+        {
+          "name": "JWT histórico retirado rechazado en producción y API local",
+          "passed": true
+        }
+      ],
+      "ownerPasswordsUsed": false,
+      "businessWritesPerformed": false
+    }
+  },
+  "protection": {
+    "api": {
+      "allowed": 120,
+      "windowSeconds": 60,
+      "firstBlockedRequest": 121,
+      "status": 429
+    },
+    "auth": {
+      "allowed": 20,
+      "windowSeconds": 900,
+      "firstBlockedRequest": 21,
+      "status": 429
+    },
+    "scope": "por IP, contadores en MongoDB temporal",
+    "passed": true
+  },
+  "performance": {
+    "version": "k6.exe v2.3.0 (commit/e088784614, go1.26.8, windows/amd64)",
+    "runs": [
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "10s",
+        "label": "warmup",
+        "start": "2026-11-15T02:40:45.129Z",
+        "end": "2026-11-15T02:40:56.047Z",
+        "p95Ms": 20.881,
+        "p99Ms": 67.80255,
+        "avgMs": 10.255819607843138,
+        "maxMs": 70.7826,
+        "pdfP95Ms": 70.484595,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 51,
+        "achievedRps": 5.090338639069818,
+        "requestMix": {
+          "dashboard": 24,
+          "employees": 11,
+          "requests": 8,
+          "documents": 6,
+          "certificate": 2
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "25s",
+        "label": "mixed-5",
+        "start": "2026-11-15T02:40:56.053Z",
+        "end": "2026-11-15T02:41:21.259Z",
+        "p95Ms": 39.6548,
+        "p99Ms": 124.388825,
+        "avgMs": 15.193330952380956,
+        "maxMs": 383.6795,
+        "pdfP95Ms": 319.322125,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 126,
+        "achievedRps": 5.037382092675965,
+        "requestMix": {
+          "dashboard": 54,
+          "employees": 24,
+          "requests": 24,
+          "documents": 18,
+          "certificate": 6
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 25,
+        "duration": "25s",
+        "label": "mixed-25",
+        "start": "2026-11-15T02:41:21.261Z",
+        "end": "2026-11-15T02:41:46.429Z",
+        "p95Ms": 27.2426,
+        "p99Ms": 47.085725,
+        "avgMs": 8.598460383386588,
+        "maxMs": 63.653,
+        "pdfP95Ms": 50.322199999999995,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 626,
+        "achievedRps": 25.026780454135636,
+        "requestMix": {
+          "dashboard": 254,
+          "employees": 124,
+          "requests": 124,
+          "documents": 93,
+          "certificate": 31
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 50,
+        "duration": "25s",
+        "label": "mixed-50",
+        "start": "2026-11-15T02:41:46.429Z",
+        "end": "2026-11-15T02:42:11.608Z",
+        "p95Ms": 35.664734999999986,
+        "p99Ms": 52.972046,
+        "avgMs": 9.323954879999999,
+        "maxMs": 122.0719,
+        "pdfP95Ms": 78.84518999999992,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 1250,
+        "achievedRps": 49.98916734743581,
+        "requestMix": {
+          "dashboard": 504,
+          "employees": 250,
+          "requests": 248,
+          "documents": 186,
+          "certificate": 62
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "25s",
+        "label": "mixed-100",
+        "start": "2026-11-15T02:42:11.609Z",
+        "end": "2026-11-15T02:42:36.786Z",
+        "p95Ms": 44.46546499999998,
+        "p99Ms": 73.65152199999999,
+        "avgMs": 12.825264520000001,
+        "maxMs": 266.4372,
+        "pdfP95Ms": 112.13667999999997,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 2500,
+        "achievedRps": 99.86370721076324,
+        "requestMix": {
+          "dashboard": 1000,
+          "employees": 500,
+          "requests": 500,
+          "documents": 375,
+          "certificate": 125
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 200,
+        "duration": "25s",
+        "label": "mixed-200",
+        "start": "2026-11-15T02:42:36.788Z",
+        "end": "2026-11-15T02:43:02.772Z",
+        "p95Ms": 949.2135099999999,
+        "p99Ms": 1293.683412,
+        "avgMs": 406.4709724630886,
+        "maxMs": 1583.5165,
+        "pdfP95Ms": 1035.6435999999999,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 4267,
+        "achievedRps": 165.6452188730021,
+        "requestMix": {
+          "dashboard": 1711,
+          "employees": 852,
+          "requests": 852,
+          "documents": 639,
+          "certificate": 213
+        },
+        "droppedIterations": 734,
+        "maxActiveVus": 100,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "recovery",
+        "start": "2026-11-15T02:43:02.775Z",
+        "end": "2026-11-15T02:43:23.079Z",
+        "p95Ms": 47.5492,
+        "p99Ms": 144.1683,
+        "avgMs": 15.108859405940597,
+        "maxMs": 155.902,
+        "pdfP95Ms": 153.55525999999998,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 101,
+        "achievedRps": 5.045095259290823,
+        "requestMix": {
+          "dashboard": 41,
+          "employees": 20,
+          "requests": 20,
+          "documents": 15,
+          "certificate": 5
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 1,
+        "duration": "20s",
+        "label": "login-1",
+        "start": "2026-11-15T02:43:23.082Z",
+        "end": "2026-11-15T02:43:44.771Z",
+        "p95Ms": 467.5117600000002,
+        "p99Ms": 669.8991519999996,
+        "avgMs": 322.31203500000004,
+        "maxMs": 720.496,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 20,
+        "achievedRps": 0.9989141703077338,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 2,
+        "duration": "20s",
+        "label": "login-2",
+        "start": "2026-11-15T02:43:44.772Z",
+        "end": "2026-11-15T02:44:04.953Z",
+        "p95Ms": 583.2830199999993,
+        "p99Ms": 849.927173,
+        "avgMs": 356.9425424999999,
+        "maxMs": 868.1009,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 40,
+        "achievedRps": 1.9994181493243652,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 1,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 3,
+        "duration": "20s",
+        "label": "login-3",
+        "start": "2026-11-15T02:44:04.954Z",
+        "end": "2026-11-15T02:44:25.110Z",
+        "p95Ms": 562.3849049999999,
+        "p99Ms": 675.4005729999999,
+        "avgMs": 336.34601333333336,
+        "maxMs": 701.9006,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 60,
+        "achievedRps": 2.999313127300717,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 2,
+        "passed": true
+      },
+      {
+        "kind": "login",
+        "targetRps": 4,
+        "duration": "20s",
+        "label": "login-4",
+        "start": "2026-11-15T02:44:25.112Z",
+        "end": "2026-11-15T02:44:51.000Z",
+        "p95Ms": 9756.506565,
+        "p99Ms": 10000.365541,
+        "avgMs": 6102.3403,
+        "maxMs": 10000.4778,
+        "failedRate": 0.0375,
+        "businessFailedRate": 0.0375,
+        "requests": 80,
+        "achievedRps": 3.1105513190149003,
+        "requestMix": {
+          "dashboard": 0,
+          "employees": 0,
+          "requests": 0,
+          "documents": 0,
+          "certificate": 0
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 33,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 150,
+        "duration": "25s",
+        "label": "refine-150",
+        "start": "2026-11-15T02:44:53.063Z",
+        "end": "2026-11-15T02:45:18.752Z",
+        "p95Ms": 398.35272999999995,
+        "p99Ms": 616.521763,
+        "avgMs": 99.23882834497563,
+        "maxMs": 840.2829,
+        "pdfP95Ms": 483.252975,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3722,
+        "achievedRps": 148.4707966678877,
+        "requestMix": {
+          "dashboard": 1490,
+          "employees": 744,
+          "requests": 744,
+          "documents": 558,
+          "certificate": 186
+        },
+        "droppedIterations": 29,
+        "maxActiveVus": 70,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 125,
+        "duration": "25s",
+        "label": "refine-125",
+        "start": "2026-11-15T02:45:18.755Z",
+        "end": "2026-11-15T02:45:43.953Z",
+        "p95Ms": 96.497575,
+        "p99Ms": 215.111025,
+        "avgMs": 23.207991746641063,
+        "maxMs": 387.9003,
+        "pdfP95Ms": 206.50725,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 3126,
+        "achievedRps": 124.96439654009323,
+        "requestMix": {
+          "dashboard": 1254,
+          "employees": 624,
+          "requests": 624,
+          "documents": 468,
+          "certificate": 156
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 24,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 125,
+        "duration": "60s",
+        "label": "confirmation-125",
+        "start": "2026-11-15T02:45:43.955Z",
+        "end": "2026-11-15T02:46:47.292Z",
+        "p95Ms": 1042.2882399999999,
+        "p99Ms": 1378.2763019999993,
+        "avgMs": 324.4068274249342,
+        "maxMs": 2892.6215,
+        "pdfP95Ms": 1132.1517,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 7227,
+        "achievedRps": 115.1159268275001,
+        "requestMix": {
+          "dashboard": 2895,
+          "employees": 1444,
+          "requests": 1444,
+          "documents": 1083,
+          "certificate": 361
+        },
+        "droppedIterations": 275,
+        "maxActiveVus": 100,
+        "passed": false
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 100,
+        "duration": "60s",
+        "label": "confirmation-100",
+        "start": "2026-11-15T02:46:47.296Z",
+        "end": "2026-11-15T02:47:47.794Z",
+        "p95Ms": 166.40702500000026,
+        "p99Ms": 293.987071,
+        "avgMs": 32.08587719999993,
+        "maxMs": 539.8446,
+        "pdfP95Ms": 366.04288,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 6000,
+        "achievedRps": 99.91811211121924,
+        "requestMix": {
+          "dashboard": 2400,
+          "employees": 1200,
+          "requests": 1200,
+          "documents": 900,
+          "certificate": 300
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 33,
+        "passed": true
+      },
+      {
+        "kind": "mixed",
+        "targetRps": 5,
+        "duration": "20s",
+        "label": "final-recovery",
+        "start": "2026-11-15T02:47:47.798Z",
+        "end": "2026-11-15T02:48:08.022Z",
+        "p95Ms": 41.7324,
+        "p99Ms": 66.2555,
+        "avgMs": 9.895843564356438,
+        "maxMs": 121.9585,
+        "pdfP95Ms": 64.8962,
+        "failedRate": 0,
+        "businessFailedRate": 0,
+        "requests": 101,
+        "achievedRps": 5.046148779251675,
+        "requestMix": {
+          "dashboard": 41,
+          "employees": 20,
+          "requests": 20,
+          "documents": 15,
+          "certificate": 5
+        },
+        "droppedIterations": 0,
+        "maxActiveVus": 0,
+        "passed": true
+      }
+    ],
+    "sustained": {
+      "kind": "mixed",
+      "targetRps": 100,
+      "duration": "60s",
+      "label": "confirmation-100",
+      "start": "2026-11-15T02:46:47.296Z",
+      "end": "2026-11-15T02:47:47.794Z",
+      "p95Ms": 166.40702500000026,
+      "p99Ms": 293.987071,
+      "avgMs": 32.08587719999993,
+      "maxMs": 539.8446,
+      "pdfP95Ms": 366.04288,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 6000,
+      "achievedRps": 99.91811211121924,
+      "requestMix": {
+        "dashboard": 2400,
+        "employees": 1200,
+        "requests": 1200,
+        "documents": 900,
+        "certificate": 300
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 33,
+      "passed": true
+    },
+    "shortPeak": {
+      "kind": "mixed",
+      "targetRps": 125,
+      "duration": "25s",
+      "label": "refine-125",
+      "start": "2026-11-15T02:45:18.755Z",
+      "end": "2026-11-15T02:45:43.953Z",
+      "p95Ms": 96.497575,
+      "p99Ms": 215.111025,
+      "avgMs": 23.207991746641063,
+      "maxMs": 387.9003,
+      "pdfP95Ms": 206.50725,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 3126,
+      "achievedRps": 124.96439654009323,
+      "requestMix": {
+        "dashboard": 1254,
+        "employees": 624,
+        "requests": 624,
+        "documents": 468,
+        "certificate": 156
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 24,
+      "passed": true
+    },
+    "loginPassed": {
+      "kind": "login",
+      "targetRps": 3,
+      "duration": "20s",
+      "label": "login-3",
+      "start": "2026-11-15T02:44:04.954Z",
+      "end": "2026-11-15T02:44:25.110Z",
+      "p95Ms": 562.3849049999999,
+      "p99Ms": 675.4005729999999,
+      "avgMs": 336.34601333333336,
+      "maxMs": 701.9006,
+      "failedRate": 0,
+      "businessFailedRate": 0,
+      "requests": 60,
+      "achievedRps": 2.999313127300717,
+      "requestMix": {
+        "dashboard": 0,
+        "employees": 0,
+        "requests": 0,
+        "documents": 0,
+        "certificate": 0
+      },
+      "droppedIterations": 0,
+      "maxActiveVus": 2,
+      "passed": true
+    },
+    "criteria": {
+      "mixedP95Ms": 500,
+      "certificateP95Ms": 1500,
+      "loginP95Ms": 1000,
+      "errorRateLessThan": 0.01,
+      "droppedIterations": 0
+    },
+    "note": "Carga exclusivamente local; generador, API y MongoDB comparten equipo. No mide capacidad de Vercel/Atlas ni usuarios simultáneos."
+  },
+  "security": {
+    "start": "2026-11-15T02:51:16.212Z",
+    "end": "2026-11-15T02:54:58.823Z",
+    "code": 0,
+    "version": "2.17.0",
+    "activeMinutesLimit": 3,
+    "threads": 2,
+    "scope": [
+      "127.0.0.1:4174",
+      "127.0.0.1:8101"
+    ],
+    "riskCounts": {
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "informational": 4
+    },
+    "alerts": [
+      {
+        "id": "10027",
+        "reference": "10027",
+        "name": "Information Disclosure - Suspicious Comments",
+        "riskCode": 0,
+        "confidence": "1",
+        "cwe": "615",
+        "count": 1,
+        "paths": [
+          "/assets/index-BXajRxTj.js"
+        ],
+        "description": "The response appears to contain suspicious comments which may help an attacker.",
+        "solution": "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.",
+        "review": "La detección de comentarios es informativa y no demuestra por sí sola una contraseña o dato privado expuesto. No se publica la evidencia cruda."
+      },
+      {
+        "id": "10104",
+        "reference": "10104",
+        "name": "User Agent Fuzzer",
+        "riskCode": 0,
+        "confidence": "2",
+        "cwe": "0",
+        "count": 3,
+        "paths": [
+          "/assets"
+        ],
+        "description": "Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.",
+        "solution": "",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      },
+      {
+        "id": "10109",
+        "reference": "10109",
+        "name": "Modern Web Application",
+        "riskCode": 0,
+        "confidence": "2",
+        "cwe": "-1",
+        "count": 4,
+        "paths": [
+          "/",
+          "/login",
+          "/sitemap.xml"
+        ],
+        "description": "The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.",
+        "solution": "This is an informational alert and so no changes are required.",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      },
+      {
+        "id": "10111",
+        "reference": "10111",
+        "name": "Authentication Request Identified",
+        "riskCode": 0,
+        "confidence": "1",
+        "cwe": "-1",
+        "count": 2,
+        "paths": [
+          "/api/auth/change-password",
+          "/api/auth/login"
+        ],
+        "description": "The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.",
+        "solution": "This is an informational alert rather than a vulnerability and so there is nothing to fix.",
+        "review": "Observación informativa; no demuestra una vulnerabilidad explotable."
+      }
+    ],
+    "productionHeaders": {
+      "timestamp": "2026-11-15T02:51:22.393Z",
+      "base": "https://sesha-app.vercel.app",
+      "method": "cuatro solicitudes GET; sin escaneo activo ni prueba de carga",
+      "results": [
+        {
+          "route": "/",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/login",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+            "x-frame-options": "DENY",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/health",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "public, max-age=0, must-revalidate",
+            "x-powered-by": null
+          }
+        },
+        {
+          "route": "/api/ready",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "no-referrer",
+            "cache-control": "no-store",
+            "x-powered-by": null
+          }
+        }
+      ]
+    },
+    "npmAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "historicalEvidence": "../2026-11-13/resultados.json"
+}
