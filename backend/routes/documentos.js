@@ -13,7 +13,11 @@ const v = require("../utils/validation");
 const { payslipDetails, payslipPDF } = require("../services/payslip");
 router.use(authenticate);
 async function payroll(req) {
-  v.fields(req.query, ["period"]);
+  // Vercel añade el parámetro del rewrite /api/:path* a la consulta.
+  // Solo se admite cuando coincide con la ruta que Express ya resolvió.
+  v.fields(req.query, ["period", "path"]);
+  if (req.query.path !== undefined && req.query.path !== "documentos" + req.path)
+    throw new HttpError(400, "La ruta de consulta de nómina no coincide");
   const profile = await Empleado.findOne({ user: req.user._id });
   return payslipDetails(req.user, profile, req.query.period);
 }

@@ -87,6 +87,17 @@ test("PDF personal contiene logo, período, programación y neto exacto; no dupl
   expect(response.body.toString("latin1")).toContain("/Subtype /Image");
 });
 
+test("acepta el parámetro interno del rewrite de Vercel solo para la ruta resuelta", async () => {
+  const ana = await employee("ana@sesha.com");
+  const period = dateInBogota().slice(0, 7);
+  const response = await request(app).get(`/api/documentos/nomina?period=${period}&path=documentos%2Fnomina`).set("Authorization", ana.token);
+  expect(response.status).toBe(200);
+  expect(response.body.net).toBe(2600000);
+  expect((await request(app).get(`/api/documentos/nomina/pdf?period=${period}&path=documentos%2Fnomina%2Fpdf`).set("Authorization", ana.token)).status).toBe(200);
+  for (const path of ["documentos/nomina/pdf", "empleados", "", "documentos/nomina&net=1"])
+    expect((await request(app).get(`/api/documentos/nomina?period=${period}&path=${encodeURIComponent(path)}`).set("Authorization", ana.token)).status).toBe(400);
+});
+
 test("perfil faltante o inactivo se explica y el rol admin no se convierte en empleado", async () => {
   const admin = await employee("admin@sesha.com", "Administrador", "admin");
   expect((await request(app).get("/api/documentos/nomina").set("Authorization", admin.token)).status).toBe(403);
